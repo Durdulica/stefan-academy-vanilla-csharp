@@ -20,6 +20,7 @@ namespace stefan_academy_vanilla_charp.Student.Models
                 new Student("Stefan","Ognean","ogn@hotmail.com",61),
                 new Student("Daniel","Popescu","123@gmail.com", 23)
             };
+            studenti.Capacity = 10;
         }
 
         //Finders
@@ -49,7 +50,6 @@ namespace stefan_academy_vanilla_charp.Student.Models
                 LastName = student.LastName,
                 Email = student.Email,
                 Age = student.Age
-
             };
         }
 
@@ -69,7 +69,24 @@ namespace stefan_academy_vanilla_charp.Student.Models
             };
         }
 
-        public StudentCreateResponse AdaugareStudent(StudentCreateRequest request)
+        //Afisare
+
+        public void AfisareStudenti()
+        {
+            foreach (Student s in studenti)
+            {
+                Console.WriteLine(s.FirstName + " " + s.LastName + ", email: " + s.Email + ", varsta: " + s.Age);
+            }
+        }
+
+        //CRUD
+
+        public List<Student> Studenti
+        {
+            get { return studenti; }
+        }
+
+        public StudentCreateResponse CreateStudent(StudentCreateRequest request)
         {
             if (studenti.Count + 1 > studenti.Capacity)
             {
@@ -84,6 +101,32 @@ namespace stefan_academy_vanilla_charp.Student.Models
             studenti.Add(newStudent);
 
             return StudentToStudentCreateResponse(newStudent);
+        }
+
+        public StudentUpdateResponse UpdateStudent(Guid id, StudentUpdateRequest request)
+        {
+            Student student = FindById(id);
+            if (student == null)
+            {
+                throw new ArgumentException("Studentul nu exista in baza de date");
+            }
+
+            student.FirstName = request.FirstName;
+            student.LastName = request.LastName;
+            student.Email = request.Email;
+            student.Age = request.Age;
+
+            return StudentToStudentUpdateResponse(student);
+        }
+
+        public void DeleteStudent(Guid id)
+        {
+            for (int i = 0; i < studenti.Count; i++) {
+                if (id.CompareTo(studenti[i].Id) == 0) { 
+                    studenti.RemoveAt(i);
+                    return;
+                }
+            }
         }
     }
 }

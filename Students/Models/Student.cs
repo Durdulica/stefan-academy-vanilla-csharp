@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace stefan_academy_vanilla_charp.Student.Models
 {
-    internal class Student
+    public class Student
     {
         public Guid Id { get; set; } = Guid.NewGuid();
         private string firstName = string.Empty;

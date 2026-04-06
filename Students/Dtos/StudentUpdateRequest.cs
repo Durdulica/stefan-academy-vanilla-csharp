@@ -6,20 +6,13 @@ using System.Threading.Tasks;
 
 namespace stefan_academy_vanilla_charp.Student.Dtos
 {
-    internal class StudentUpdateRequest
+     public class StudentUpdateRequest
     {
         private string firstName = string.Empty;
         private string lastName = string.Empty;
         private string email = string.Empty;
         private int age;
 
-        public StudentUpdateRequest()
-        {
-            FirstName = "Necunoscut";
-            LastName = "Necunoscut";
-            Email = "Necunoscut";
-            age = -1;
-        }
         public StudentUpdateRequest(string firstName, string lastName, string email, int age)
         {
             FirstName = firstName;

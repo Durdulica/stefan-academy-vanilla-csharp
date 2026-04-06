@@ -9,9 +9,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Student\Dtos\" />
-    <Folder Include="Student\Data\" />
-    <Folder Include="Student\Services\" />
+    <Compile Remove="Student\**" />
+    <EmbeddedResource Remove="Student\**" />
+    <None Remove="Student\**" />
   </ItemGroup>
 
 </Project>

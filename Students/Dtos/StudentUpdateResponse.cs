@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace stefan_academy_vanilla_charp.Student.Dtos
 {
-    internal class StudentUpdateResponse
+    public class StudentUpdateResponse
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }
