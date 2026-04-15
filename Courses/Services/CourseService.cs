@@ -10,20 +10,11 @@ namespace stefan_academy_vanilla_charp.Courses.Services
 {
     public class CourseService
     {
-        private readonly List<Course> courses;
+        private readonly List<Course> courses = new List<Course>();
 
         public CourseService()
         {
-            courses = new List<Course>
-            {
-                new Course("Analiza", "Matematica"),
-                new Course("Algebra", "Matematica"),
-                new Course("Geometrie", "Matematica"),
-                new Course("Algoritmica", "Informatica"),
-                new Course("Optica", "Fizica"),
-                new Course("Mecanica", "Fizica")
-            };
-            courses.Capacity = 10;
+            ReadCourses();
         }
 
         //Finders
@@ -89,11 +80,6 @@ namespace stefan_academy_vanilla_charp.Courses.Services
 
         public CourseCreateResponse CreateCourse(CourseCreateRequest request)
         {
-            if (courses.Count + 1 >= courses.Capacity)
-            {
-                throw new ArgumentException("Baza de date este plina");
-            }
-
             Course newCourse = CourseCreateRequestToCourse(request);
 
             if (FindById(newCourse.Id) != null)

@@ -1,6 +1,6 @@
 ﻿using stefan_academy_vanilla_charp.Books.Dtos;
 using stefan_academy_vanilla_charp.Books.Models;
-using stefan_academy_vanilla_charp.Student.Models;
+using stefan_academy_vanilla_charp.Students.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +15,6 @@ namespace stefan_academy_vanilla_charp.Books.Services
 
         public BookService()
         {
-            books.Capacity = 10;
             ReadBooks();
         }
 
@@ -82,11 +81,6 @@ namespace stefan_academy_vanilla_charp.Books.Services
 
         public BookCreateResponse CreateBook(BookCreateRequest request)
         {
-            if (books.Count + 1 > books.Capacity)
-            {
-                throw new ArgumentException("Baze de data este plina");
-            }
-
             Book newBook = BookCreateRequestToBook(request);
 
             if (FindById(newBook.Id) != null)
@@ -163,6 +157,22 @@ namespace stefan_academy_vanilla_charp.Books.Services
                 string list = BooksListToString();
                 writer.Write(list);
             }
+        }
+
+        public List<Book> GetAllStudentIdBooks(Guid studentId)
+        {
+            List<Book> studentBooks = new List<Book>();
+            studentBooks.Capacity = books.Count;
+
+            foreach (Book b in books)
+            {
+                if(b.StudentId == studentId)
+                {
+                    studentBooks.Add(b);
+                }
+            }
+
+            return studentBooks;
         }
     }
 }

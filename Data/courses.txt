@@ -1,0 +1,6 @@
+Analiza,Matematica,
+Algebra,Matematica,
+Geometrie,Matematica,
+Algoritmica,Informatica,
+Optica,Fizica,
+Mecanica,Fizica

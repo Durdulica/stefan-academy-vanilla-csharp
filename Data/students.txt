@@ -1,0 +1,6 @@
+Stefan,Scarlat,stefanel.scarlat@gmail.com,18,
+Alex,Bordei,alex.bordei@yahoo.com,27,
+Stefan,Ognean,ogn@hotmail.com,61,
+Daniel,Popescu,123@gmail.com,23,
+Teodor,Prundel,teo@gmail.com,18,
+Andrei,Puscas,puscasAndrei@yahoo.com,23

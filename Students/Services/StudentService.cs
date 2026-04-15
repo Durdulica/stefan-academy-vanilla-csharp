@@ -1,26 +1,19 @@
-﻿using stefan_academy_vanilla_charp.Student.Dtos;
+﻿using stefan_academy_vanilla_charp.Students.Dtos;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace stefan_academy_vanilla_charp.Student.Models
+namespace stefan_academy_vanilla_charp.Students.Models
 {
     public class StudentService
     {
-        private readonly List<Student> students;
+        private readonly List<Student> students = new List<Student>();
 
         public StudentService()
         {
-            students = new List<Student>
-            {
-                new Student("Stefan","Scarlat","stefanel.scarlat@gmail.com", 18),
-                new Student("Alex","Bordei","alex.bordei@yahoo.com", 27),
-                new Student("Stefan","Ognean","ogn@hotmail.com",61),
-                new Student("Daniel","Popescu","123@gmail.com", 23)
-            };
-            students.Capacity = 10;
+            ReadStudents();
         }
 
         //Finders
@@ -88,11 +81,6 @@ namespace stefan_academy_vanilla_charp.Student.Models
 
         public StudentCreateResponse CreateStudent(StudentCreateRequest request)
         {
-            if (students.Count + 1 > students.Capacity)
-            {
-                throw new ArgumentException("Baza de date plina");
-            }
-
             Student newStudent = StudentCreateRequestToStudent(request);
             if (FindById(newStudent.Id) != null)
             {
@@ -129,15 +117,15 @@ namespace stefan_academy_vanilla_charp.Student.Models
             }
         }
 
-        public void ReadStudents()
+        private void ReadStudents()
         {
             string path = Path.Combine("..","..","..","Data","students.txt");
 
             using (var reader = new StreamReader(path))
             {
-                string list = "";
-                while ((list = reader.ReadLine()) != null) { 
-                    students.Add(new Student(list));
+                string line = "";
+                while ((line = reader.ReadLine()) != null) { 
+                    students.Add(new Student(line));
                 }
             };
         }

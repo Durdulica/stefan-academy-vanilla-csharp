@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace stefan_academy_vanilla_charp.Student.Dtos
+namespace stefan_academy_vanilla_charp.Students.Dtos
 {
      public class StudentUpdateRequest
     {
