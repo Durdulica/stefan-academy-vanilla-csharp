@@ -9,9 +9,9 @@ namespace stefan_academy_vanilla_charp.Books.Models
     public class Book
     {
         public Guid Id { get; set; } = Guid.NewGuid();
-        private Guid studentId = Guid.Empty;
+        public Guid StudentId { get; set; } = Guid.Empty;
         private string bookName = string.Empty;
-        private DateTime createdAt;
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
 
         public Book(Guid studentId, string bookName, DateTime createdAt)
         {
@@ -19,10 +19,14 @@ namespace stefan_academy_vanilla_charp.Books.Models
             BookName = bookName;
             CreatedAt = createdAt;
         }
-        public Guid StudentId
+
+        public Book(string text)
         {
-            get { return studentId; }
-            set { studentId = value; }
+            string[] cuv = text.Split(',');
+           
+            StudentId=Guid.Parse(cuv[0]);
+            BookName = cuv[1];
+            CreatedAt= DateTime.Parse(cuv[2]);
         }
 
         public string BookName
@@ -52,12 +56,6 @@ namespace stefan_academy_vanilla_charp.Books.Models
                 }
                 bookName = text;
             }
-        }
-
-        public DateTime CreatedAt
-        {
-            get { return createdAt; }
-            set { createdAt = value; }
         }
     }
 }

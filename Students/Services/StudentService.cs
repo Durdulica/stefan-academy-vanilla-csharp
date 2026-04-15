@@ -9,25 +9,25 @@ namespace stefan_academy_vanilla_charp.Student.Models
 {
     public class StudentService
     {
-        private readonly List<Student> studenti;
+        private readonly List<Student> students;
 
         public StudentService()
         {
-            studenti = new List<Student>
+            students = new List<Student>
             {
                 new Student("Stefan","Scarlat","stefanel.scarlat@gmail.com", 18),
                 new Student("Alex","Bordei","alex.bordei@yahoo.com", 27),
                 new Student("Stefan","Ognean","ogn@hotmail.com",61),
                 new Student("Daniel","Popescu","123@gmail.com", 23)
             };
-            studenti.Capacity = 10;
+            students.Capacity = 10;
         }
 
         //Finders
 
         public Student FindById(Guid id)
         {
-            foreach (Student s in studenti) { 
+            foreach (Student s in students) { 
                 if(s.Id.CompareTo(id) == 0)
                 {
                     return s;
@@ -73,7 +73,7 @@ namespace stefan_academy_vanilla_charp.Student.Models
 
         public void AfisareStudenti()
         {
-            foreach (Student s in studenti)
+            foreach (Student s in students)
             {
                 Console.WriteLine(s.FirstName + " " + s.LastName + ", email: " + s.Email + ", varsta: " + s.Age);
             }
@@ -83,12 +83,12 @@ namespace stefan_academy_vanilla_charp.Student.Models
 
         public List<Student> Studenti
         {
-            get { return studenti; }
+            get { return students; }
         }
 
         public StudentCreateResponse CreateStudent(StudentCreateRequest request)
         {
-            if (studenti.Count + 1 > studenti.Capacity)
+            if (students.Count + 1 > students.Capacity)
             {
                 throw new ArgumentException("Baza de date plina");
             }
@@ -98,7 +98,7 @@ namespace stefan_academy_vanilla_charp.Student.Models
             {
                 throw new ArgumentException("Studentul se afla deja in baza de date");
             }
-            studenti.Add(newStudent);
+            students.Add(newStudent);
 
             return StudentToStudentCreateResponse(newStudent);
         }
@@ -121,11 +121,51 @@ namespace stefan_academy_vanilla_charp.Student.Models
 
         public void DeleteStudent(Guid id)
         {
-            for (int i = 0; i < studenti.Count; i++) {
-                if (id.CompareTo(studenti[i].Id) == 0) { 
-                    studenti.RemoveAt(i);
+            for (int i = 0; i < students.Count; i++) {
+                if (id.CompareTo(students[i].Id) == 0) { 
+                    students.RemoveAt(i);
                     return;
                 }
+            }
+        }
+
+        public void ReadStudents()
+        {
+            string path = Path.Combine("..","..","..","Data","students.txt");
+
+            using (var reader = new StreamReader(path))
+            {
+                string list = "";
+                while ((list = reader.ReadLine()) != null) { 
+                    students.Add(new Student(list));
+                }
+            };
+        }
+
+        public string StudentListToString()
+        {
+            string list = "";
+            for (int i = 0; i < students.Count; i++)
+            {
+                if (i + 1 == students.Count)
+                {
+                    list += students[i].FirstName + "," + students[i].LastName + "," + students[i].Email + "," + students[i].Age;
+                }
+                else
+                {
+                    list += students[i].FirstName + "," + students[i].LastName + "," + students[i].Email + "," + students[i].Age + ",\n";
+                }
+            }
+            return list;
+        }
+
+        public void Save()
+        {
+            string path = Path.Combine("..", "..", "..", "Data", "students.txt");
+            using (var writer = new StreamWriter(path))
+            {
+                string list = StudentListToString();
+                writer.Write(list);
             }
         }
     }

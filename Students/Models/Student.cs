@@ -27,6 +27,16 @@ namespace stefan_academy_vanilla_charp.Student.Models
             Email = email;
             Age = age;
         }
+
+        public Student(string text)
+        {
+            string[] cuv = text.Split(',');
+            FirstName = cuv[0];
+            LastName = cuv[1];
+            Email = cuv[2];
+            Age = Int32.Parse(cuv[3]);
+        }
+
         public string FirstName
         {
             get { return firstName; }

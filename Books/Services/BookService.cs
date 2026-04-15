@@ -9,18 +9,14 @@ using System.Threading.Tasks;
 
 namespace stefan_academy_vanilla_charp.Books.Services
 {
-    internal class BookService
+    public class BookService
     {
-        private readonly List<Book> books;
+        private readonly List<Book> books = new List<Book>();
 
         public BookService()
         {
-            StudentService service = new StudentService();
-            //books = new List<Models.Book>
-            {
-
-                //new Models.Book(,"test",new DateTime(2026,4,6))
-            };
+            books.Capacity = 10;
+            ReadBooks();
         }
 
         //Finders
@@ -125,6 +121,47 @@ namespace stefan_academy_vanilla_charp.Books.Services
                     books.RemoveAt(i);
                     return;
                 }
+            }
+        }
+
+        public void ReadBooks()
+        {
+            string path = Path.Combine("..", "..", "..", "Data", "books.txt");
+      
+            using (var reader = new StreamReader(path))
+            {
+                string line = "";
+                while ((line = reader.ReadLine()) != null)
+                {
+                    books.Add(new Book(line));
+                }
+            }
+        }
+
+        public string BooksListToString()
+        {
+            string list = "";
+            for(int i = 0; i < books.Count; i++) 
+            {
+                if (i + 1 == books.Count)
+                {
+                    list += books[i].StudentId + "," + books[i].BookName + "," + books[i].CreatedAt.ToString("yyyy-MM-dd");
+                }
+                else
+                {
+                    list += books[i].StudentId + "," + books[i].BookName + "," + books[i].CreatedAt.ToString("yyyy-MM-dd") + ",\n";
+                }
+            }
+            return list;
+        }
+
+        public void Save()
+        {
+            string path = Path.Combine("..", "..", "..", "Data", "books.txt");
+            using (var writer = new StreamWriter(path))
+            {
+                string list = BooksListToString();
+                writer.Write(list);
             }
         }
     }
