@@ -31,6 +31,34 @@ namespace stefan_academy_vanilla_charp.Books.Services
             return null;
         }
 
+        public Book GetBook(Guid studentId, string bookName)
+        {
+            foreach (Book book in books)
+            {
+                if (book.StudentId == studentId && book.BookName.Contains(bookName))
+                {
+                    return book;
+                }
+            }
+            return null;
+        }
+
+        public List<Book> GetBooksByStudentId(Guid studentId)
+        {
+            List<Book> studentBooks = new List<Book>();
+            studentBooks.Capacity = books.Count;
+
+            foreach (Book b in books)
+            {
+                if (b.StudentId == studentId)
+                {
+                    studentBooks.Add(b);
+                }
+            }
+
+            return studentBooks;
+        }
+
         //Mappers
 
         public Book BookCreateRequestToBook(BookCreateRequest request)
@@ -139,11 +167,11 @@ namespace stefan_academy_vanilla_charp.Books.Services
             {
                 if (i + 1 == books.Count)
                 {
-                    list += books[i].StudentId + "," + books[i].BookName + "," + books[i].CreatedAt.ToString("yyyy-MM-dd");
+                    list += books[i].Id + "," + books[i].StudentId + "," + books[i].BookName + "," + books[i].CreatedAt.ToString("yyyy-MM-dd");
                 }
                 else
                 {
-                    list += books[i].StudentId + "," + books[i].BookName + "," + books[i].CreatedAt.ToString("yyyy-MM-dd") + ",\n";
+                    list += books[i].Id + "," + books[i].StudentId + "," + books[i].BookName + "," + books[i].CreatedAt.ToString("yyyy-MM-dd") + "\n";
                 }
             }
             return list;
@@ -157,22 +185,6 @@ namespace stefan_academy_vanilla_charp.Books.Services
                 string list = BooksListToString();
                 writer.Write(list);
             }
-        }
-
-        public List<Book> GetAllStudentIdBooks(Guid studentId)
-        {
-            List<Book> studentBooks = new List<Book>();
-            studentBooks.Capacity = books.Count;
-
-            foreach (Book b in books)
-            {
-                if(b.StudentId == studentId)
-                {
-                    studentBooks.Add(b);
-                }
-            }
-
-            return studentBooks;
         }
     }
 }

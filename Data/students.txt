@@ -1,6 +1,7 @@
-Stefan,Scarlat,stefanel.scarlat@gmail.com,18,
-Alex,Bordei,alex.bordei@yahoo.com,27,
-Stefan,Ognean,ogn@hotmail.com,61,
-Daniel,Popescu,123@gmail.com,23,
-Teodor,Prundel,teo@gmail.com,18,
-Andrei,Puscas,puscasAndrei@yahoo.com,23
+d383e75c-6adf-4bbc-94e5-5d21a52b6dff,Stefan,Scarlat,stefanel.scarlat@gmail.com,18,
+7b78b29c-914a-4c4a-9275-86762516c3be,Alex,Bordei,alex.bordei@yahoo.com,27,
+6513fab5-455b-4eca-9f61-7139f39628dd,Stefan,Ognean,ogn@hotmail.com,61,
+5bdbca15-42d5-40b7-bef9-b7b16afc9a39,Daniel,Popescu,123@gmail.com,23,
+0ab503d2-475d-4170-97ec-c055bca104bd,Teodor,Prundel,teo@gmail.com,18,
+07a4e522-d372-4007-9ed5-b50fbe95b243,Andrei,Puscas,puscasAndrei@yahoo.com,30
+7f14e670-c46e-4a8b-a7dd-7deeadd7c9be,Alex,Rosca,rosca@gmail.com,23

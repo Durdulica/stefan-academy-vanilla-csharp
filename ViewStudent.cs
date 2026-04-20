@@ -3,51 +3,66 @@ using stefan_academy_vanilla_charp.Courses.Models;
 using stefan_academy_vanilla_charp.Students.Models;
 using stefan_academy_vanilla_charp.Books.Services;
 using stefan_academy_vanilla_charp.Books.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using stefan_academy_vanilla_charp.Books.Dtos;
-
+using stefan_academy_vanilla_charp.Enrolments.Models;
+using stefan_academy_vanilla_charp.Enrolments.Services;
 
 namespace stefan_academy_vanilla_charp
 {
     public class ViewStudent
     {
+        //apasati tasta 0 pentru a iesi
         //apasati tasta 1 pentru a vedea cursurile
         //apasati tasta 2 pentru a afisa cartile detinute
         //apasati tasta 3 pentru a adauga o carte
         //apasati tasta 4 pentru a modifica o carte
+        //apasati tasta 5 pentru a sterge o carte
 
         private CourseService courseService = new CourseService();
         private BookService bookService = new BookService();
+        private EnrolmentService enrolmentService = new EnrolmentService();
 
         private Student loggedUser = new Student("Alex", "Rosca", "rosca@gmail.com", 23);
         public void Viewer()
         {
-            Console.WriteLine("Apasati tasta 1 pentru a vedea cursurile");
-            Console.WriteLine("Apasati tasta 2 pentru a afisa cartile detinute");
-            Console.WriteLine("Apasati tasta 3 pentru a adauga o carte");
-            Console.WriteLine("Apasati tast 4 pentru a modifica o carte");
-
-            int tasta = Int32.Parse(Console.ReadLine());
-            switch (tasta)
+            int tasta;
+            do
             {
-                case 1: AfisareCursuri(); break;
-                case 2: AfisareCartiDetinute(); break;
-                case 3: AdaugareCarte();  break;
+                Console.WriteLine("Apasati tasta 0 pentru a iesi");
+                Console.WriteLine("Apasati tasta 1 pentru a vedea cursurile");
+                Console.WriteLine("Apasati tasta 2 pentru a afisa cartile detinute");
+                Console.WriteLine("Apasati tasta 3 pentru a adauga o carte");
+                Console.WriteLine("Apasati tasta 4 pentru a modifica o carte");
+                Console.WriteLine("Apasati tasta 5 pentru a sterge o carte");
+
+                tasta = Int32.Parse(Console.ReadLine());
+
+                switch (tasta)
+                {
+                    case 0: return;
+                    case 1: AfisareCursuri(); break;
+                    case 2: AfisareCartiDetinute(); break;
+                    case 3: AdaugareCarte(); break;
+                    case 4: ModificareCarte(); break;
+                    case 5: StergereCarte(); break;
+                }
+                //Console.Clear();
             }
+            while (tasta != 0);
         }
 
         public void AfisareCursuri()
         {
-            courseService.AfisareCourses();
+            List<Course> courses = courseService.GetCourseListByEnrolmentId(enrolmentService.GetEnrolmentIdByStudentId(loggedUser.Id));
+            foreach (Course c in courses)
+            {
+                Console.WriteLine("nume: " + c.Name + ", departament: " + c.Department);
+            }
         }
 
         public void AfisareCartiDetinute()
         {
-            List<Book> books = bookService.GetAllStudentIdBooks(loggedUser.Id);
+            List<Book> books = bookService.GetBooksByStudentId(loggedUser.Id);
             if (books.Count == 0)
             {
                 Console.WriteLine("Nu ai nicio carte");
@@ -83,30 +98,45 @@ namespace stefan_academy_vanilla_charp
 
         public void ModificareCarte()
         {
-            Console.Write("Tastati Id-ul cartii pe care doriti sa o modificati: ");
-            Guid Id = Guid.Parse(Console.ReadLine());
+            Console.Write("Tastati numele cartii pe care doriti sa o modificati: ");
+            string text = Console.ReadLine();
+            Book book = bookService.GetBook(loggedUser.Id, text);
 
-            if(bookService.FindById(Id) == null)
+            if (book == null)
             {
-                Console.WriteLine("Cartea nu a fost gasita");
+                Console.WriteLine("Cartea nu va apartine sau nu a fost gasita");
                 return;
             }
-
-            Console.Write("Tastati Id-ul noului proprietar al cartii: ");
-            Guid studentId = Guid.Parse(Console.ReadLine());
 
             Console.Write("Tastati noul nume al cartii: ");
             string nume = Console.ReadLine();
 
             try
             {
-                BookUpdateRequest request = new BookUpdateRequest(studentId, nume, DateTime.Now);
-                BookUpdateResponse response = bookService.UpdateBook(Id, request);
+                BookUpdateRequest request = new BookUpdateRequest(book.Id, nume, DateTime.Now);
+                BookUpdateResponse response = bookService.UpdateBook(book.Id, request);
             }
             catch (ArgumentException ex)
             {
                 Console.WriteLine(ex);
             }
+        }
+
+        public void StergereCarte()
+        {
+            Console.Write("Tastati numele cartii pe care doriti sa o stergeti: ");
+            string text = Console.ReadLine();
+            Book book = bookService.GetBook(loggedUser.Id, text);
+
+            if (book == null)
+            {
+                Console.WriteLine("Cartea nu va apartine sau nu a fost gasita");
+                return;
+            }
+
+            bookService.DeleteBook(book.Id);
+
+            Console.WriteLine("Carte stearsa cu succes");
         }
     }
 }

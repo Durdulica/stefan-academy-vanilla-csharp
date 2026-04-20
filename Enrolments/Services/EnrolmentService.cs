@@ -12,6 +12,38 @@ namespace stefan_academy_vanilla_charp.Enrolments.Services
     {
         private readonly List<Enrolment> enrolments = new List<Enrolment>();
 
+        public EnrolmentService()
+        {
+            ReadEnrolments();
+        }
+
+        //Finders
+
+        public Enrolment FindById(Guid id)
+        {
+            foreach (Enrolment enr in enrolments)
+            {
+                if (enr.Id == id) return enr;
+            }
+            return null;
+        }
+
+        public List<Guid> GetEnrolmentIdByStudentId(Guid studentId)
+        {
+            List<Guid> studentEnrolments = new List<Guid>();
+            studentEnrolments.Capacity = enrolments.Count;
+
+            for (int i = 0; i < enrolments.Count; i++)
+            {
+                if(enrolments[i].StudentId == studentId)
+                {
+                    studentEnrolments.Add(enrolments[i].Id);
+                }
+            }
+
+            return studentEnrolments;
+        }
+
         //Mappers
 
         public Enrolment EnrolmentCreateRequestToEnrolment(EnrolmentCreateRequest request)
@@ -60,21 +92,80 @@ namespace stefan_academy_vanilla_charp.Enrolments.Services
 
         public EnrolmentCreateResponse CreateEnrolment(EnrolmentCreateRequest request)
         {
-            if (enrolments.Count + 1 >= enrolments.Capacity)
-            {
-                throw new ArgumentException("Baza de date este plina");
-            }
-
             Enrolment newEnrolment = EnrolmentCreateRequestToEnrolment(request);
+            if(FindById(newEnrolment.Id) != null)
+            {
+                throw new ArgumentException("Enrolmentul se afla deja in baza de date");
+            }
             enrolments.Add(newEnrolment);
 
             return EnrolmentToEnrolmentCreateResponse(newEnrolment);
         }
 
-        //public EnrolmentUpdateResponse UpdateEnrolment(EnrolmentUpdateRequest request)
-        //{
-        //}
+        public EnrolmentUpdateResponse UpdateEnrolment(Guid id,EnrolmentUpdateRequest request)
+        {
+            Enrolment enrolment = FindById(id);
+            if (enrolment == null) {
+                throw new ArgumentException("Enrolmentul nu se afla in baza de date");
+            }
 
-        public void DeleteEnrolment() { }
+            enrolment.StudentId = request.StudentId;
+            enrolment.CourseId = request.CourseId;
+            enrolment.CreatedAt = request.CreatedAt;
+
+            return EnrolmentToEnrolmentUpdateRespone(enrolment);
+        }
+
+        public void DeleteEnrolment(Guid id)
+        {
+            for(int i = 0; i < enrolments.Count; i++)
+            {
+                if(enrolments[i].Id == id)
+                {
+                    enrolments.RemoveAt(i);
+                    return;
+                }
+            }
+        }
+
+        public void ReadEnrolments()
+        {
+            string path = Path.Combine("..", "..", "..", "Data", "enrolments.txt");
+            using (var reader = new StreamReader(path))
+            {
+                string line = "";
+                while ((line = reader.ReadLine()) != null)
+                {
+                    enrolments.Add(new Enrolment(line));
+                }
+            }
+        }
+
+        public string EnrolmentsListToString()
+        {
+            string list = "";
+            for(int i = 0; i < enrolments.Count; i++)
+            {
+                if(i + 1 == enrolments.Count)
+                {
+                   list+=enrolments[i].Id+","+enrolments[i].StudentId+","+enrolments[i].CourseId+","+enrolments[i].CreatedAt.ToString("yyyy-MM-dd");
+                }
+                else
+                {
+                   list += enrolments[i].Id+","+enrolments[i].StudentId+","+enrolments[i].CourseId+","+enrolments[i].CreatedAt.ToString("yyyy-MM-dd")+"\n";
+                }
+            }
+            return list;
+        }
+
+        public void Save()
+        {
+            string path = Path.Combine("..", "..", "..", "Data", "enrolments.txt");
+            using (var writer = new StreamWriter(path))
+            {
+                string list = EnrolmentsListToString();
+                writer.Write(list);
+            }
+        }
     }
 }

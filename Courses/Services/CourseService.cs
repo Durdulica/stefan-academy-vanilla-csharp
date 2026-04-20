@@ -1,10 +1,6 @@
 ﻿using stefan_academy_vanilla_charp.Courses.Dtos;
 using stefan_academy_vanilla_charp.Courses.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using stefan_academy_vanilla_charp.Enrolments.Models;
 
 namespace stefan_academy_vanilla_charp.Courses.Services
 {
@@ -19,7 +15,7 @@ namespace stefan_academy_vanilla_charp.Courses.Services
 
         //Finders
 
-        Course FindById(Guid id)
+        public Course FindById(Guid id)
         {
             foreach (Course c in courses)
             {
@@ -29,6 +25,18 @@ namespace stefan_academy_vanilla_charp.Courses.Services
                 }
             }
             return null;
+        }
+
+        public List<Course> GetCourseListByEnrolmentId(List<Guid> enrolmentsId)
+        {
+            List<Course> studentCourses = new List<Course>();
+
+            foreach (Guid id in enrolmentsId)
+            {
+                studentCourses.Add(FindById(id));
+            }
+
+            return studentCourses;
         }
 
         //Mappers
@@ -138,11 +146,11 @@ namespace stefan_academy_vanilla_charp.Courses.Services
             {
                 if (i + 1 == courses.Count)
                 {
-                    list += courses[i].Name + "," + courses[i].Department;
+                    list += courses[i].Id + "," + courses[i].Name + "," + courses[i].Department;
                 }
                 else
                 {
-                    list += courses[i].Name + "," + courses[i].Department + ",\n";
+                    list += courses[i].Id + "," + courses[i].Name + "," + courses[i].Department + "\n";
                 }
             }
             return list;

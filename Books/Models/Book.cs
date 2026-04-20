@@ -23,10 +23,10 @@ namespace stefan_academy_vanilla_charp.Books.Models
         public Book(string text)
         {
             string[] cuv = text.Split(',');
-           
-            StudentId=Guid.Parse(cuv[0]);
-            BookName = cuv[1];
-            CreatedAt= DateTime.Parse(cuv[2]);
+            Id = Guid.Parse(cuv[0]);
+            StudentId = Guid.Parse(cuv[1]);
+            BookName = cuv[2];
+            CreatedAt = DateTime.Parse(cuv[3]);
         }
 
         public string BookName

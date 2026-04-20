@@ -31,10 +31,11 @@ namespace stefan_academy_vanilla_charp.Students.Models
         public Student(string text)
         {
             string[] cuv = text.Split(',');
-            FirstName = cuv[0];
-            LastName = cuv[1];
-            Email = cuv[2];
-            Age = Int32.Parse(cuv[3]);
+            Id = Guid.Parse(cuv[0]);
+            FirstName = cuv[1];
+            LastName = cuv[2];
+            Email = cuv[3];
+            Age = Int32.Parse(cuv[4]);
         }
 
         public string FirstName

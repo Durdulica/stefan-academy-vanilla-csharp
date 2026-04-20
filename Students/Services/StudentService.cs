@@ -109,8 +109,10 @@ namespace stefan_academy_vanilla_charp.Students.Models
 
         public void DeleteStudent(Guid id)
         {
-            for (int i = 0; i < students.Count; i++) {
-                if (id.CompareTo(students[i].Id) == 0) { 
+            for (int i = 0; i < students.Count; i++)
+            {
+                if (id.CompareTo(students[i].Id) == 0)
+                {
                     students.RemoveAt(i);
                     return;
                 }
@@ -137,11 +139,11 @@ namespace stefan_academy_vanilla_charp.Students.Models
             {
                 if (i + 1 == students.Count)
                 {
-                    list += students[i].FirstName + "," + students[i].LastName + "," + students[i].Email + "," + students[i].Age;
+                    list += students[i].Id + "," + students[i].FirstName + "," + students[i].LastName + "," + students[i].Email + "," + students[i].Age;
                 }
                 else
                 {
-                    list += students[i].FirstName + "," + students[i].LastName + "," + students[i].Email + "," + students[i].Age + ",\n";
+                    list += students[i].Id + "," + students[i].FirstName + "," + students[i].LastName + "," + students[i].Email + "," + students[i].Age + "\n";
                 }
             }
             return list;

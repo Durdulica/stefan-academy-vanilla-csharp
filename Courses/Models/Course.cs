@@ -27,8 +27,9 @@ namespace stefan_academy_vanilla_charp.Courses.Models
         public Course(string text)
         {
             string[] cuv = text.Split(',');
-            Name = cuv[0];
-            Department = cuv[1];
+            Id = Guid.Parse(cuv[0]);
+            Name = cuv[1];
+            Department = cuv[2];
         }
 
         public string Name

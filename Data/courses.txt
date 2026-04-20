@@ -1,6 +1,6 @@
-Analiza,Matematica,
-Algebra,Matematica,
-Geometrie,Matematica,
-Algoritmica,Informatica,
-Optica,Fizica,
-Mecanica,Fizica
+db7a391a-ee78-4ae6-a3fb-a8c99a27fbf1,Analiza,Matematica
+86737a36-5443-4350-a035-b7ae4dec134e,Algebra,Matematica
+ac4b763d-adcb-4fac-b54e-6b513d3175fb,Geometrie,Matematica
+7f5aed86-232f-4920-8830-e67793196acd,Algoritmica,Informatica
+058f84df-6d40-4a09-9465-682851fac5d4,Optica,Fizica
+f2dc59f2-9d50-4fb8-bb99-c9623e8f3a74,Mecanica,Fizica
