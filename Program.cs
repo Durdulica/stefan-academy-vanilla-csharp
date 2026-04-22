@@ -8,7 +8,8 @@ internal class Program
     {
         try
         {
-
+            ViewStudent viewer = new ViewStudent();
+            viewer.Viewer();
         }
         catch (ArgumentException text)
         {

@@ -44,6 +44,18 @@ namespace stefan_academy_vanilla_charp.Enrolments.Services
             return studentEnrolments;
         }
 
+        public Guid GetEnrolmentIdByStudentAndCourseId(Guid studentId, Guid courseId)
+        {
+            foreach(Enrolment enr in enrolments)
+            {
+                if(enr.StudentId == studentId && enr.CourseId == courseId)
+                {
+                    return enr.Id;
+                }
+            }
+            return Guid.Empty;
+        }
+
         //Mappers
 
         public Enrolment EnrolmentCreateRequestToEnrolment(EnrolmentCreateRequest request)
@@ -166,6 +178,20 @@ namespace stefan_academy_vanilla_charp.Enrolments.Services
                 string list = EnrolmentsListToString();
                 writer.Write(list);
             }
+        }
+
+        public int StudentsCountForCourseId(Guid courseId)
+        {
+            int index = 0;
+            foreach (Enrolment enr in enrolments)
+            {
+                if(enr.CourseId == courseId)
+                {
+                    index++;
+                }
+            }
+
+            return index;
         }
     }
 }

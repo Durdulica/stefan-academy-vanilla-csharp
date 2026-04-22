@@ -1,6 +1,7 @@
 ﻿using stefan_academy_vanilla_charp.Courses.Dtos;
 using stefan_academy_vanilla_charp.Courses.Models;
 using stefan_academy_vanilla_charp.Enrolments.Models;
+using stefan_academy_vanilla_charp.Enrolments.Services;
 
 namespace stefan_academy_vanilla_charp.Courses.Services
 {
@@ -37,6 +38,18 @@ namespace stefan_academy_vanilla_charp.Courses.Services
             }
 
             return studentCourses;
+        }
+
+        public Course FindByName(string name)
+        {
+            foreach (Course c in courses)
+            {
+                if (c.Name.Contains(name))
+                {
+                    return c;
+                }
+            }
+            return null;
         }
 
         //Mappers
@@ -165,5 +178,6 @@ namespace stefan_academy_vanilla_charp.Courses.Services
                 writer.Write(list);
             }
         }
+
     }
 }

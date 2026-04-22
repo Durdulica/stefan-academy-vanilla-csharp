@@ -11,13 +11,6 @@ namespace stefan_academy_vanilla_charp
 {
     public class ViewStudent
     {
-        //apasati tasta 0 pentru a iesi
-        //apasati tasta 1 pentru a vedea cursurile
-        //apasati tasta 2 pentru a afisa cartile detinute
-        //apasati tasta 3 pentru a adauga o carte
-        //apasati tasta 4 pentru a modifica o carte
-        //apasati tasta 5 pentru a sterge o carte
-
         private CourseService courseService = new CourseService();
         private BookService bookService = new BookService();
         private EnrolmentService enrolmentService = new EnrolmentService();
@@ -28,35 +21,114 @@ namespace stefan_academy_vanilla_charp
             int tasta;
             do
             {
+                //Console.Clear();
                 Console.WriteLine("Apasati tasta 0 pentru a iesi");
-                Console.WriteLine("Apasati tasta 1 pentru a vedea cursurile");
-                Console.WriteLine("Apasati tasta 2 pentru a afisa cartile detinute");
-                Console.WriteLine("Apasati tasta 3 pentru a adauga o carte");
-                Console.WriteLine("Apasati tasta 4 pentru a modifica o carte");
-                Console.WriteLine("Apasati tasta 5 pentru a sterge o carte");
-
+                Console.WriteLine("Apasati tasta 1 pentru a lucra cu CARTI");
+                Console.WriteLine("Apasati tasta 2 pentru a lucra cu CURSURI");
+                Console.WriteLine("Apasati tasta 3 pentru a vedea statisticile");
                 tasta = Int32.Parse(Console.ReadLine());
 
                 switch (tasta)
                 {
                     case 0: return;
-                    case 1: AfisareCursuri(); break;
-                    case 2: AfisareCartiDetinute(); break;
-                    case 3: AdaugareCarte(); break;
-                    case 4: ModificareCarte(); break;
-                    case 5: StergereCarte(); break;
+                    case 1: Carti(); break;
+                    case 2: Cursuri(); break;
+                    case 3: Statistici(); break;
+                    default: InputGresit(); break;
                 }
                 //Console.Clear();
             }
             while (tasta != 0);
         }
 
+        //Domenii
+
+        public void Carti()
+        {
+            Console.Clear();
+            int tasta;
+            do
+            {
+                Console.WriteLine("Apasati tasta 0 pentru a va intoarce");
+                Console.WriteLine("Apasati tasta 1 pentru a afisa cartile detinute");
+                Console.WriteLine("Apasati tasta 2 pentru a adauga o carte");
+                Console.WriteLine("Apasati tasta 3 pentru a modifica o carte");
+                Console.WriteLine("Apasati tasta 4 pentru a sterge o carte");
+
+                tasta = Int32.Parse(Console.ReadLine());
+                switch (tasta)
+                {
+                    case 0: break;
+                    case 1: AfisareCartiDetinute(); break;
+                    case 2: AdaugareCarte(); break;
+                    case 3: ModificareCarte(); break;
+                    case 4: StergereCarte(); break;
+                    default: InputGresit(); break;
+                }
+            }while(tasta != 0);
+        }
+
+        public void Cursuri()
+        {
+            Console.Clear();
+            int tasta;
+            do
+            {
+                Console.WriteLine("Apasati tasta 0 pentru a va intoarce");
+                Console.WriteLine("Apasati tasta 1 pentru a vedea cursurile");
+                Console.WriteLine("Apasati tasta 2 pentru a va inscrie la un curs");
+                Console.WriteLine("Apasati tasta 3 pentru a va dezabona de la un curs");
+
+                tasta = Int32.Parse(Console.ReadLine());
+                switch (tasta)
+                {
+                    case 0: break;
+                    case 1: AfisareCursuri(); break;
+                    case 2: InscriereCurs(); break;
+                    case 3: DezabonareCurs(); break;
+                    default: InputGresit(); break;
+                }
+            } while (tasta != 0);
+        }
+
+        public void Statistici()
+        {
+            int tasta;
+            do
+            {
+                Console.WriteLine("Apasati tasta 0 pentru a va intoarce");
+                Console.WriteLine("Apasati tasta 1 pentru a vedea cursul cu cei mai multi elevi");
+                tasta = Int32.Parse(Console.ReadLine());
+
+                switch (tasta)
+                {
+                    case 0: return;
+                    case 1: CursTopStudenti(); break;
+                    default: InputGresit(); break;
+                }
+            } while (tasta != 0);
+        }
+
+        //Functii
+
+        public void InputGresit()
+        {
+            Console.WriteLine("Ati introdus un caracter nepermis!");
+        }
+
         public void AfisareCursuri()
         {
             List<Course> courses = courseService.GetCourseListByEnrolmentId(enrolmentService.GetEnrolmentIdByStudentId(loggedUser.Id));
-            foreach (Course c in courses)
+            if (courses.Count > 0)
             {
-                Console.WriteLine("nume: " + c.Name + ", departament: " + c.Department);
+                foreach (Course c in courses)
+                {
+                    Console.WriteLine("nume: " + c.Name + ", departament: " + c.Department);
+                }
+            }
+            else
+            {
+                Console.WriteLine("Nu sunteti inscris la niciun curs");
             }
         }
 
@@ -137,6 +209,78 @@ namespace stefan_academy_vanilla_charp
             bookService.DeleteBook(book.Id);
 
             Console.WriteLine("Carte stearsa cu succes");
+        }
+
+        public void InscriereCurs()
+        {
+            Console.Write("Numele cursului la care doriti sa va inscrieti: ");
+            string text = Console.ReadLine();
+
+            Course course = courseService.FindByName(text);
+            if (course == null)
+            {
+                Console.WriteLine("Cursul nu a fost gasit!");
+                return;
+            }
+
+            if(enrolmentService.GetEnrolmentIdByStudentAndCourseId(loggedUser.Id,course.Id) != Guid.Empty)
+            {
+                Console.WriteLine("Sunteti deja inscris la acest curs!");
+                return;
+            }
+
+            enrolmentService.Enrolments.Add(new Enrolment(loggedUser.Id, course.Id, DateTime.Now));
+            Console.WriteLine("Ati fost inscris cu succes la curs!");
+        }
+
+        public void DezabonareCurs()
+        {
+            Console.Write("Numele cursului de la care doriti sa va dezabonati");
+            string text = Console.ReadLine();
+
+            Course course = courseService.FindByName(text);
+
+            if(course == null)
+            {
+                Console.WriteLine("Cursul nu a fost gasit!");
+                return;
+            }
+
+            Guid id = enrolmentService.GetEnrolmentIdByStudentAndCourseId(loggedUser.Id, course.Id);
+            if (id == Guid.Empty)
+            {
+                Console.WriteLine("Nu sunteti inscris la acest curs!");
+                return;
+            }
+
+            enrolmentService.DeleteEnrolment(id);
+            Console.WriteLine("Ati fost dezabonat cu succes!");
+        }
+
+        public void CursTopStudenti()
+        {
+            List<Course> courses = courseService.Courses;
+            Course course = null;
+            int index = -1;
+
+            foreach (Course c in courses)
+            {
+                int aux = enrolmentService.StudentsCountForCourseId(c.Id);
+                Console.WriteLine(aux);
+                if(aux > index)
+                {
+                    index = aux;
+                    course = c;
+                }
+            }
+
+            if(course == null)
+            {
+                Console.WriteLine("Nu exista cursuri in baza de date");
+                return;
+            }
+
+            Console.WriteLine(course.Name + " " + course.Department + " cu " + index + " studenti");
         }
     }
 }
