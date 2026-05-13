@@ -1,11 +1,11 @@
 ﻿using stefan_academy_vanilla_charp.Courses.Services;
 using stefan_academy_vanilla_charp.Courses.Models;
-using stefan_academy_vanilla_charp.Students.Models;
 using stefan_academy_vanilla_charp.Books.Services;
 using stefan_academy_vanilla_charp.Books.Models;
 using stefan_academy_vanilla_charp.Books.Dtos;
 using stefan_academy_vanilla_charp.Enrolments.Models;
 using stefan_academy_vanilla_charp.Enrolments.Services;
+using stefan_academy_vanilla_charp.Users.Models;
 
 namespace stefan_academy_vanilla_charp
 {
@@ -15,7 +15,12 @@ namespace stefan_academy_vanilla_charp
         private BookService bookService = new BookService();
         private EnrolmentService enrolmentService = new EnrolmentService();
 
-        private Student loggedUser = new Student("Alex", "Rosca", "rosca@gmail.com", 23);
+        private User loggedUser;
+
+        public ViewStudent(User user)
+        {
+            loggedUser = user;
+        }
         public void Viewer()
         {
             int tasta;

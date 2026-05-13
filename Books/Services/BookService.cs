@@ -1,6 +1,5 @@
 ﻿using stefan_academy_vanilla_charp.Books.Dtos;
 using stefan_academy_vanilla_charp.Books.Models;
-using stefan_academy_vanilla_charp.Students.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -76,10 +75,6 @@ namespace stefan_academy_vanilla_charp.Books.Services
             };
         }
 
-        public Book BookUpdateRequestToBook(BookUpdateRequest request) {
-            return new Book(request.StudentId, request.BookName, request.CreatedAt);
-        }
-
         public BookUpdateResponse BookToBookUpdateResponse(Book book)
         {
             return new BookUpdateResponse()
@@ -120,6 +115,20 @@ namespace stefan_academy_vanilla_charp.Books.Services
             return BookToBookCreateResponse(newBook);
         }
 
+        private void ReadBooks()
+        {
+            string path = Path.Combine("..", "..", "..", "Data", "books.txt");
+
+            using (var reader = new StreamReader(path))
+            {
+                string line = "";
+                while ((line = reader.ReadLine()) != null)
+                {
+                    books.Add(new Book(line));
+                }
+            }
+        }
+
         public BookUpdateResponse UpdateBook(Guid id, BookUpdateRequest request)
         {
             Book book = FindById(id);
@@ -142,20 +151,6 @@ namespace stefan_academy_vanilla_charp.Books.Services
                 {
                     books.RemoveAt(i);
                     return;
-                }
-            }
-        }
-
-        public void ReadBooks()
-        {
-            string path = Path.Combine("..", "..", "..", "Data", "books.txt");
-      
-            using (var reader = new StreamReader(path))
-            {
-                string line = "";
-                while ((line = reader.ReadLine()) != null)
-                {
-                    books.Add(new Book(line));
                 }
             }
         }

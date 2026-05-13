@@ -1,44 +1,34 @@
-﻿using System;
+﻿using stefan_academy_vanilla_charp.Users.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace stefan_academy_vanilla_charp.Students.Models
+namespace stefan_academy_vanilla_charp.Users.Dtos
 {
-    public class Student
+    public class UserCreateRequest 
     {
-        public Guid Id { get; set; } = Guid.NewGuid();
         private string firstName = string.Empty;
         private string lastName = string.Empty;
         private string email = string.Empty;
-        private int age;
+        private int age = 0;
 
         //Constructors
 
-        public Student()
+        public UserCreateRequest()
         {
-            FirstName = "Necunoscut";
-            LastName = "Necunoscut";
-            Email = "Necunoscut";
-            age = -1;
+            FirstName = "necunoscut";
+            LastName = "necunoscut";
+            email = "necunoscut";
         }
 
-        public Student(string firstName, string lastName, string email, int age) { 
+        public UserCreateRequest(string firstName, string lastName, string email, int age)
+        {
             FirstName = firstName;
             LastName = lastName;
             Email = email;
             Age = age;
-        }
-
-        public Student(string text)
-        {
-            string[] cuv = text.Split(',');
-            Id = Guid.Parse(cuv[0]);
-            FirstName = cuv[1];
-            LastName = cuv[2];
-            Email = cuv[3];
-            Age = Int32.Parse(cuv[4]);
         }
 
         //Incapsulare
@@ -118,7 +108,7 @@ namespace stefan_academy_vanilla_charp.Students.Models
 
                 string text = value.Trim();
 
-                if(!text.Contains("@gmail") && !text.Contains("@yahoo") && !text.Contains("@hotmail"))
+                if (!text.Contains("@gmail") && !text.Contains("@yahoo") && !text.Contains("@hotmail"))
                 {
                     throw new ArgumentException("Email incomplet");
                 }
@@ -141,12 +131,13 @@ namespace stefan_academy_vanilla_charp.Students.Models
             get { return age; }
             set
             {
-                if(value < 18)
+                if (value < 18)
                 {
                     throw new ArgumentException("Studentul este prea tanar");
                 }
                 age = value;
             }
         }
+
     }
 }

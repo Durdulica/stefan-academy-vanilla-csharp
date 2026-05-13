@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace stefan_academy_vanilla_charp.Admins.Dtos
+namespace stefan_academy_vanilla_charp.Users.Dtos
 {
-    public class AdminCreateRequest
+    public class StudentUpdateResponse : UserUpdateResponse
     {
 
     }

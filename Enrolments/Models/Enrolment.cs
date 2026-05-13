@@ -26,7 +26,5 @@ namespace stefan_academy_vanilla_charp.Enrolments.Models
             StudentId = studentId;
             CourseId = courseId;
         }
-
-
     }
 }

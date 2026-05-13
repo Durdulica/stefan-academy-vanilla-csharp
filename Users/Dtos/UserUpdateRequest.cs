@@ -1,51 +1,34 @@
-﻿using System;
+﻿using stefan_academy_vanilla_charp.Users.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace stefan_academy_vanilla_charp.Admins.Models
+namespace stefan_academy_vanilla_charp.Users.Dtos
 {
-    public class Admin
+    public class UserUpdateRequest
     {
-        public Guid Id { get; set; } = Guid.NewGuid();
-        public string firstName = string.Empty;
-        public string lastName = string.Empty;
-        public string email = string.Empty;
-        public int salary = 0;
-        public int age = 0;
-        public string password = string.Empty;
+        private string firstName = string.Empty;
+        private string lastName = string.Empty;
+        private string email = string.Empty;
+        private int age = 0;
 
         //Constructors
 
-        public Admin()
+        public UserUpdateRequest()
         {
-            firstName = "necunoscut";
-            lastName = "necunoscut";
-            Email = "necunoscut";
+            FirstName = "necunoscut";
+            LastName = "necunoscut";
+            email = "necunoscut";
         }
 
-        public Admin(string text)
-        {
-            string[] cuv = text.Split(',');
-            Id = Guid.Parse(cuv[0]);
-            FirstName = cuv[1];
-            LastName = cuv[2];
-            Email = cuv[3];
-            Salary = Int32.Parse(cuv[4]);
-            Age = Int32.Parse(cuv[5]);
-            Password = cuv[6];
-        }
-
-        public Admin(string firstName, string lastName, string email, int salary, int age, string password)
+        public UserUpdateRequest(string firstName, string lastName, string email, int age)
         {
             FirstName = firstName;
             LastName = lastName;
             Email = email;
-            Salary = salary;
             Age = age;
-            Password = password;
-
         }
 
         //Incapsulare
@@ -57,7 +40,7 @@ namespace stefan_academy_vanilla_charp.Admins.Models
             {
                 if (value.Length == 0)
                 {
-                    throw new ArgumentException("Numele adminului nu poate fi gol");
+                    throw new ArgumentException("Numele studentului nu poate fi gol");
                 }
 
                 string text = value.Trim();
@@ -86,7 +69,7 @@ namespace stefan_academy_vanilla_charp.Admins.Models
             {
                 if (value.Length == 0)
                 {
-                    throw new ArgumentException("Prenumele adminului nu poate fi gol");
+                    throw new ArgumentException("Prenumele studentului nu poate fi gol");
                 }
 
                 string text = value.Trim();
@@ -143,33 +126,6 @@ namespace stefan_academy_vanilla_charp.Admins.Models
             }
         }
 
-        public int Salary
-        {
-            get { return salary; }
-            set
-            {
-                if(value < 3500)
-                {
-                    Console.WriteLine("Salariul trebuie sa fie cel putin minim pe economie");
-                }
-                salary = value;
-            }
-        }
-
-        public string Password
-        {
-            get { return password; }
-            set
-            {
-                if(value.Length < 8)
-                {
-                    Console.WriteLine("Parola trebuie sa aiba cel putin 8 caractere");
-                }
-
-                password = value;
-            }
-        }
-
         public int Age
         {
             get { return age; }
@@ -177,7 +133,7 @@ namespace stefan_academy_vanilla_charp.Admins.Models
             {
                 if (value < 18)
                 {
-                    throw new ArgumentException("Adminul este prea tanar");
+                    throw new ArgumentException("Studentul este prea tanar");
                 }
                 age = value;
             }

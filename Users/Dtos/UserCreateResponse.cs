@@ -4,15 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace stefan_academy_vanilla_charp.Students.Dtos
+namespace stefan_academy_vanilla_charp.Users.Dtos
 {
-    public class StudentCreateResponse
+    public class UserCreateResponse
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Email { get; set; }
         public int Age { get; set; }
-
-
     }
 }

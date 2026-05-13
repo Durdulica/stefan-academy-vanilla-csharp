@@ -1,25 +1,48 @@
-﻿using System;
+﻿using stefan_academy_vanilla_charp.Users.Dtos;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace stefan_academy_vanilla_charp.Students.Dtos
+namespace stefan_academy_vanilla_charp.Users.Models
 {
-     public class StudentUpdateRequest
+    public class User
     {
+        public Guid Id { get; set; } = Guid.NewGuid();
         private string firstName = string.Empty;
         private string lastName = string.Empty;
         private string email = string.Empty;
-        private int age;
+        private int age = 0;
 
-        public StudentUpdateRequest(string firstName, string lastName, string email, int age)
+        //Constructors
+
+        public User() {
+            FirstName = "necunoscut";
+            LastName = "necunoscut";
+            email = "necunoscut";
+        }
+
+        public User(string firstName, string lastName, string email, int age)
         {
             FirstName = firstName;
             LastName = lastName;
             Email = email;
             Age = age;
         }
+
+        public User(string text)
+        {
+            string[] cuv = text.Split(',');
+            Id = Guid.Parse(cuv[1]);
+            FirstName = cuv[2];
+            LastName = cuv[3];
+            Email = cuv[4];
+            Age = int.Parse(cuv[5]);
+        }
+
+        //Incapsulare
+
         public string FirstName
         {
             get { return firstName; }
@@ -124,6 +147,28 @@ namespace stefan_academy_vanilla_charp.Students.Dtos
                 }
                 age = value;
             }
+        }
+
+        public virtual string ToText(int cnt, int size)
+        {
+            string list = "";
+            if (cnt + 1 == size)
+            {
+                list += "USER," + Id + "," + FirstName + "," + LastName + "," + Email + "," + Age;
+            }
+            else
+            {
+                list += "USER," + Id + "," + FirstName + "," + LastName + "," + Email + "," + Age + "\n";
+            }
+            return list;
+        }
+
+        public virtual void Update(UserUpdateRequest request)
+        {
+            FirstName = request.FirstName;
+            LastName = request.LastName;
+            Email = request.Email;
+            Age = request.Age;
         }
     }
 }

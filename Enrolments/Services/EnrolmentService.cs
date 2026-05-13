@@ -73,11 +73,6 @@ namespace stefan_academy_vanilla_charp.Enrolments.Services
             };
         }
 
-        public Enrolment EnrolmentUpdateRequestToEnrolment(EnrolmentUpdateRequest request)
-        {
-            return new Enrolment(request.StudentId, request.CourseId, request.CreatedAt);
-        }
-
         public EnrolmentUpdateResponse EnrolmentToEnrolmentUpdateRespone(Enrolment enrolment)
         {
             return new EnrolmentUpdateResponse
@@ -105,6 +100,7 @@ namespace stefan_academy_vanilla_charp.Enrolments.Services
         public EnrolmentCreateResponse CreateEnrolment(EnrolmentCreateRequest request)
         {
             Enrolment newEnrolment = EnrolmentCreateRequestToEnrolment(request);
+
             if(FindById(newEnrolment.Id) != null)
             {
                 throw new ArgumentException("Enrolmentul se afla deja in baza de date");
@@ -112,6 +108,19 @@ namespace stefan_academy_vanilla_charp.Enrolments.Services
             enrolments.Add(newEnrolment);
 
             return EnrolmentToEnrolmentCreateResponse(newEnrolment);
+        }
+
+        public void ReadEnrolments()
+        {
+            string path = Path.Combine("..", "..", "..", "Data", "enrolments.txt");
+            using (var reader = new StreamReader(path))
+            {
+                string line = "";
+                while ((line = reader.ReadLine()) != null)
+                {
+                    enrolments.Add(new Enrolment(line));
+                }
+            }
         }
 
         public EnrolmentUpdateResponse UpdateEnrolment(Guid id,EnrolmentUpdateRequest request)
@@ -136,19 +145,6 @@ namespace stefan_academy_vanilla_charp.Enrolments.Services
                 {
                     enrolments.RemoveAt(i);
                     return;
-                }
-            }
-        }
-
-        public void ReadEnrolments()
-        {
-            string path = Path.Combine("..", "..", "..", "Data", "enrolments.txt");
-            using (var reader = new StreamReader(path))
-            {
-                string line = "";
-                while ((line = reader.ReadLine()) != null)
-                {
-                    enrolments.Add(new Enrolment(line));
                 }
             }
         }
@@ -179,6 +175,8 @@ namespace stefan_academy_vanilla_charp.Enrolments.Services
                 writer.Write(list);
             }
         }
+
+        //Functions
 
         public int StudentsCountForCourseId(Guid courseId)
         {

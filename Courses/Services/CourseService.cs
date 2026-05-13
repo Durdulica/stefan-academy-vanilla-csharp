@@ -1,7 +1,5 @@
 ﻿using stefan_academy_vanilla_charp.Courses.Dtos;
 using stefan_academy_vanilla_charp.Courses.Models;
-using stefan_academy_vanilla_charp.Enrolments.Models;
-using stefan_academy_vanilla_charp.Enrolments.Services;
 
 namespace stefan_academy_vanilla_charp.Courses.Services
 {
@@ -68,11 +66,6 @@ namespace stefan_academy_vanilla_charp.Courses.Services
             };
         }
 
-        public Course CourseUpdateRequestToCourse(CourseUpdateRequest request)
-        {
-            return new Course(request.Name, request.Department);
-        }
-
         public CourseUpdateResponse CourseToCourseUpdateResponse(Course course)
         {
             return new CourseUpdateResponse
@@ -112,6 +105,21 @@ namespace stefan_academy_vanilla_charp.Courses.Services
             return CourseToCourseCreateResponse(newCourse);
         }
 
+        private void ReadCourses()
+        {
+            string path = Path.Combine("..", "..", "..", "Data", "courses.txt");
+
+            using (var reader = new StreamReader(path))
+            {
+                string list = "";
+                while ((list = reader.ReadLine()) != null)
+                {
+                    courses.Add(new Course(list));
+                }
+            }
+            ;
+        }
+
         public CourseUpdateResponse UpdateCourse(Guid id, CourseUpdateRequest request)
         {
             Course course = FindById(id);
@@ -137,21 +145,7 @@ namespace stefan_academy_vanilla_charp.Courses.Services
                 }
             }
         }
-
-        public void ReadCourses()
-        {
-            string path = Path.Combine("..", "..", "..", "Data", "courses.txt");
-
-            using (var reader = new StreamReader(path))
-            {
-                string list = "";
-                while ((list = reader.ReadLine()) != null)
-                {
-                    courses.Add(new Course(list));
-                }
-            };
-        }
-
+       
         public string CoursesListToString()
         {
             string list = "";
@@ -178,6 +172,5 @@ namespace stefan_academy_vanilla_charp.Courses.Services
                 writer.Write(list);
             }
         }
-
     }
 }

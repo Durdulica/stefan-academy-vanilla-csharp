@@ -1,4 +1,5 @@
-﻿using System;
+﻿using stefan_academy_vanilla_charp.Enrolments.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,25 +7,11 @@ using System.Threading.Tasks;
 
 namespace stefan_academy_vanilla_charp.Enrolments.Dtos
 {
-    public class EnrolmentCreateRequest
+    public class EnrolmentCreateRequest : Enrolment
     {
-        public Guid StudentId { get; set; } = Guid.Empty;
-        public Guid CourseId { get; set; } = Guid.Empty;
-        public DateTime CreatedAt { get; set; } = DateTime.Now;
-
-        public EnrolmentCreateRequest(string text)
-        {
-            string[] cuv = text.Split(',');
-            StudentId = Guid.Parse(cuv[0]);
-            CourseId = Guid.Parse(cuv[1]);
-            CreatedAt = DateTime.Parse(cuv[2]);
-        }
+        public EnrolmentCreateRequest(string text) : base(text) { }
 
         public EnrolmentCreateRequest(Guid studentId, Guid courseId, DateTime createdAt)
-        {
-            StudentId = studentId;
-            CourseId = courseId;
-
-        }
+            : base(studentId, courseId, createdAt) { }
     }
 }
