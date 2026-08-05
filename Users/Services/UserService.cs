@@ -1,9 +1,6 @@
 ﻿using stefan_academy_vanilla_charp.Users.Dtos;
 using stefan_academy_vanilla_charp.Users.Models;
-using stefan_academy_vanilla_charp.Users.Models.Admins.Models;
 using stefan_academy_vanilla_charp.Users.Models.Students.Dtos;
-using stefan_academy_vanilla_charp.Users.Models.Students.Models;
-using stefan_academy_vanilla_charp.Users.Models.Teachers.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -84,46 +81,7 @@ namespace stefan_academy_vanilla_charp.Users.Services
         public UserCreateResponse CreateUser(UserCreateRequest request) {
             User newUser = new();
 
-            StudentCreateRequest s = request as StudentCreateRequest;
-            TeacherCreateRequest t = request as TeacherCreateRequest;
-            AdminCreateRequest a = request as AdminCreateRequest;
-
-            if (s != null)
-            {
-                Student newS = new();
-                newS.FirstName = s.FirstName;
-                newS.LastName = s.LastName;
-                newS.Email = s.Email;
-                newS.Age = s.Age;
-                newUser = newS;
-            }
-            else if (t != null)
-            {
-                Teacher newT = new();
-                newT.FirstName = t.FirstName;
-                newT.LastName = t.LastName;
-                newT.Email = t.Email;
-                newT.Age = t.Age;
-                newT.Salary = t.Salary;
-                newT.WorkHours = t.WorkHours;
-                newT.Password = t.Password;
-                newUser = newT;
-            }
-            else if (a != null)
-            {
-                Admin newA = new();
-                newA.FirstName = a.FirstName;
-                newA.LastName = a.LastName;
-                newA.Email = a.Email;
-                newA.Age = a.Age;
-                newA.Salary = a.Salary;
-                newA.Password = a.Password;
-                newUser = newA;
-            }
-            else
-            {
-                throw new ArgumentException("Create requestul nu este de niciun tip");
-            }
+            newUser.Create(request);
 
             users.Add(newUser);
             return UserToUserCreateResponse(newUser);
@@ -164,14 +122,8 @@ namespace stefan_academy_vanilla_charp.Users.Services
 
         public void DeleteUser(Guid id)
         {
-            for(int i = 0; i < users.Count; i++)
-            {
-                if(users[i].Id == id)
-                {
-                    users.RemoveAt(i);
-                    return;
-                }
-            }
+            User user = FindById(id);
+            users.Remove(user);
         }
 
         public string UserListToString()

@@ -163,6 +163,14 @@ namespace stefan_academy_vanilla_charp.Users.Models
             return list;
         }
 
+        public virtual void Create(UserCreateRequest request)
+        {
+            FirstName = request.FirstName;
+            LastName = request.LastName;
+            Email = request.Email;
+            Age = request.Age;
+        }
+
         public virtual void Update(UserUpdateRequest request)
         {
             FirstName = request.FirstName;

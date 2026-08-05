@@ -1,12 +1,11 @@
 ﻿using stefan_academy_vanilla_charp.Users.Dtos;
-using stefan_academy_vanilla_charp.Users.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace stefan_academy_vanilla_charp.Users.Models.Teachers.Models
+namespace stefan_academy_vanilla_charp.Users.Models
 {
     public class Teacher : User
     {
@@ -28,8 +27,8 @@ namespace stefan_academy_vanilla_charp.Users.Models.Teachers.Models
         
         public Teacher(string text) : base(text) {
             string[] cuv = text.Split(',');
-            Salary = Int32.Parse(cuv[6]);
-            WorkHours = Int32.Parse(cuv[7]);
+            Salary = int.Parse(cuv[6]);
+            WorkHours = int.Parse(cuv[7]);
             Password = cuv[8];
         }
 
@@ -96,12 +95,18 @@ namespace stefan_academy_vanilla_charp.Users.Models.Teachers.Models
             return list;
         }
 
+        public override void Create(UserCreateRequest request)
+        {
+            base.Create(request);
+            TeacherCreateRequest req = request as TeacherCreateRequest;
+            Salary = req.Salary;
+            WorkHours = req.WorkHours;
+            Password = req.Password;
+        }
+
         public override void Update(UserUpdateRequest request)
         {
-            FirstName = request.FirstName;
-            LastName = request.LastName;
-            Email = request.Email;
-            Age = request.Age;
+            base.Update(request);
             TeacherUpdateRequest req = request as TeacherUpdateRequest;
             Salary = req.Salary;
             WorkHours = req.WorkHours;

@@ -5,9 +5,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using stefan_academy_vanilla_charp.Users.Models.Students.Models;
-using stefan_academy_vanilla_charp.Users.Models.Teachers.Models;
-using stefan_academy_vanilla_charp.Users.Models.Admins.Models;
 
 namespace stefan_academy_vanilla_charp
 {

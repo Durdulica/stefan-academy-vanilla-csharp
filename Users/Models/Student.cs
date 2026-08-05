@@ -1,11 +1,11 @@
-﻿using stefan_academy_vanilla_charp.Users.Models;
+﻿using stefan_academy_vanilla_charp.Users.Dtos;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace stefan_academy_vanilla_charp.Users.Models.Students.Models
+namespace stefan_academy_vanilla_charp.Users.Models
 {
     public class Student : User
     {
@@ -28,6 +28,16 @@ namespace stefan_academy_vanilla_charp.Users.Models.Students.Models
                 list += "STUDENT," + Id + "," + FirstName + "," + LastName + "," + Email + "," + Age + "\n";
             }
             return list;
+        }
+
+        public override void Create(UserCreateRequest request)
+        {
+            base.Create(request);
+        }
+
+        public override void Update(UserUpdateRequest request)
+        {
+            base.Update(request);
         }
     }
 }
