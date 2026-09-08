@@ -114,7 +114,7 @@ Aici e lecția, și merită ținută minte: **polimorfismul alege ce metodă se 
 
 ## T0.5 — DTO-urile moștenesc entitățile
 
-> **`Book` e deja făcut, în cod, ca model de urmat.** Deschide `Books/Dtos/` și `Books/Services/BookService.cs` și compară-le cu `Courses/` și `Enrolments/` — ai varianta veche și cea nouă una lângă alta. Tu faci `Course` și `Enrolment` după același tipar, apoi `Users` la urmă.
+> **`Book` e deja făcut, în cod, ca model de urmat.** Deschide `Books/Dtos/`, `Books/Mappers/` și `Books/Services/BookService.cs` și compară-le cu `Courses/` și `Enrolments/` — ai varianta veche și cea nouă una lângă alta. Tu faci `Course` și `Enrolment` după același tipar, apoi `Users` la urmă.
 
 `Books/Dtos/BookCreateRequest.cs:10` · `BookUpdateRequest.cs:10` · `Courses/Dtos/CourseCreateRequest.cs:10` · `CourseUpdateRequest.cs:10` · `Enrolments/Dtos/EnrolmentCreateRequest.cs:10` · `EnrolmentUpdateRequest.cs:10`
 
@@ -171,31 +171,56 @@ public record BookCreateResponse(Guid Id, Guid StudentId, string BookName, DateT
 public record BookUpdateResponse(Guid Id, string BookName, DateTime CreatedAt);
 ```
 
-**2. Mapperele fac toată traducerea DTO ↔ entitate.** Ai deja o secțiune `//Mappers` în fiecare serviciu — problema e că nu trece totul prin ea. `CreateBook` cheamă mapperul, dar `UpdateBook` atribuie câmpurile cu mâna, direct în serviciu. `BookService.cs`, secțiunea de mappere, completă:
+**2. Mapperele își primesc folderul lor.** Traducerea DTO ↔ entitate nu e treaba serviciului — serviciul ține lista și regulile de business. Azi mapperele stăteau într-o secțiune `//Mappers` în mijlocul lui `BookService`, și nici acolo nu trecea totul prin ea: `CreateBook` chema mapperul, dar `UpdateBook` atribuia câmpurile cu mâna.
+
+Structura ta pe funcționalități are deja `Models`, `Dtos`, `Services`. Mai lipsea unul:
+
+```
+Books/
+    Models/
+    Dtos/
+    Mappers/       <-- nou
+    Services/
+```
+
+`Books/Mappers/BookMapper.cs`:
 
 ```csharp
-public Book BookCreateRequestToBook(BookCreateRequest request)
-{
-    return new Book(request.StudentId, request.BookName, request.CreatedAt);
-}
+using stefan_academy_vanilla_charp.Books.Dtos;
+using stefan_academy_vanilla_charp.Books.Models;
 
-public void ApplyUpdate(Book book, BookUpdateRequest request)
+namespace stefan_academy_vanilla_charp.Books.Mappers
 {
-    book.BookName = request.BookName;
-}
+    public static class BookMapper
+    {
+        public static Book ToBook(BookCreateRequest request)
+        {
+            return new Book(request.StudentId, request.BookName, request.CreatedAt);
+        }
 
-public BookCreateResponse BookToBookCreateResponse(Book book)
-{
-    return new BookCreateResponse(book.Id, book.StudentId, book.BookName, book.CreatedAt);
-}
+        public static void ApplyUpdate(Book book, BookUpdateRequest request)
+        {
+            book.BookName = request.BookName;
+        }
 
-public BookUpdateResponse BookToBookUpdateResponse(Book book)
-{
-    return new BookUpdateResponse(book.Id, book.BookName, book.CreatedAt);
+        public static BookCreateResponse ToCreateResponse(Book book)
+        {
+            return new BookCreateResponse(book.Id, book.StudentId, book.BookName, book.CreatedAt);
+        }
+
+        public static BookUpdateResponse ToUpdateResponse(Book book)
+        {
+            return new BookUpdateResponse(book.Id, book.BookName, book.CreatedAt);
+        }
+    }
 }
 ```
 
-`ApplyUpdate` e mapperul care lipsea. Are un singur rol: **este singurul loc din proiect care știe ce câmpuri ale unei cărți poate atinge o cerere de modificare.** Cât timp regula e scrisă într-o singură metodă, nu poate fi încălcată din greșeală în altă parte.
+Numele s-au scurtat: în interiorul unei clase numite `BookMapper`, `BookCreateRequestToBook` se bâlbâie. `BookMapper.ToBook(request)` se citește dintr-o bucată.
+
+**De ce `static` aici, când la T4 o să spunem că `static` e răspunsul leneș?** Fiindcă întrebarea nu e „static sau nu", ci **„are obiectul ăsta stare?"**. `BookService` are: ține lista de cărți. Două instanțe = două liste care nu se văd (exact bug-ul de la T4). `BookMapper` nu ține nimic — primește un obiect, întoarce altul, nu-și amintește nimic între apeluri. Nu există „două mappere diferite", deci nici motiv să instanțiezi unul. Ăsta e cazul în care `static` e răspunsul corect, nu scurtătura.
+
+`ApplyUpdate` e metoda care lipsea cu totul. Are un singur rol: **este singurul loc din proiect care știe ce câmpuri ale unei cărți poate atinge o cerere de modificare.** Cât timp regula e scrisă într-o singură metodă, nu poate fi încălcată din greșeală în altă parte.
 
 **3. `UpdateBook` nu mai atinge niciun câmp.** Serviciul găsește, verifică, deleagă:
 
@@ -208,13 +233,13 @@ public BookUpdateResponse UpdateBook(Guid id, BookUpdateRequest request)
         throw new ArgumentException("Cartea nu exista in baza de date");
     }
 
-    ApplyUpdate(book, request);
+    BookMapper.ApplyUpdate(book, request);
 
-    return BookToBookUpdateResponse(book);
+    return BookMapper.ToUpdateResponse(book);
 }
 ```
 
-**Regula, de acum înainte:** în afara secțiunii `//Mappers`, un serviciu nu scrie niciodată într-un câmp de entitate. Dacă te prinzi scriind `x.Ceva = request.Ceva` altundeva, îți lipsește un mapper.
+**Regula, de acum înainte:** un serviciu nu scrie niciodată direct într-un câmp de entitate. Dacă te prinzi scriind `x.Ceva = request.Ceva` în afara unui mapper, îți lipsește un mapper. `BookService` nu mai are nicio linie de genul ăsta — verifică singur.
 
 **4. Apelul din `ViewStudent.cs:194` devine:**
 
@@ -243,7 +268,7 @@ Book e gata (fă `git show` pe commit-ul ăsta ca să vezi exact ce s-a schimbat
 **Gata când:**
 1. `grep -rn "Request : \|Response : " Books Courses Enrolments` nu mai găsește nimic (pe `Users`, `record`-urile pot moșteni `record`-uri, e în regulă). Pe `Books` e deja curat.
 2. ✅ Apelul de modificare a unei cărți nu mai conține niciun `Guid` — `ViewStudent.cs:194`.
-3. `UpdateCourse` și `UpdateEnrolment` nu mai au nicio atribuire de câmp în corpul lor, cum n-are nici `UpdateBook`.
+3. Există `Courses/Mappers/CourseMapper.cs` și `Enrolments/Mappers/EnrolmentMapper.cs`, iar `UpdateCourse` și `UpdateEnrolment` nu mai au nicio atribuire de câmp în corpul lor — cum n-are nici `UpdateBook`.
 4. Build verde, și scenariul de la T0.2 rulat din nou: modifici o carte, rămâne a ta, cu data inițială.
 
 ---

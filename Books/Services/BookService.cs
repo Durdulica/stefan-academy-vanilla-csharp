@@ -1,4 +1,5 @@
 ﻿using stefan_academy_vanilla_charp.Books.Dtos;
+using stefan_academy_vanilla_charp.Books.Mappers;
 using stefan_academy_vanilla_charp.Books.Models;
 
 namespace stefan_academy_vanilla_charp.Books.Services
@@ -53,28 +54,6 @@ namespace stefan_academy_vanilla_charp.Books.Services
             return studentBooks;
         }
 
-        //Mappers
-
-        public Book BookCreateRequestToBook(BookCreateRequest request)
-        {
-            return new Book(request.StudentId,request.BookName,request.CreatedAt);
-        }
-
-        public void ApplyUpdate(Book book, BookUpdateRequest request)
-        {
-            book.BookName = request.BookName;
-        }
-
-        public BookCreateResponse BookToBookCreateResponse(Book book)
-        {
-            return new BookCreateResponse(book.Id, book.StudentId, book.BookName, book.CreatedAt);
-        }
-
-        public BookUpdateResponse BookToBookUpdateResponse(Book book)
-        {
-            return new BookUpdateResponse(book.Id, book.BookName, book.CreatedAt);
-        }
-
         //Afisare
 
         public void AfisareCarti()
@@ -94,7 +73,7 @@ namespace stefan_academy_vanilla_charp.Books.Services
 
         public BookCreateResponse CreateBook(BookCreateRequest request)
         {
-            Book newBook = BookCreateRequestToBook(request);
+            Book newBook = BookMapper.ToBook(request);
 
             if (FindById(newBook.Id) != null)
             {
@@ -102,7 +81,7 @@ namespace stefan_academy_vanilla_charp.Books.Services
             }
 
             books.Add(newBook);
-            return BookToBookCreateResponse(newBook);
+            return BookMapper.ToCreateResponse(newBook);
         }
 
         private void ReadBooks()
@@ -127,9 +106,9 @@ namespace stefan_academy_vanilla_charp.Books.Services
                 throw new ArgumentException("Cartea nu exista in baza de date");
             }
 
-            ApplyUpdate(book, request);
+            BookMapper.ApplyUpdate(book, request);
 
-            return BookToBookUpdateResponse(book);
+            return BookMapper.ToUpdateResponse(book);
         }
 
         public void DeleteBook(Guid id) { 
