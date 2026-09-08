@@ -179,7 +179,8 @@ Structura ta pe funcționalități are deja `Models`, `Dtos`, `Services`. Mai li
 Books/
     Models/
     Dtos/
-    Mappers/       <-- nou
+    Mappers/         <-- nou
+    Repositories/    <-- nou, T0.6
     Services/
 ```
 
@@ -271,11 +272,128 @@ Book e gata (fă `git show` pe commit-ul ăsta ca să vezi exact ce s-a schimbat
 3. Există `Courses/Mappers/CourseMapper.cs` și `Enrolments/Mappers/EnrolmentMapper.cs`, iar `UpdateCourse` și `UpdateEnrolment` nu mai au nicio atribuire de câmp în corpul lor — cum n-are nici `UpdateBook`.
 4. Build verde, și scenariul de la T0.2 rulat din nou: modifici o carte, rămâne a ta, cu data inițială.
 
+## T0.6 — Serviciul face trei meserii deodată
+
+`Books/` e deja făcut, ca model. Tu faci `Courses`, `Enrolments` și `Users`.
+
+### De ce
+
+Uită-te ce era în `BookService` înainte:
+
+- ținea lista în memorie — `private readonly List<Book> books`
+- vorbea cu fișierul — `ReadBooks`, `Save`, `BooksListToString`, `Path.Combine(...)`
+- căuta prin listă — `FindById`, `GetBook`, `GetBooksByStudentId`
+- aplica regulile — „cartea există?", „e deja în bază?"
+
+Patru meserii într-o clasă de 152 de linii. Semnul că e prea mult nu e numărul de linii, ci **numărul de motive pentru care ai deschide fișierul**: dacă mâine treci de la `books.txt` la o bază de date, ai de umblat în serviciu. Dacă mâine schimbi regula „cine poate modifica o carte", tot în serviciu. Două schimbări care n-au nicio legătură una cu alta ajung în același loc și se calcă pe picioare.
+
+Repartizarea corectă:
+
+| Cine | Ce știe | Ce NU știe |
+|---|---|---|
+| `BookRepository` | unde stau cărțile și cum se caută printre ele | ce înseamnă „carte inexistentă" pentru aplicație |
+| `BookService` | regulile: ce e valid, ce aruncă excepție | dacă datele vin din fișier, din memorie sau din SQL |
+| `BookMapper` | cum se traduce DTO ↔ entitate | orice altceva |
+
+### Ce construiești
+
+`Books/Repositories/BookRepository.cs` primește lista, fișierul și căutările:
+
+```csharp
+public Book FindById(Guid id)
+public Book FindByStudentAndName(Guid studentId, string bookName)
+public List<Book> FindByStudentId(Guid studentId)
+public void Add(Book book)
+public void Remove(Book book)
+public void Save()
+private void Read()
+```
+
+`BookService` rămâne doar cu regulile — 65 de linii, și fiecare metodă are aceeași formă: **întreabă repo-ul, verifică existența, deleagă**:
+
+```csharp
+public BookUpdateResponse UpdateBook(Guid id, BookUpdateRequest request)
+{
+    Book book = repository.FindById(id);
+    if (book == null)
+    {
+        throw new ArgumentException("Cartea nu exista in baza de date");
+    }
+
+    BookMapper.ApplyUpdate(book, request);
+
+    return BookMapper.ToUpdateResponse(book);
+}
+```
+
+În tot serviciul nu mai există niciun `List<>`, niciun `StreamReader` și niciun `Path.Combine`. Verifică singur cu `grep`.
+
+### Injecția: repo-ul se PRIMEȘTE, nu se fabrică
+
+```csharp
+public class BookService
+{
+    private readonly BookRepository repository;
+
+    public BookService(BookRepository repository)
+    {
+        this.repository = repository;
+    }
+```
+
+Diferența față de `private readonly BookRepository repository = new();` pare cosmetică. Nu e.
+
+Cât timp o clasă își face singură dependențele cu `new`, **nimeni din afară nu poate schimba cu ce lucrează ea**. Nu poți să-i dai un repo de test cu 3 cărți fixe. Nu poți să-i dai un repo care citește din altă parte. Și, cel mai important pentru bug-ul pe care îl ai: nu poți să-i dai **același** repo pe care îl are altcineva — fiecare `new` face o copie proprie.
+
+Uită-te acum la `ViewStudent.cs:15`:
+
+```csharp
+private BookService bookService = new(new BookRepository());
+```
+
+Decizia „ce repo folosește serviciul" s-a mutat din serviciu în cel care îl construiește. E doar jumătate de pas — `ViewStudent` tot fabrică, în loc să primească — dar e jumătatea care contează, fiindcă abia acum **există** un loc unde poți decide altfel. A doua jumătate e **T4**, unde `ViewStudent` primește serviciile prin constructor, cum primește deja `User`.
+
+### O schimbare de comportament, intenționată
+
+`DeleteBook` ștergea în tăcere dacă nu găsea nimic. Acum aruncă, la fel ca `UpdateBook`:
+
+```csharp
+Book book = repository.FindById(id);
+if (book == null)
+{
+    throw new ArgumentException("Cartea nu exista in baza de date");
+}
+```
+
+Din meniu nu se vede nicio diferență, fiindcă `ViewStudent` verifică deja cu `GetBook` înainte să cheme. Dar regula „ce se întâmplă când ceva nu există" trebuie să fie **aceeași în tot serviciul**, altfel apelantul trebuie să țină minte, metodă cu metodă, care aruncă și care tace.
+
+### De gândit
+
+În `CreateBook` a rămas:
+
+```csharp
+if (repository.FindById(newBook.Id) != null)
+{
+    throw new ArgumentException("Cartea se afla deja in baza de date");
+}
+```
+
+Uită-te de unde vine `newBook.Id` și spune-mi: **poate fi vreodată adevărată condiția asta?** Dacă nu, ce voiai de fapt să verifici acolo? (Aceeași întrebare e valabilă în `CourseService` și `EnrolmentService` — e copiată în toate trei.)
+
+**Gata când:**
+1. Există `Courses/Repositories/CourseRepository.cs` și `Enrolments/Repositories/EnrolmentRepository.cs`.
+2. `grep -rn "StreamReader\|StreamWriter\|Path.Combine" Books Courses Enrolments Users` găsește numai fișiere din `Repositories/`.
+3. Niciun serviciu nu mai declară `List<...>`.
+4. Serviciile primesc repo-ul prin constructor. Niciun `new SomethingRepository()` în interiorul unui serviciu.
+5. Build verde + fluxurile de cărți și cursuri rulate din meniu.
+
 ---
 
 # T1 — Strategy: persistența într-un singur loc
 
 **Pattern:** Strategy (lecția 1).
+
+> După T0.6 ai deja `BookRepository` — dar unul concret, care știe doar de cărți. La T1 îl faci generic (`Repository<T>`) și îi scoți din burtă bucata care știe formatul textului (`ITextMapper<T>`). Cele trei repo-uri pe care le scrii la T0.6 vor fi aproape identice; asta e chiar dovada că se pot uni în unul singur.
 
 ## De ce
 

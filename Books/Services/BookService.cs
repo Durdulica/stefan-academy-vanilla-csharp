@@ -1,106 +1,46 @@
-﻿using stefan_academy_vanilla_charp.Books.Dtos;
+using stefan_academy_vanilla_charp.Books.Dtos;
 using stefan_academy_vanilla_charp.Books.Mappers;
 using stefan_academy_vanilla_charp.Books.Models;
+using stefan_academy_vanilla_charp.Books.Repositories;
 
 namespace stefan_academy_vanilla_charp.Books.Services
 {
     public class BookService
     {
-        private readonly List<Book> books = new List<Book>();
+        private readonly BookRepository repository;
 
-        public BookService()
+        public BookService(BookRepository repository)
         {
-            ReadBooks();
-        }
-
-        //Finders
-
-        public Book FindById(Guid Id)
-        {
-            foreach (Book b in books) {
-                if (Id.CompareTo(b.Id) == 0)
-                {
-                    return b;
-                }
-            }
-            return null;
+            this.repository = repository;
         }
 
         public Book GetBook(Guid studentId, string bookName)
         {
-            foreach (Book book in books)
-            {
-                if (book.StudentId == studentId && book.BookName.Contains(bookName))
-                {
-                    return book;
-                }
-            }
-            return null;
+            return repository.FindByStudentAndName(studentId, bookName);
         }
 
         public List<Book> GetBooksByStudentId(Guid studentId)
         {
-            List<Book> studentBooks = new List<Book>();
-            studentBooks.Capacity = books.Count;
-
-            foreach (Book b in books)
-            {
-                if (b.StudentId == studentId)
-                {
-                    studentBooks.Add(b);
-                }
-            }
-
-            return studentBooks;
-        }
-
-        //Afisare
-
-        public void AfisareCarti()
-        {
-            foreach (Book b in books)
-            {
-                Console.WriteLine("Id student: " + b.StudentId + ", nume carte: " + b.BookName + ", data: " + b.CreatedAt);
-            }
-        }
-
-        //CRUD
-
-        public List<Book> Books
-        {
-            get { return books; }
+            return repository.FindByStudentId(studentId);
         }
 
         public BookCreateResponse CreateBook(BookCreateRequest request)
         {
             Book newBook = BookMapper.ToBook(request);
 
-            if (FindById(newBook.Id) != null)
+            if (repository.FindById(newBook.Id) != null)
             {
                 throw new ArgumentException("Cartea se afla deja in baza de date");
             }
 
-            books.Add(newBook);
+            repository.Add(newBook);
+
             return BookMapper.ToCreateResponse(newBook);
-        }
-
-        private void ReadBooks()
-        {
-            string path = Path.Combine("..", "..", "..", "Data", "books.txt");
-
-            using (var reader = new StreamReader(path))
-            {
-                string line = "";
-                while ((line = reader.ReadLine()) != null)
-                {
-                    books.Add(new Book(line));
-                }
-            }
         }
 
         public BookUpdateResponse UpdateBook(Guid id, BookUpdateRequest request)
         {
-            Book book = FindById(id);
+            Book book = repository.FindById(id);
             if (book == null)
             {
                 throw new ArgumentException("Cartea nu exista in baza de date");
@@ -111,42 +51,15 @@ namespace stefan_academy_vanilla_charp.Books.Services
             return BookMapper.ToUpdateResponse(book);
         }
 
-        public void DeleteBook(Guid id) { 
-            for(int i = 0; i < books.Count; i++)
-            {
-                if (id.CompareTo(books[i].Id) == 0)
-                {
-                    books.RemoveAt(i);
-                    return;
-                }
-            }
-        }
-
-        public string BooksListToString()
+        public void DeleteBook(Guid id)
         {
-            string list = "";
-            for(int i = 0; i < books.Count; i++) 
+            Book book = repository.FindById(id);
+            if (book == null)
             {
-                if (i + 1 == books.Count)
-                {
-                    list += books[i].Id + "," + books[i].StudentId + "," + books[i].BookName + "," + books[i].CreatedAt.ToString("yyyy-MM-dd");
-                }
-                else
-                {
-                    list += books[i].Id + "," + books[i].StudentId + "," + books[i].BookName + "," + books[i].CreatedAt.ToString("yyyy-MM-dd") + "\n";
-                }
+                throw new ArgumentException("Cartea nu exista in baza de date");
             }
-            return list;
-        }
 
-        public void Save()
-        {
-            string path = Path.Combine("..", "..", "..", "Data", "books.txt");
-            using (var writer = new StreamWriter(path))
-            {
-                string list = BooksListToString();
-                writer.Write(list);
-            }
+            repository.Remove(book);
         }
     }
 }

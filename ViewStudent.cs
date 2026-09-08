@@ -1,5 +1,6 @@
 ﻿using stefan_academy_vanilla_charp.Courses.Services;
 using stefan_academy_vanilla_charp.Courses.Models;
+using stefan_academy_vanilla_charp.Books.Repositories;
 using stefan_academy_vanilla_charp.Books.Services;
 using stefan_academy_vanilla_charp.Books.Models;
 using stefan_academy_vanilla_charp.Books.Dtos;
@@ -12,7 +13,7 @@ namespace stefan_academy_vanilla_charp
     public class ViewStudent
     {
         private CourseService courseService = new();
-        private BookService bookService = new();
+        private BookService bookService = new(new BookRepository());
         private EnrolmentService enrolmentService = new();
 
         private User loggedUser;
