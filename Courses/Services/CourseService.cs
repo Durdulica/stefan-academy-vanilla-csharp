@@ -5,7 +5,7 @@ namespace stefan_academy_vanilla_charp.Courses.Services
 {
     public class CourseService
     {
-        private readonly List<Course> courses = new List<Course>();
+        private readonly List<Course> courses = new();
 
         public CourseService()
         {
@@ -26,11 +26,11 @@ namespace stefan_academy_vanilla_charp.Courses.Services
             return null;
         }
 
-        public List<Course> GetCourseListByEnrolmentId(List<Guid> enrolmentsId)
+        public List<Course> GetCourseListByCourseId(List<Guid> coursesId)
         {
-            List<Course> studentCourses = new List<Course>();
+            List<Course> studentCourses = new();
 
-            foreach (Guid id in enrolmentsId)
+            foreach (Guid id in coursesId)
             {
                 studentCourses.Add(FindById(id));
             }

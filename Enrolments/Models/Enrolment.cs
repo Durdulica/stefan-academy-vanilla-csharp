@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace stefan_academy_vanilla_charp.Enrolments.Models
+﻿namespace stefan_academy_vanilla_charp.Enrolments.Models
 {
     public class Enrolment
     {
@@ -25,6 +19,7 @@ namespace stefan_academy_vanilla_charp.Enrolments.Models
         public Enrolment(Guid studentId, Guid courseId, DateTime createdAt) {
             StudentId = studentId;
             CourseId = courseId;
+            CreatedAt = createdAt;
         }
     }
 }

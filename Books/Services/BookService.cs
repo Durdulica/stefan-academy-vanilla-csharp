@@ -1,10 +1,5 @@
 ﻿using stefan_academy_vanilla_charp.Books.Dtos;
 using stefan_academy_vanilla_charp.Books.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace stefan_academy_vanilla_charp.Books.Services
 {
@@ -139,7 +134,6 @@ namespace stefan_academy_vanilla_charp.Books.Services
 
             book.StudentId = request.StudentId;
             book.BookName = request.BookName;
-            book.CreatedAt = request.CreatedAt;
 
             return BookToBookUpdateResponse(book);
         }

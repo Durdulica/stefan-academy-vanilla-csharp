@@ -11,9 +11,9 @@ namespace stefan_academy_vanilla_charp
 {
     public class ViewStudent
     {
-        private CourseService courseService = new CourseService();
-        private BookService bookService = new BookService();
-        private EnrolmentService enrolmentService = new EnrolmentService();
+        private CourseService courseService = new();
+        private BookService bookService = new();
+        private EnrolmentService enrolmentService = new();
 
         private User loggedUser;
 
@@ -123,7 +123,8 @@ namespace stefan_academy_vanilla_charp
 
         public void AfisareCursuri()
         {
-            List<Course> courses = courseService.GetCourseListByEnrolmentId(enrolmentService.GetEnrolmentIdByStudentId(loggedUser.Id));
+            List<Course> courses = courseService.GetCourseListByCourseId(enrolmentService.GetCourseIdListByStudentId(loggedUser.Id));
+
             if (courses.Count > 0)
             {
                 foreach (Course c in courses)
@@ -190,7 +191,7 @@ namespace stefan_academy_vanilla_charp
 
             try
             {
-                BookUpdateRequest request = new BookUpdateRequest(book.Id, nume, DateTime.Now);
+                BookUpdateRequest request = new(loggedUser.Id, nume, DateTime.Now);
                 BookUpdateResponse response = bookService.UpdateBook(book.Id, request);
             }
             catch (ArgumentException ex)

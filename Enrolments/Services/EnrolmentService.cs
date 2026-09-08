@@ -1,16 +1,11 @@
 ﻿using stefan_academy_vanilla_charp.Enrolments.Dtos;
 using stefan_academy_vanilla_charp.Enrolments.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace stefan_academy_vanilla_charp.Enrolments.Services
 {
     public class EnrolmentService
     {
-        private readonly List<Enrolment> enrolments = new List<Enrolment>();
+        private readonly List<Enrolment> enrolments = new();
 
         public EnrolmentService()
         {
@@ -54,6 +49,21 @@ namespace stefan_academy_vanilla_charp.Enrolments.Services
                 }
             }
             return Guid.Empty;
+        }
+
+        public List<Guid> GetCourseIdListByStudentId(Guid studentId)
+        {
+            List<Guid> courses = new();
+
+            foreach(Enrolment enr in enrolments)
+            {
+                if(enr.StudentId == studentId)
+                {
+                    courses.Add(enr.CourseId);
+                }
+            }
+
+            return courses;
         }
 
         //Mappers
