@@ -112,6 +112,138 @@ Aici e lecția, și merită ținută minte: **polimorfismul alege ce metodă se 
 
 **Gata când:** creezi un profesor, îl salvezi, repornești aplicația, și profesorul e tot profesor, cu salariu și parolă.
 
+## T0.5 — DTO-urile moștenesc entitățile
+
+`Books/Dtos/BookCreateRequest.cs:10` · `BookUpdateRequest.cs:10` · `Courses/Dtos/CourseCreateRequest.cs:10` · `CourseUpdateRequest.cs:10` · `Enrolments/Dtos/EnrolmentCreateRequest.cs:10` · `EnrolmentUpdateRequest.cs:10`
+
+Șase clase de request încep la fel:
+
+```csharp
+public class BookUpdateRequest : Book
+```
+
+Un request care moștenește entitatea **este** entitatea: are `Id`-ul ei (un `Guid.NewGuid()` generat și aruncat la fiecare cerere), are toate câmpurile ei, trece prin validările ei și poate fi pasat oriunde se așteaptă un `Book`. Nu mai există nicio graniță între „ce cere clientul" și „ce ține baza de date".
+
+Asta e cauza bug-ului pe care l-ai reparat la T0.2. Uită-te la linia veche:
+
+```csharp
+BookUpdateRequest request = new BookUpdateRequest(book.Id, nume, DateTime.Now);
+```
+
+`StudentId` exista în request **doar** pentru că e moștenit din `Book`. Nimeni n-a decis vreodată „la modificarea unei cărți, clientul are voie să schimbe proprietarul" — a venit gratis odată cu `: Book`. Tu ai reparat valoarea trimisă. Câmpul e tot acolo.
+
+Pe `Users` ai făcut exact pe dos: `UserCreateRequest` (143 linii) și `UserUpdateRequest` (142 linii) sunt validarea din `User` copiată cu mâna. Aceeași întrebare, două răspunsuri opuse, în același proiect. Semnul că sunt două copii, nu una: în `Teacher`, setterul `Salary` doar scrie un mesaj și atribuie oricum, iar `WorkHours` aruncă excepție — și exact aceeași asimetrie e copiată în `TeacherCreateRequest`. Două locuri care trebuie ținute în pas la fiecare modificare.
+
+### Ce construiești
+
+**1. DTO-urile devin `record`-uri.** Un `record` e o clasă de date: câmpuri needitabile după construcție, egalitate pe valoare, un `ToString` folositor la depanare — și, cel mai important aici, compilatorul îți interzice moștenirea greșită:
+
+```
+error CS8864: Records may only inherit from object or another record
+```
+
+Adică decizia de design nu mai depinde de disciplina ta: `record ... : Book` **nu compilează**. Regula se aplică singură.
+
+`Books/Dtos/BookCreateRequest.cs` — 18 linii devin una:
+
+```csharp
+namespace stefan_academy_vanilla_charp.Books.Dtos
+{
+    public record BookCreateRequest(Guid StudentId, string BookName, DateTime CreatedAt);
+}
+```
+
+`Books/Dtos/BookUpdateRequest.cs` — și aici e partea importantă. Nu copia câmpurile vechi: întreabă-te **ce are voie să schimbe o modificare de carte**. Proprietarul, nu. Data adăugării, nu (ai stabilit-o la T0.2). Rămâne numele:
+
+```csharp
+namespace stefan_academy_vanilla_charp.Books.Dtos
+{
+    public record BookUpdateRequest(string BookName);
+}
+```
+
+`BookCreateResponse` / `BookUpdateResponse`, la fel:
+
+```csharp
+public record BookCreateResponse(Guid Id, Guid StudentId, string BookName, DateTime CreatedAt);
+public record BookUpdateResponse(Guid Id, string BookName, DateTime CreatedAt);
+```
+
+**2. Mapperele fac toată traducerea DTO ↔ entitate.** Ai deja o secțiune `//Mappers` în fiecare serviciu — problema e că nu trece totul prin ea. `CreateBook` cheamă mapperul, dar `UpdateBook` atribuie câmpurile cu mâna, direct în serviciu. `BookService.cs`, secțiunea de mappere, completă:
+
+```csharp
+public Book BookCreateRequestToBook(BookCreateRequest request)
+{
+    return new Book(request.StudentId, request.BookName, request.CreatedAt);
+}
+
+public void ApplyUpdate(Book book, BookUpdateRequest request)
+{
+    book.BookName = request.BookName;
+}
+
+public BookCreateResponse BookToBookCreateResponse(Book book)
+{
+    return new BookCreateResponse(book.Id, book.StudentId, book.BookName, book.CreatedAt);
+}
+
+public BookUpdateResponse BookToBookUpdateResponse(Book book)
+{
+    return new BookUpdateResponse(book.Id, book.BookName, book.CreatedAt);
+}
+```
+
+`ApplyUpdate` e mapperul care lipsea. Are un singur rol: **este singurul loc din proiect care știe ce câmpuri ale unei cărți poate atinge o cerere de modificare.** Cât timp regula e scrisă într-o singură metodă, nu poate fi încălcată din greșeală în altă parte.
+
+**3. `UpdateBook` nu mai atinge niciun câmp.** Serviciul găsește, verifică, deleagă:
+
+```csharp
+public BookUpdateResponse UpdateBook(Guid id, BookUpdateRequest request)
+{
+    Book book = FindById(id);
+    if (book == null)
+    {
+        throw new ArgumentException("Cartea nu exista in baza de date");
+    }
+
+    ApplyUpdate(book, request);
+
+    return BookToBookUpdateResponse(book);
+}
+```
+
+**Regula, de acum înainte:** în afara secțiunii `//Mappers`, un serviciu nu scrie niciodată într-un câmp de entitate. Dacă te prinzi scriind `x.Ceva = request.Ceva` altundeva, îți lipsește un mapper.
+
+**4. Apelul din `ViewStudent.cs:194` devine:**
+
+```csharp
+BookUpdateRequest request = new BookUpdateRequest(nume);
+```
+
+Uită-te bine la linia asta. **Nu mai există niciun `Guid` de pus pe poziția greșită.** Bug-ul de la T0.2 nu mai e reparat — e imposibil de scris. Asta e diferența dintre a corecta o linie și a închide o clasă de greșeli.
+
+### Ce NU face `record`-ul
+
+Să nu rămâi cu impresia că rezolvă tot. `EnrolmentCreateRequest(Guid StudentId, Guid CourseId, DateTime CreatedAt)` are în continuare doi `Guid` unul lângă altul, iar dacă îi inversezi compilatorul tace la fel de mult ca înainte. Împotriva **aia** ai două unelte: argumente numite la apel —
+
+```csharp
+new EnrolmentCreateRequest(studentId: loggedUser.Id, courseId: course.Id, createdAt: DateTime.Now)
+```
+
+— și, mai târziu, **T5 (Builder)**. `record`-ul rezolvă altceva: imutabilitatea, boilerplate-ul și moștenirea greșită.
+
+### Ordinea
+
+Book întâi, complet, cu build între pași. Abia după ce merge, aceeași operație la `Course` și `Enrolment` — sunt identice ca formă.
+
+`UserCreateRequest` și `UserUpdateRequest` le lași **la urmă**: acolo nu e doar o moștenire de șters, ci 285 de linii de validare de mutat înapoi în `User`, `Teacher` și `Admin`. Le facem separat, după T1.
+
+**Gata când:**
+1. `grep -rn "Request : \|Response : " Books Courses Enrolments` nu mai găsește nimic (pe `Users`, `record`-urile pot moșteni `record`-uri, e în regulă).
+2. Apelul de modificare a unei cărți nu mai conține niciun `Guid`.
+3. `UpdateBook`, `UpdateCourse` și `UpdateEnrolment` nu mai au nicio atribuire de câmp în corpul lor.
+4. Build verde, și scenariul de la T0.2 rulat din nou: modifici o carte, rămâne a ta, cu data inițială.
+
 ---
 
 # T1 — Strategy: persistența într-un singur loc
