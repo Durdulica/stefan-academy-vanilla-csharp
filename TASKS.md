@@ -393,21 +393,34 @@ Uită-te de unde vine `newBook.Id` și spune-mi: **poate fi vreodată adevărat�
 
 **Pattern:** Strategy (lecția 1).
 
-> După T0.6 ai deja `BookRepository` — dar unul concret, care știe doar de cărți. La T1 îl faci generic (`Repository<T>`) și îi scoți din burtă bucata care știe formatul textului (`ITextMapper<T>`). Cele trei repo-uri pe care le scrii la T0.6 vor fi aproape identice; asta e chiar dovada că se pot uni în unul singur.
+> **`Book` e făcut complet, în cod, ca model de urmat.** Deschide `Common/` și `Books/` și ai toată forma sub ochi. Tu faci `Course` și `Enrolment`; `User` așteaptă T3 și mai jos scrie de ce.
 
 ## De ce
 
 Trei probleme, aceeași cauză.
 
-**1. Scrierea și citirea stau în fișiere diferite și au divergat.** `Teacher.ToText` (`Users/Models/Teacher.cs:82-96`) scrie 8 câmpuri și uită parola. `Teacher(string text)` (`Users/Models/Teacher.cs:28-33`) citește `cuv[8]`. Deocamdată nu se vede, pentru că `Save()` nu e chemat niciodată — dar în clipa în care repari asta (T2), primul `Save()` scrie o linie de profesor fără parolă, iar la următoarea pornire aplicația moare cu `IndexOutOfRangeException` și baza de date rămâne nefolosibilă.
+**1. Scrierea și citirea stau în fișiere diferite și au divergat.** `Teacher.ToText` (`Users/Models/Teacher.cs:82`) scrie 8 câmpuri și uită parola. `Teacher(string text)` (`Users/Models/Teacher.cs:28`) citește `cuv[8]`. Am rulat testul: profesor salvat pe ultima linie → se recitește cu parola goală și nu se mai poate loga; profesor oriunde altundeva → `IndexOutOfRangeException` la pornire.
 
-**2. Modelele știu că sunt salvate într-un fișier.** `ToText(int cnt, int size)` — modelul primește poziția lui în listă ca să decidă dacă pune `\n` la final. Un `Teacher` n-are de ce să știe câți alți useri există.
+**2. Modelele știu că sunt salvate într-un fișier.** `ToText(int cnt, int size)` — modelul primește poziția lui în listă ca să decidă dacă pune `\n` la final (`User.cs:147`, `Student.cs:19`, `Teacher.cs:82`, `Admin.cs:56`). Un `Teacher` n-are de ce să știe câți alți useri există.
 
-**3. Aceeași buclă, scrisă de patru ori:** `UserService.cs:129`, `BookService.cs:158`, `CourseService.cs:149`, `EnrolmentService.cs:152`. Plus `Path.Combine("..", "..", "..", "Data", ...)` în opt locuri.
+**3. Aceeași buclă, scrisă de patru ori:** `UserService.cs:123` + `:162` + `:172`, `CourseService.cs:108` + `:149` + `:166`, `EnrolmentService.cs:123` + `:162` + `:179`. Plus `Path.Combine("..", "..", "..", "Data", ...)` peste tot. (`Books` e deja curățat — de-aia nu mai apare în listă.)
 
 ## Ce construiești
 
-Contractul — o strategie de traducere între obiect și linie de text:
+### 1. Promisiunea: `Common/IEntity.cs`
+
+```csharp
+public interface IEntity
+{
+    Guid Id { get; }
+}
+```
+
+Cele patru entități au fiecare `public Guid Id { get; set; }`, dar pe patru tipuri fără nicio legătură între ele. Compilatorul nu vede acolo un tipar, vede patru coincidențe — deci `FindById` nu poate urca într-o clasă generică. **Codul generic are nevoie de o promisiune despre `T`, iar constrângerea `where T : class, IEntity` ESTE promisiunea.** Fără ea, `T` e `object` și nu poți face nimic cu el.
+
+Costul: fiecare entitate primește `: IEntity` și atât — membrul îl are deja. `Book` e făcut; mai sunt `Course`, `Enrolment`, `User`.
+
+### 2. Strategia: `Common/ITextMapper.cs`
 
 ```csharp
 public interface ITextMapper<T>
@@ -417,43 +430,113 @@ public interface ITextMapper<T>
 }
 ```
 
-Cele două metode stau **una sub alta, în aceeași clasă**. Asta e miezul task-ului: greșeala din punctul 1 devine greu de făcut, pentru că vezi ambele capete deodată.
+(Era în `Users/Models/` — un contract generic n-avea ce căuta acolo. A fost mutat în `Common/`.)
 
-Apoi contextul care le folosește:
+Implementarea, `Books/Mappers/BookTextMapper.cs`, cu cele două metode **una sub alta**:
 
 ```csharp
-public class Repository<T>
+public string ToText(Book item)
 {
-    public Repository(string filePath, ITextMapper<T> mapper) { }
+    return item.Id + "," + item.StudentId + "," + item.BookName + "," + item.CreatedAt.ToString("yyyy-MM-dd");
+}
 
-    public List<T> Load() { }
-    public void Save(List<T> items) { }
+public Book FromText(string text)
+{
+    string[] cuv = text.Split(',');
+
+    Book book = new Book(Guid.Parse(cuv[1]), cuv[2], DateTime.Parse(cuv[3]));
+    book.Id = Guid.Parse(cuv[0]);
+
+    return book;
 }
 ```
 
-`Repository` nu știe ce e un `Book` sau un `Teacher`. Știe doar să citească linii, să ceară mapper-ului să le traducă, și invers.
+Ăsta e miezul task-ului: bug-ul de la punctul 1 devine greu de făcut, fiindcă vezi ambele capete deodată. Adaugi un câmp în `ToText` și `FromText` e chiar sub el.
 
-Clase de scris: `BookMapper`, `CourseMapper`, `EnrolmentMapper`, `UserMapper`.
+### 3. Contextul: `Common/Repository.cs`
 
-`UserMapper` e cel interesant — el decide, după prefixul `STUDENT`/`TEACHER`/`ADMIN`, ce tip construiește. Lasă-l deocamdată cu un `switch`; îl curățăm la T3.
+```csharp
+public class Repository<T> where T : class, IEntity
+{
+    private readonly List<T> items = new();
+    private readonly ITextMapper<T> mapper;
+    private readonly string path;
+
+    public Repository(ITextMapper<T> mapper, string path)
+    {
+        this.mapper = mapper;
+        this.path = path;
+        Read();
+    }
+
+    protected List<T> Items { get { return items; } }
+
+    public T FindById(Guid id)
+    public void Add(T item)
+    public void Remove(T item)
+    public void Save()
+    private void Read()
+}
+```
+
+`Repository` nu știe ce e un `Book`. Știe să citească linii, să ceară mapperului să le traducă, și invers. Observă cine pune acum `\n` între linii: `Save`, în buclă. **Nu modelul.** Asta rezolvă punctul 2.
+
+### 4. Moștenirea: `BookRepository : Repository<Book>`
+
+```csharp
+public class BookRepository : Repository<Book>
+{
+    public BookRepository()
+        : base(new BookTextMapper(), Path.Combine("..", "..", "..", "Data", "books.txt")) { }
+
+    public Book FindByStudentAndName(Guid studentId, string bookName)
+    public List<Book> FindByStudentId(Guid studentId)
+}
+```
+
+Din 102 linii au rămas 30, și toate cele 30 sunt despre cărți. `FindById`, `Add`, `Remove`, `Save`, `Read` vin din bază.
+
+Moștenirea e corectă aici pentru că `BookRepository` **adaugă** și nu **ascunde** nimic. Regula: moștenești ca să adaugi. În clipa în care o subclasă trebuie să facă ilegală o metodă moștenită, moștenirea era unealta greșită.
+
+## Capcana pe care am ocolit-o
+
+Varianta la care ajunge oricine prima dată:
+
+```csharp
+public abstract class Repository<T>
+{
+    protected abstract T FromText(string line);
+    protected abstract string ToText(T item);
+}
+```
+
+Compilează, e mai puțin de scris, și **anulează T0.6**. Pentru că atunci `BookRepository` conține iar două lucruri fără legătură: interogările despre cărți *și* formatul în care cărțile ajung pe disc. Ca să treci de la `books.txt` la JSON, ai deschide fișierul care ține căutările.
+
+Ăsta e chiar contrastul dintre **Template Method** (subclasa completează golurile din bază) și **Strategy** (bazei i se dă o piesă, din afară). Diferența practică vine la **T6, Adapter**: cu mapper injectat, pui `System.Text.Json` în spatele lui `ITextMapper` și nu atingi niciun repository. Cu metode abstracte, T6 cere rescriere.
+
+## De ce `User` nu intră acum
+
+`Repository<User>` ar trebui să transforme o linie în `Student`, `Teacher` **sau** `Admin`, după prefix. Un `ITextMapper<User>.FromText` poate face asta cu un `switch` — dar ăla e chiar lanțul de la T0.4, mutat în alt fișier. „Cine decide ce clasă se construiește" e **T3, Factory Method**.
+
+Deci ordinea e: `Course` și `Enrolment` acum, `User` la T3. Dacă te blochezi la `User`, nu e vina ta — e task-ul următor.
 
 ## Ce atingi
 
-- Adaugi `ITextMapper<T>`, `Repository<T>` și cele 4 mappere.
-- Scoți `ToText(cnt, size)` din `User`, `Student`, `Teacher`, `Admin`.
-- Scoți `ReadX()`, `XListToString()`, `Save()` din cele 4 servicii; ele primesc un `Repository` și îl folosesc.
-- Ștergi constructorii `Model(string text)` — treaba aia e acum a mapper-ului.
+- `Course` și `Enrolment` primesc `: IEntity`.
+- Scrii `CourseTextMapper`, `EnrolmentTextMapper`, apoi `CourseRepository : Repository<Course>` și `EnrolmentRepository : Repository<Enrolment>`.
+- Scoți `ReadX()`, `XListToString()`, `Save()` din `CourseService` și `EnrolmentService`; ele primesc repo-ul prin constructor, ca `BookService`.
+- Ștergi constructorii `Course(string text)` și `Enrolment(string text)` — treaba aia e acum a mapperului. (`Book(string text)` e deja șters.)
 
 ## Ce NU atingi
 
-`ViewStudent`, `ViewLogIn`, DTO-urile, validările din setteri.
+`ViewLogIn`, DTO-urile, validările din setteri. În `ViewStudent` schimbi doar linia care construiește serviciile.
 
 ## Gata când
 
 - `Data/*.txt` rămân neschimbate ca format — scopul e ca nimic din afară să nu observe refactorul.
-- Adaugi manual un `TEACHER` **în mijlocul** lui `users.txt`, pornești aplicația, salvezi, o pornești din nou: pornește. Ăsta e testul care pică acum.
-- Calea fișierului apare o singură dată per serviciu, nu de opt ori.
-- Niciun model nu mai conține cuvântul „txt", „\n" sau vreo virgulă de separator.
+- Adaugi manual o linie **în mijlocul** lui `courses.txt`, pornești, salvezi, pornești din nou: pornește și cursul e acolo. (Pe `books.txt` testul ăsta trece deja — l-am rulat: 8 linii scrise, 8 recitite, cu aceleași `Id`-uri și date.)
+- `grep -rn "StreamReader\|StreamWriter\|Path.Combine" Books Courses Enrolments` nu mai găsește nimic în afara lui `Repositories/`.
+- Niciun model din `Books`, `Courses`, `Enrolments` nu mai conține „txt", `\n` sau vreo virgulă de separator.
 
 ---
 

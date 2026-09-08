@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using stefan_academy_vanilla_charp.Common;
 
 namespace stefan_academy_vanilla_charp.Books.Models
 {
-    public class Book
+    public class Book : IEntity
     {
         public Guid Id { get; set; } = Guid.NewGuid();
         public Guid StudentId { get; set; } = Guid.Empty;
@@ -18,15 +14,6 @@ namespace stefan_academy_vanilla_charp.Books.Models
             StudentId = studentId;
             BookName = bookName;
             CreatedAt = createdAt;
-        }
-
-        public Book(string text)
-        {
-            string[] cuv = text.Split(',');
-            Id = Guid.Parse(cuv[0]);
-            StudentId = Guid.Parse(cuv[1]);
-            BookName = cuv[2];
-            CreatedAt = DateTime.Parse(cuv[3]);
         }
 
         public string BookName

@@ -1,4 +1,4 @@
-﻿namespace stefan_academy_vanilla_charp.Users.Models
+namespace stefan_academy_vanilla_charp.Common
 {
     public interface ITextMapper<T>
     {
