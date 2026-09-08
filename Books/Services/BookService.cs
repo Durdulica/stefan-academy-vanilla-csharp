@@ -60,24 +60,19 @@ namespace stefan_academy_vanilla_charp.Books.Services
             return new Book(request.StudentId,request.BookName,request.CreatedAt);
         }
 
+        public void ApplyUpdate(Book book, BookUpdateRequest request)
+        {
+            book.BookName = request.BookName;
+        }
+
         public BookCreateResponse BookToBookCreateResponse(Book book)
         {
-            return new BookCreateResponse()
-            {
-                StudentId = book.StudentId,
-                BookName = book.BookName,
-                CreatedAt = book.CreatedAt
-            };
+            return new BookCreateResponse(book.Id, book.StudentId, book.BookName, book.CreatedAt);
         }
 
         public BookUpdateResponse BookToBookUpdateResponse(Book book)
         {
-            return new BookUpdateResponse()
-            {
-                StudentId = book.StudentId,
-                BookName = book.BookName,
-                CreatedAt = book.CreatedAt
-            };
+            return new BookUpdateResponse(book.Id, book.BookName, book.CreatedAt);
         }
 
         //Afisare
@@ -132,8 +127,7 @@ namespace stefan_academy_vanilla_charp.Books.Services
                 throw new ArgumentException("Cartea nu exista in baza de date");
             }
 
-            book.StudentId = request.StudentId;
-            book.BookName = request.BookName;
+            ApplyUpdate(book, request);
 
             return BookToBookUpdateResponse(book);
         }

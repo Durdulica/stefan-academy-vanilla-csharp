@@ -191,7 +191,7 @@ namespace stefan_academy_vanilla_charp
 
             try
             {
-                BookUpdateRequest request = new(loggedUser.Id, nume, DateTime.Now);
+                BookUpdateRequest request = new(nume);
                 BookUpdateResponse response = bookService.UpdateBook(book.Id, request);
             }
             catch (ArgumentException ex)

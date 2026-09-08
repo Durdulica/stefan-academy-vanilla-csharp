@@ -114,6 +114,8 @@ Aici e lecția, și merită ținută minte: **polimorfismul alege ce metodă se 
 
 ## T0.5 — DTO-urile moștenesc entitățile
 
+> **`Book` e deja făcut, în cod, ca model de urmat.** Deschide `Books/Dtos/` și `Books/Services/BookService.cs` și compară-le cu `Courses/` și `Enrolments/` — ai varianta veche și cea nouă una lângă alta. Tu faci `Course` și `Enrolment` după același tipar, apoi `Users` la urmă.
+
 `Books/Dtos/BookCreateRequest.cs:10` · `BookUpdateRequest.cs:10` · `Courses/Dtos/CourseCreateRequest.cs:10` · `CourseUpdateRequest.cs:10` · `Enrolments/Dtos/EnrolmentCreateRequest.cs:10` · `EnrolmentUpdateRequest.cs:10`
 
 Șase clase de request încep la fel:
@@ -234,14 +236,14 @@ new EnrolmentCreateRequest(studentId: loggedUser.Id, courseId: course.Id, create
 
 ### Ordinea
 
-Book întâi, complet, cu build între pași. Abia după ce merge, aceeași operație la `Course` și `Enrolment` — sunt identice ca formă.
+Book e gata (fă `git show` pe commit-ul ăsta ca să vezi exact ce s-a schimbat și ce **nu** s-a schimbat). Urmează `Course` și `Enrolment`, identice ca formă, cu build între ele.
 
 `UserCreateRequest` și `UserUpdateRequest` le lași **la urmă**: acolo nu e doar o moștenire de șters, ci 285 de linii de validare de mutat înapoi în `User`, `Teacher` și `Admin`. Le facem separat, după T1.
 
 **Gata când:**
-1. `grep -rn "Request : \|Response : " Books Courses Enrolments` nu mai găsește nimic (pe `Users`, `record`-urile pot moșteni `record`-uri, e în regulă).
-2. Apelul de modificare a unei cărți nu mai conține niciun `Guid`.
-3. `UpdateBook`, `UpdateCourse` și `UpdateEnrolment` nu mai au nicio atribuire de câmp în corpul lor.
+1. `grep -rn "Request : \|Response : " Books Courses Enrolments` nu mai găsește nimic (pe `Users`, `record`-urile pot moșteni `record`-uri, e în regulă). Pe `Books` e deja curat.
+2. ✅ Apelul de modificare a unei cărți nu mai conține niciun `Guid` — `ViewStudent.cs:194`.
+3. `UpdateCourse` și `UpdateEnrolment` nu mai au nicio atribuire de câmp în corpul lor, cum n-are nici `UpdateBook`.
 4. Build verde, și scenariul de la T0.2 rulat din nou: modifici o carte, rămâne a ta, cu data inițială.
 
 ---
