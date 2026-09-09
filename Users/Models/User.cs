@@ -133,7 +133,7 @@ namespace stefan_academy_vanilla_charp.Users.Models
             }
         }
 
-        public virtual string ToText(int cnt, int size)
+        /*public virtual string ToText(int cnt, int size)
         {
             string list = "";
             if (cnt + 1 == size)
@@ -160,6 +160,6 @@ namespace stefan_academy_vanilla_charp.Users.Models
             FirstName = request.FirstName;
             LastName = request.LastName;
             Email = request.Email;
-        }
+        }*/
     }
 }

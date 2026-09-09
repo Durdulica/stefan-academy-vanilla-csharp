@@ -1,8 +1,8 @@
-﻿using stefan_academy_vanilla_charp.Users.Dtos;
+﻿using stefan_academy_vanilla_charp.Common;
 
 namespace stefan_academy_vanilla_charp.Users.Models
 {
-    public class Admin : User
+    public class Admin : User, ITextMapper<Admin>
     {
         private int salary = 0;
         private string password = string.Empty;
@@ -52,36 +52,17 @@ namespace stefan_academy_vanilla_charp.Users.Models
             }
         }
 
-        /*public override string ToText(int cnt, int size)
+        public string ToText(Admin item)
         {
-            string list = "";
-            if (cnt + 1 == size)
-            {
-                list += "ADMIN," + Id + "," + FirstName + "," + LastName + "," + Email
+            return "ADMIN," + Id + "," + FirstName + "," + LastName + "," + Email
                     + "," + Age + "," + Salary + "," + Password;
-            }
-            else
-            {
-                list += "ADMIN," + Id + "," + FirstName + "," + LastName + "," + Email
-                    + "," + Age + "," + Salary + "," + Password + "\n";
-            }
-            return list;
         }
 
-        public override void Create(UserCreateRequest request)
+       public Admin FromText(string text)
         {
-            base.Create(request);
-            AdminCreateRequest req = request as AdminCreateRequest;
-            Salary = req.Salary;
-            Password = req.Password;
-        }
+            string []cuv = text.Split(',');
 
-        public override void Update(UserUpdateRequest request)
-        {
-            base.Update(request);
-            AdminUpdateRequest req = request as AdminUpdateRequest; 
-            Salary = req.Salary;
-            Password = req.Password;
-        }*/
+            return new Admin(Guid.Parse(cuv[0]), cuv[1], cuv[2], cuv[3], Int32.Parse(cuv[4]), Int32.Parse(cuv[5]), cuv[6]);
+        }
     }
 }

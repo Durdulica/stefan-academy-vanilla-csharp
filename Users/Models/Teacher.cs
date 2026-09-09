@@ -1,8 +1,9 @@
-﻿using stefan_academy_vanilla_charp.Users.Dtos;
+﻿using stefan_academy_vanilla_charp.Common;
+using System.Collections.Generic;
 
 namespace stefan_academy_vanilla_charp.Users.Models
 {
-    public class Teacher : User
+    public class Teacher : User, ITextMapper<Teacher>
     {
         private int salary = 0;
         private string password;
@@ -73,38 +74,17 @@ namespace stefan_academy_vanilla_charp.Users.Models
             }
         }
 
-        /*public override string ToText(int cnt, int size)
+        public string ToText(Teacher item)
         {
-            string list = "";
-            if (cnt + 1 == size)
-            {
-                list += "TEACHER," + Id + "," + FirstName + "," + LastName + "," + Email
-                    + "," + Age + "," + Salary + "," + WorkHours + ",";
-            }
-            else
-            {
-                list += "TEACHER," + Id + "," + FirstName + "," + LastName + "," + Email
-                    + "," + Age + "," + Salary + "," + WorkHours + "\n";
-            }
-            return list;
+            return "TEACHER," + Id + "," + FirstName + "," + LastName + "," + Email
+                    + "," + Age + "," + Salary + "," + WorkHours + "," + Password;
         }
 
-        public override void Create(UserCreateRequest request)
+        public Teacher FromText(string text)
         {
-            base.Create(request);
-            TeacherCreateRequest req = request as TeacherCreateRequest;
-            Salary = req.Salary;
-            WorkHours = req.WorkHours;
-            Password = req.Password;
-        }
+            string []cuv = text.Split(',');
 
-        public override void Update(UserUpdateRequest request)
-        {
-            base.Update(request);
-            TeacherUpdateRequest req = request as TeacherUpdateRequest;
-            Salary = req.Salary;
-            WorkHours = req.WorkHours;
-            Password = req.Password;
-        }*/
+            return new Teacher(Guid.Parse(cuv[0]), cuv[1], cuv[2], cuv[3], Int32.Parse(cuv[4]), Int32.Parse(cuv[5]), cuv[6]);
+        }
     }
 }

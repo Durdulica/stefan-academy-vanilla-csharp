@@ -1,6 +1,7 @@
 ﻿using stefan_academy_vanilla_charp.Common;
 using stefan_academy_vanilla_charp.Users.Mappers;
 using stefan_academy_vanilla_charp.Users.Models;
+using stefan_academy_vanilla_charp.Users.Models.Students.Dtos;
 
 namespace stefan_academy_vanilla_charp.Users.Repositories
 {

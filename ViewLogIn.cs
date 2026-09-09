@@ -18,7 +18,7 @@ namespace stefan_academy_vanilla_charp
             Console.Write("Prenumele: ");
             string firstName = Console.ReadLine();
 
-            User user = service.GetByFirstAndLastName(firstName, lastName);
+            User user = service.repository.GetByFirstAndLastName(firstName, lastName);
 
             if (user == null) {
                 throw new ArgumentException("Userul nu aceste credentiale nu exista");

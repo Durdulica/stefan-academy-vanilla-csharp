@@ -1,4 +1,5 @@
-﻿using stefan_academy_vanilla_charp.Users.Dtos;
+﻿using stefan_academy_vanilla_charp.Books.Models;
+using stefan_academy_vanilla_charp.Users.Dtos;
 using stefan_academy_vanilla_charp.Users.Mappers;
 using stefan_academy_vanilla_charp.Users.Models;
 using stefan_academy_vanilla_charp.Users.Models.Students.Dtos;
@@ -15,97 +16,100 @@ namespace stefan_academy_vanilla_charp.Users.Services
             this.repository = repository;
         }
 
-        //CRUD
-
         public User GetUser(Guid id)
         {
             return repository.FindById(id);
         }
 
+        //CRUD
 
-        public UserCreateResponse CreateUser(UserCreateRequest request) {
-            User newUser;
+        public StudentCreateResponse CreateStudent(StudentCreateRequest request)
+        {
+            Student student = UserMapper.ToStudent(request);
 
-            TeacherCreateRequest t = request as TeacherCreateRequest;
-            AdminCreateRequest a = request as AdminCreateRequest;
-
-            if (request != null)
+            if (repository.FindById(student.Id) != null)
             {
-                Student newS = new();
-                newS.FirstName = request.FirstName;
-                newS.LastName = request.LastName;
-                newS.Email = request.Email;
-                newS.Age = request.Age;
-                newUser = newS;
-            }
-            else if (t != null)
-            {
-                Teacher newT = new();
-                newT.FirstName = t.FirstName;
-                newT.LastName = t.LastName;
-                newT.Email = t.Email;
-                newT.Age = t.Age;
-                newT.Salary = t.Salary;
-                newT.WorkHours = t.WorkHours;
-                newT.Password = t.Password;
-                newUser = newT;
-            }
-            else if (a != null)
-            {
-                Admin newA = new();
-                newA.FirstName = a.FirstName;
-                newA.LastName = a.LastName;
-                newA.Email = a.Email;
-                newA.Age = a.Age;
-                newA.Salary = a.Salary;
-                newA.Password = a.Password;
-                newUser = newA;
-            }
-            else
-            {
-                throw new ArgumentException("Create requestul nu este de niciun tip");
+                throw new ArgumentException("Studentul se afla deja in baza de date");
             }
 
-            repository.Add(newUser);
-            return UserMapper.ToCreateResponse(newUser);
+            repository.Add(student);
+            return UserMapper.StudentToCreateResponse(student);
         }
 
-        /*public UserUpdateResponse UpdateUser(Guid id, UserUpdateRequest request)
+        public TeacherCreateResponse CreateTeacher(TeacherCreateRequest request) 
         {
-            User u = FindById(id);
+            Teacher teacher = UserMapper.ToTeacher(request);
 
-            if (u == null) {
-                throw new ArgumentException("Userul pe care incercati sa il modificati nu se afla in baza de date");
+            if (repository.FindById(teacher.Id) != null)
+            {
+                throw new ArgumentException("Profesorul se afla deja in baza de date");
             }
 
-            u.Update(request);
+            repository.Add(teacher);
+            return UserMapper.TeacherToCreateResponse(teacher);
+        }
 
-            return UserToUserUpdateResponse(u);
+        public AdminCreateResponse CreateAdmin(AdminCreateRequest request)
+        {
+            Admin admin = UserMapper.ToAdmin(request);
+
+            if (repository.FindById(admin.Id) != null)
+            {
+                throw new ArgumentException("Adminul se afla deja in baza de date");
+            }
+
+            repository.Add(admin);
+            return UserMapper.AdminToCreateResponse(admin);
+        }
+
+
+
+        public StudentUpdateResponse UpdateStudent(Guid id, StudentUpdateRequest request) 
+        {
+            Student student = repository.FindById(id) as Student;
+            
+            if(student == null)
+            {
+                throw new ArgumentException("Studentul nu exista in baza de date");
+            }
+
+            UserMapper.ApplyStudentUpdate(student, request);
+
+            return UserMapper.ToStudentUpdateResponse(student);
+        }
+
+        public TeacherUpdateResponse UpdateTeacher(Guid id, TeacherUpdateRequest request) 
+        {
+            Teacher teacher = repository.FindById(id) as Teacher;
+
+            if (teacher == null)
+            {
+                throw new ArgumentException("Profesorul nu exista in baza de date");
+            }
+
+            UserMapper.ApplyTeacherUpdate(teacher, request);
+
+            return UserMapper.ToTeacherUpdateResponse(teacher);
+        }
+
+        public AdminUpdateResponse UpdateAdmin(Guid id, AdminUpdateRequest request) 
+        {
+            Admin admin = repository.FindById(id) as Admin;
+
+            if (admin == null)
+            {
+                throw new ArgumentException("Adminul nu exista in baza de date");
+            }
+
+            UserMapper.ApplyAdminUpdate(admin, request);
+
+            return UserMapper.ToAdminUpdateResponse(admin);
         }
 
         public void DeleteUser(Guid id)
         {
-            User user = FindById(id);
-            users.Remove(user);
+            User user = repository.FindById(id);
+            repository.Remove(user);
         }
-
-        public string UserListToString()
-        {
-            string list = "";
-            for (int i = 0; i < users.Count; i++) {
-                list += users[i].ToText(i,users.Count);
-            }
-
-            return list;
-        }
-
-        public void Save()
-        {
-            string path = Path.Combine("..", "..", "..", "Data", "users.txt");
-
-            using var writer = new StreamWriter(path);
-            string list = UserListToString();
-            writer.Write(list);
-        }*/
     }
 }

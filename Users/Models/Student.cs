@@ -1,8 +1,8 @@
-﻿using stefan_academy_vanilla_charp.Users.Dtos;
+﻿using stefan_academy_vanilla_charp.Common;
 
 namespace stefan_academy_vanilla_charp.Users.Models
 {
-    public class Student : User
+    public class Student : User, ITextMapper<Student>
     {
         public Student(Guid id, string firstName, string lastName, string email, int age) 
             : base(id, firstName, lastName, email, age) { }
@@ -11,28 +11,16 @@ namespace stefan_academy_vanilla_charp.Users.Models
             : base(firstName, lastName, email, age) { }
 
 
-        /*public override string ToText(int cnt, int size)
+        public string ToText(Student item)
         {
-            string list = "";
-            if (cnt + 1 == size)
-            {
-                list += "STUDENT," + Id + "," + FirstName + "," + LastName + "," + Email + "," + Age;
-            }
-            else
-            {
-                list += "STUDENT," + Id + "," + FirstName + "," + LastName + "," + Email + "," + Age + "\n";
-            }
-            return list;
+            return "STUDENT," + Id + "," + FirstName + "," + LastName + "," + Email + "," + Age;
         }
 
-        public override void Create(UserCreateRequest request)
+        public Student FromText(string text) 
         {
-            base.Create(request);
-        }
+            string[] cuv = text.Split(',');
 
-        public override void Update(UserUpdateRequest request)
-        {
-            base.Update(request);
-        }*/
+            return new Student(Guid.Parse(cuv[0]), cuv[1], cuv[2], cuv[3], Int32.Parse(cuv[4]));
+        }
     }
 }
