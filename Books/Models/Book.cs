@@ -4,17 +4,21 @@ namespace stefan_academy_vanilla_charp.Books.Models
 {
     public class Book : IEntity
     {
-        public Guid Id { get; set; } = Guid.NewGuid();
+        public Guid Id { get; private set; }
         public Guid StudentId { get; set; } = Guid.Empty;
         private string bookName = string.Empty;
         public DateTime CreatedAt { get; set; } = DateTime.Now;
 
-        public Book(Guid studentId, string bookName, DateTime createdAt)
+        public Book(Guid id, Guid studentId, string bookName, DateTime createdAt)
         {
+            Id = id;
             StudentId = studentId;
             BookName = bookName;
             CreatedAt = createdAt;
         }
+
+        public Book(Guid studentId, string bookName, DateTime createdAt)
+            : this(Guid.NewGuid(), studentId, bookName, createdAt) { }
 
         public string BookName
         {

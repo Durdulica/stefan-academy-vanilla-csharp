@@ -14,10 +14,7 @@ namespace stefan_academy_vanilla_charp.Books.Mappers
         {
             string[] cuv = text.Split(',');
 
-            Book book = new Book(Guid.Parse(cuv[1]), cuv[2], DateTime.Parse(cuv[3]));
-            book.Id = Guid.Parse(cuv[0]);
-
-            return book;
+            return new Book(Guid.Parse(cuv[0]), Guid.Parse(cuv[1]), cuv[2], DateTime.Parse(cuv[3]));
         }
     }
 }
