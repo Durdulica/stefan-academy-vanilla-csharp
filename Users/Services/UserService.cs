@@ -1,91 +1,41 @@
 ﻿using stefan_academy_vanilla_charp.Users.Dtos;
+using stefan_academy_vanilla_charp.Users.Mappers;
 using stefan_academy_vanilla_charp.Users.Models;
 using stefan_academy_vanilla_charp.Users.Models.Students.Dtos;
+using stefan_academy_vanilla_charp.Users.Repositories;
 
 namespace stefan_academy_vanilla_charp.Users.Services
 {
     public class UserService
     {
-        List<User> users = new();
+        private readonly UserRepository repository;
 
-        public UserService() {
-            ReadUsers();
-        }
-
-        //Finders
-
-        public User FindById(Guid id) {
-            foreach (var user in users) {
-                if(id.CompareTo(user.Id) == 0)
-                {
-                    return user;
-                }
-            }
-            return null;
-        }
-
-        public User GetByFirstAndLastName(string firstName, string lastName)
+        public UserService(UserRepository repository) 
         {
-            foreach (var user in users)
-            {
-                if(user.FirstName.CompareTo(firstName) == 0 && user.LastName.CompareTo(lastName) == 0)
-                {
-                    return user;
-                }
-            }
-
-            return null;
-        }
-
-        //Mappers
-
-        public User UserCreateRequestToUser(UserCreateRequest request)
-        {
-            return new User(request.FirstName, request.LastName, request.Email, request.Age);
-        }
-
-        public UserCreateResponse UserToUserCreateResponse(User user)
-        {
-            return new UserCreateResponse()
-            {
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                Email = user.Email,
-                Age = user.Age
-            };
-        }
-
-        public UserUpdateResponse UserToUserUpdateResponse(User user)
-        {
-            return new UserUpdateResponse()
-            {
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                Email = user.Email,
-                Age = user.Age
-            };
+            this.repository = repository;
         }
 
         //CRUD
 
-        public List<User> GetUsers {
-            get { return users; }
+        public User GetUser(Guid id)
+        {
+            return repository.FindById(id);
         }
 
-        public UserCreateResponse CreateUser(UserCreateRequest request) {
-            User newUser = new();
 
-            StudentCreateRequest s = request as StudentCreateRequest;
+        public UserCreateResponse CreateUser(UserCreateRequest request) {
+            User newUser;
+
             TeacherCreateRequest t = request as TeacherCreateRequest;
             AdminCreateRequest a = request as AdminCreateRequest;
 
-            if (s != null)
+            if (request != null)
             {
                 Student newS = new();
-                newS.FirstName = s.FirstName;
-                newS.LastName = s.LastName;
-                newS.Email = s.Email;
-                newS.Age = s.Age;
+                newS.FirstName = request.FirstName;
+                newS.LastName = request.LastName;
+                newS.Email = request.Email;
+                newS.Age = request.Age;
                 newUser = newS;
             }
             else if (t != null)
@@ -116,31 +66,11 @@ namespace stefan_academy_vanilla_charp.Users.Services
                 throw new ArgumentException("Create requestul nu este de niciun tip");
             }
 
-            users.Add(newUser);
-            return UserToUserCreateResponse(newUser);
+            repository.Add(newUser);
+            return UserMapper.ToCreateResponse(newUser);
         }
 
-        private void ReadUsers()
-        {
-            string path = Path.Combine("..", "..", "..", "Data", "users.txt");
-
-            using (var reader = new StreamReader(path)) {
-
-                string line = "";
-                while ((line = reader.ReadLine()) != null) {
-                    string[] cuv = line.Split(',');
-                    switch (cuv[0])
-                    {
-                        case "STUDENT": users.Add(new Student(line)); break;
-                        case "TEACHER": users.Add(new Teacher(line)); break;
-                        case "ADMIN": users.Add(new Admin(line)); break;
-                        default: throw new ArgumentException("Eroare in fisierul de citire!!!");
-                    }
-                }
-            }
-        }
-
-        public UserUpdateResponse UpdateUser(Guid id, UserUpdateRequest request)
+        /*public UserUpdateResponse UpdateUser(Guid id, UserUpdateRequest request)
         {
             User u = FindById(id);
 
@@ -173,10 +103,9 @@ namespace stefan_academy_vanilla_charp.Users.Services
         {
             string path = Path.Combine("..", "..", "..", "Data", "users.txt");
 
-            using (var writer = new StreamWriter(path)) {
-                string list = UserListToString();
-                writer.Write(list);
-            }
-        }
+            using var writer = new StreamWriter(path);
+            string list = UserListToString();
+            writer.Write(list);
+        }*/
     }
 }

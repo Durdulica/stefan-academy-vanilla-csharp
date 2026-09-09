@@ -1,9 +1,4 @@
 ﻿using stefan_academy_vanilla_charp.Users.Dtos;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace stefan_academy_vanilla_charp.Users.Models
 {
@@ -15,21 +10,20 @@ namespace stefan_academy_vanilla_charp.Users.Models
 
         //Constructors
 
-        public Teacher() : base() { }
-
-        public Teacher(string firstName, string lastName, string email, int age, int salary, string password, int workHours) 
+        public Teacher(string firstName, string lastName, string email, int age, int salary, int workHours, string password) 
             : base(firstName, lastName, email, age) 
         {
             Salary = salary;
             Password = password;
             WorkHours = workHours;
         }
-        
-        public Teacher(string text) : base(text) {
-            string[] cuv = text.Split(',');
-            Salary = int.Parse(cuv[6]);
-            WorkHours = int.Parse(cuv[7]);
-            Password = cuv[8];
+
+        public Teacher(Guid id, string firstName, string lastName, string email, int age, int salary, int workHours, string password)
+            : base(id, firstName, lastName, email, age)
+        {
+            Salary = salary;
+            Password = password;
+            WorkHours = workHours;
         }
 
         //Incapsulare
@@ -79,7 +73,7 @@ namespace stefan_academy_vanilla_charp.Users.Models
             }
         }
 
-        public override string ToText(int cnt, int size)
+        /*public override string ToText(int cnt, int size)
         {
             string list = "";
             if (cnt + 1 == size)
@@ -111,6 +105,6 @@ namespace stefan_academy_vanilla_charp.Users.Models
             Salary = req.Salary;
             WorkHours = req.WorkHours;
             Password = req.Password;
-        }
+        }*/
     }
 }

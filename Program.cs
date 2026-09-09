@@ -6,7 +6,7 @@ internal class Program
     {
         try
         {
-            ViewLogIn logIn = new ViewLogIn();
+            ViewLogIn logIn = new();
             logIn.Logger();
         }
         catch (ArgumentException text)

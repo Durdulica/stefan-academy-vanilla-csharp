@@ -13,7 +13,7 @@ namespace stefan_academy_vanilla_charp.Books.Repositories
         {
             foreach (Book book in Items)
             {
-                if (book.StudentId == studentId && book.BookName.Contains(bookName))
+                if (book.StudentId == studentId && book.BookName == bookName)
                 {
                     return book;
                 }

@@ -1,22 +1,17 @@
 ﻿using stefan_academy_vanilla_charp.Users.Dtos;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace stefan_academy_vanilla_charp.Users.Models
 {
     public class Student : User
     {
-        public Student() : base() { }
+        public Student(Guid id, string firstName, string lastName, string email, int age) 
+            : base(id, firstName, lastName, email, age) { }
 
         public Student(string firstName, string lastName, string email, int age) 
             : base(firstName, lastName, email, age) { }
 
-        public Student(string text) : base(text) { }
 
-        public override string ToText(int cnt, int size)
+        /*public override string ToText(int cnt, int size)
         {
             string list = "";
             if (cnt + 1 == size)
@@ -38,6 +33,6 @@ namespace stefan_academy_vanilla_charp.Users.Models
         public override void Update(UserUpdateRequest request)
         {
             base.Update(request);
-        }
+        }*/
     }
 }

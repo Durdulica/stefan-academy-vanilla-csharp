@@ -1,10 +1,11 @@
-﻿using stefan_academy_vanilla_charp.Users.Dtos;
+﻿using stefan_academy_vanilla_charp.Common;
+using stefan_academy_vanilla_charp.Users.Dtos;
 
 namespace stefan_academy_vanilla_charp.Users.Models
 {
-    public class User
+    public class User : IEntity
     {
-        public Guid Id { get; set; } = Guid.NewGuid();
+        public Guid Id { get; private set; }
         private string firstName = string.Empty;
         private string lastName = string.Empty;
         private string email = string.Empty;
@@ -12,30 +13,18 @@ namespace stefan_academy_vanilla_charp.Users.Models
 
         //Constructors
 
-        public User() {
-            FirstName = "necunoscut";
-            LastName = "necunoscut";
-            email = "necunoscut";
-        }
-
-        public User(string firstName, string lastName, string email, int age)
+        public User(Guid id, string firstName, string lastName, string email, int age)
         {
+            Id = id;
             FirstName = firstName;
             LastName = lastName;
             Email = email;
             Age = age;
         }
 
-        public User(string text)
-        {
-            string[] cuv = text.Split(',');
-            Id = Guid.Parse(cuv[1]);
-            FirstName = cuv[2];
-            LastName = cuv[3];
-            Email = cuv[4];
-            Age = int.Parse(cuv[5]);
-        }
-
+        public User(string firstName, string lastName, string email, int age) 
+            : this(Guid.NewGuid(), firstName, lastName, email, age) { }
+        
         //Incapsulare
 
         public string FirstName
@@ -171,7 +160,6 @@ namespace stefan_academy_vanilla_charp.Users.Models
             FirstName = request.FirstName;
             LastName = request.LastName;
             Email = request.Email;
-            Age = request.Age;
         }
     }
 }

@@ -1,13 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace stefan_academy_vanilla_charp.Users.Dtos
+﻿namespace stefan_academy_vanilla_charp.Users.Dtos
 {
-    public class StudentUpdateResponse : UserUpdateResponse
-    {
-
-    }
+    public record StudentUpdateResponse(Guid Id, string FirstName, string LastName, string Email);
 }

@@ -32,7 +32,8 @@ namespace stefan_academy_vanilla_charp.Courses.Services
 
             foreach (Guid id in coursesId)
             {
-                studentCourses.Add(FindById(id));
+                Course c = FindById(id);
+                if (c != null) studentCourses.Add(c);
             }
 
             return studentCourses;
@@ -42,7 +43,7 @@ namespace stefan_academy_vanilla_charp.Courses.Services
         {
             foreach (Course c in courses)
             {
-                if (c.Name.Contains(name))
+                if (c.Name == name)
                 {
                     return c;
                 }

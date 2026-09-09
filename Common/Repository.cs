@@ -42,29 +42,25 @@ namespace stefan_academy_vanilla_charp.Common
 
         public void Save()
         {
-            using (var writer = new StreamWriter(path))
+            using var writer = new StreamWriter(path);
+            for (int i = 0; i < items.Count; i++)
             {
-                for (int i = 0; i < items.Count; i++)
-                {
-                    writer.Write(mapper.ToText(items[i]));
+                writer.Write(mapper.ToText(items[i]));
 
-                    if (i + 1 < items.Count)
-                    {
-                        writer.Write("\n");
-                    }
+                if (i + 1 < items.Count)
+                {
+                    writer.Write("\n");
                 }
             }
         }
 
         private void Read()
         {
-            using (var reader = new StreamReader(path))
+            using var reader = new StreamReader(path);
+            string line = "";
+            while ((line = reader.ReadLine()) != null)
             {
-                string line = "";
-                while ((line = reader.ReadLine()) != null)
-                {
-                    items.Add(mapper.FromText(line));
-                }
+                items.Add(mapper.FromText(line));
             }
         }
     }

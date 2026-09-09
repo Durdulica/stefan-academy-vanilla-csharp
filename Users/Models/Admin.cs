@@ -9,7 +9,12 @@ namespace stefan_academy_vanilla_charp.Users.Models
 
         //Constructors
 
-        public Admin() : base() { }
+        public Admin(Guid id, string firstName, string lastName, string email, int salary, int age, string password)
+            : base(id, firstName, lastName, email, age) 
+        {
+            Salary = salary;
+            Password = password;
+        }
 
         public Admin(string firstName, string lastName, string email, int salary, int age, string password)
             : base(firstName, lastName, email, age)
@@ -18,12 +23,6 @@ namespace stefan_academy_vanilla_charp.Users.Models
             Password = password;
         }
         
-        public Admin(string text) : base(text) {
-            string[] cuv = text.Split(',');
-            Salary = int.Parse(cuv[6]);
-            Password = cuv[7];
-        }
-
         //Incapsulare
 
         public int Salary
@@ -53,7 +52,7 @@ namespace stefan_academy_vanilla_charp.Users.Models
             }
         }
 
-        public override string ToText(int cnt, int size)
+        /*public override string ToText(int cnt, int size)
         {
             string list = "";
             if (cnt + 1 == size)
@@ -83,6 +82,6 @@ namespace stefan_academy_vanilla_charp.Users.Models
             AdminUpdateRequest req = request as AdminUpdateRequest; 
             Salary = req.Salary;
             Password = req.Password;
-        }
+        }*/
     }
 }
