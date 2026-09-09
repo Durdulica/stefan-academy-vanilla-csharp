@@ -8,9 +8,64 @@ Proiectul ăsta devine terenul pe care aplici pattern-urile din modulul `design-
 
 ---
 
+# Harta lucrului — două faze
+
+Planul are două jumătăți, și ordinea dintre ele nu e negociabilă.
+
+| | Ce faci | De ce în ordinea asta |
+|---|---|---|
+| **Faza 1** | Aduci `Course`, `Enrolment` și `User` la forma lui `Book` | Copiezi o formă care există deja în cod. Zero decizii de design |
+| **Faza 2** | Aplici pattern-urile învățate, acolo unde codul le cere | Fiecare pattern intră peste o structură curată; peste cea de acum ar doar muta bug-ul |
+
+`Book` e dus până la capăt, de mine, ca model: DTO-uri `record` + `Books/Mappers/BookMapper.cs`, `Books/Repositories/BookRepository.cs` injectat în serviciu, `Common/IEntity` + `Common/ITextMapper<T>` + `Common/Repository<T>` cu mapper injectat. **Deschide fișierele alea înainte să scrii ceva** — sunt răspunsul, nu o sugestie.
+
+---
+
+## Faza 1 — adaptezi tot la modelul `Book`
+
+O entitate deodată, build + rulare între ele. Nu ai de inventat nimic.
+
+| Pas | Entitate | Ce faci | Detaliile |
+|---|---|---|---|
+| 1 | `Course` | T0.5 → T0.6 → T1, în ordinea asta | secțiunile T0.5, T0.6, T1 de mai jos |
+| 2 | `Enrolment` | la fel | idem |
+| 3 | `User` | **doar T0.5** — DTO-uri `record` + `UserMapper` | T0.5 |
+
+`User` se oprește la T0.5 intenționat. `ITextMapper<User>.FromText` ar trebui să decidă singur dacă naște un `Student`, un `Teacher` sau un `Admin` — iar asta nu se poate face cu polimorfism. Repository-ul lui vine în Faza 2, cu Factory Method. Explicația lungă e la T1, „De ce `User` nu intră acum".
+
+**Un lucru de observat, nu de făcut:** copiind `Book`, aplici deja un **Strategy** — `Repository<T>` ține un `ITextMapper<T>` fără să știe care e, exact ca `Raport` cu `IExportStrategie` în `ex3`. Îl aplici, nu îl proiectezi. Pe ăla îl proiectezi tu în Faza 2.
+
+**O îmbunătățire față de model:** `BookRepository` își fixează singur calea (`Path.Combine("..","..","..","Data","books.txt")`). La `Course` și `Enrolment`, dă calea **din afară**, de la cel care construiește repo-ul (`ViewStudent`). Configurația care vine din exterior e forma pe care o vei vedea peste câteva luni ca fișier de configurare și connection string — și e singurul lucru care ar face codul ăsta testabil.
+
+---
+
+## Faza 2 — pattern-urile, în ordine
+
+Se deschid pe rând. Ordinea e impusă de cod, nu de programa lecțiilor.
+
+| Task | Pattern | Unde aterizează | De ce acolo |
+|---|---|---|---|
+| **T3** | Factory Method | `UserService.ReadUsers` (`switch` pe tip) și `CreateUser` (lanț `as`+`if`) | **poarta** — fără el `User` nu intră niciodată în `Repository<T>` |
+| **T1-User** | Strategy | `UserTextMapper`, folosind fabricile de la T3 | abia acum moare bug-ul cu profesorul care nu se recitește |
+| **T-Strategy-2** | Strategy, proiectat de tine | validările din `Teacher`/`Admin` | `Salary` și `Password` avertizează cu `Console.WriteLine` **și atribuie oricum**, în timp ce `WorkHours` și `Age` aruncă. Aceeași regulă, copiată în două clase. Ăsta e `ex5` mutat aici |
+| **T2** | Observer | serviciile devin sursă; `AutoSave` + `JurnalAudit` ascultă | `Save()` există în toate serviciile și **nu e chemat niciodată** |
+| **T8** | Decorator | *de stabilit* | îl fixăm la lecția 4 |
+
+**Ordinea are un motiv dur:** `Teacher.ToText` scrie 8 câmpuri și nu scrie parola, iar `Teacher(string)` citește `cuv[8]`. În clipa în care ceva chiar salvează, `users.txt` se rescrie stricat și aplicația nu mai pornește. De-aia Observer (salvarea automată) vine **după** ce `User` trece printr-un mapper, nu înainte.
+
+Restul — Singleton, Builder, Adapter, State — rămân în „Ce urmează", la finalul fișierului.
+
+---
+
+**Când citești T0.5, T0.6 și T1:** referințele `file:line` care arată spre `Books/` descriu codul **de dinainte** — fișierele alea sunt deja rescrise, uită-te direct în cod. Pentru `Course` și `Enrolment` descrierile sunt corecte; acolo n-am atins nimic.
+
+---
+
 # T0 — Reparații, fără niciun pattern
 
-Astea trebuie făcute primele: dacă refactorizezi peste ele, muți bug-ul într-o structură nouă și îl găsești mai greu.
+**T0.0–T0.4: ÎNCHISE ✅** (`79abec3`, 2026-09-08) — verificate prin rulare, toate cinci. Rămân aici ca istoric; nu mai ai nimic de făcut în ele.
+
+**T0.5 și T0.6 sunt vii** — sunt pașii din Faza 1, aplicați acum pe `Course`, `Enrolment` și `User`.
 
 ## T0.0 — Proiectul nu compilează
 
@@ -591,18 +646,18 @@ Mapper-ele și `Repository` din T1.
 
 ---
 
-# Ce urmează
+# Ce urmează — după Faza 2
 
-Se deschid pe măsură ce facem lecțiile. Fiecare are deja locul lui în cod.
+Pattern-uri pe care nu le-am făcut încă la lecție. Fiecare are deja locul lui în cod, te așteaptă acolo.
 
 | Task | Pattern | Unde aterizează |
 |---|---|---|
-| T3 | Factory Method | `UserService.CreateUser` și `UserMapper` — răspunsul corect la ce ai încercat în T0.4 |
 | T4 | Singleton (și de ce de obicei NU) | `ViewLogIn` și `ViewStudent` construiesc fiecare propriile servicii — ai două copii ale bazei de date în memorie |
 | T5 | Builder | Constructorii `Teacher` și `Admin`. Uită-te la ordinea parametrilor în cele două, unul lângă altul. Apoi adu-ți aminte de T0.2 |
 | T6 | Adapter | `System.Text.Json` pus în spatele lui `ITextMapper` — schimbi formatul de stocare fără să atingi vreun serviciu |
 | T7 | State | `Book` capătă stări de împrumut: `Disponibila → Imprumutata → Restituita/Pierduta`, cu tranziții interzise |
-| T8 | Decorator | `LoggingRepository` peste `Repository` |
+
+(T3 Factory Method și T8 Decorator au urcat în **Faza 2** — pe primul îl ceri tu, ca să poată `User` intra în `Repository<T>`.)
 
 ---
 
