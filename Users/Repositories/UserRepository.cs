@@ -1,7 +1,6 @@
 ﻿using stefan_academy_vanilla_charp.Common;
 using stefan_academy_vanilla_charp.Users.Mappers;
 using stefan_academy_vanilla_charp.Users.Models;
-using stefan_academy_vanilla_charp.Users.Models.Students.Dtos;
 
 namespace stefan_academy_vanilla_charp.Users.Repositories
 {
@@ -10,11 +9,11 @@ namespace stefan_academy_vanilla_charp.Users.Repositories
         public UserRepository() 
             : base(new UserTextMapper(), Path.Combine("..","..","..","Data","users.txt")) { }
 
-        public User FindById(Guid id)
+        public User GetByFirstAndLastName(string firstName, string lastName)
         {
             foreach (var user in Items)
             {
-                if (id.CompareTo(user.Id) == 0)
+                if (user.FirstName.CompareTo(firstName) == 0 && user.LastName.CompareTo(lastName) == 0)
                 {
                     return user;
                 }
@@ -23,11 +22,11 @@ namespace stefan_academy_vanilla_charp.Users.Repositories
             return null;
         }
 
-        public User GetByFirstAndLastName(string firstName, string lastName)
+        public User GetByEmail(string email) 
         {
             foreach (var user in Items)
             {
-                if (user.FirstName.CompareTo(firstName) == 0 && user.LastName.CompareTo(lastName) == 0)
+                if (user.Email == email)
                 {
                     return user;
                 }

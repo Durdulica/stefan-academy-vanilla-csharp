@@ -36,7 +36,7 @@ namespace stefan_academy_vanilla_charp.Users.Models
             {
                 if (value < 4257)
                 {
-                    Console.WriteLine("Salariul trebuie sa fie cel putin minim pe economie");
+                    throw new ArgumentException("Salariul trebuie sa fie cel putin minim pe economie");
                 }
                 salary = value;
             }
@@ -49,7 +49,7 @@ namespace stefan_academy_vanilla_charp.Users.Models
             {
                 if (value.Length < 8)
                 {
-                    Console.WriteLine("Parola trebuie sa aiba cel putin 8 caractere");
+                    throw new ArgumentException("Parola trebuie sa aiba cel putin 8 caractere");
                 }
 
                 password = value;
@@ -84,7 +84,8 @@ namespace stefan_academy_vanilla_charp.Users.Models
         {
             string []cuv = text.Split(',');
 
-            return new Teacher(Guid.Parse(cuv[0]), cuv[1], cuv[2], cuv[3], Int32.Parse(cuv[4]), Int32.Parse(cuv[5]), cuv[6]);
+            return new Teacher(Guid.Parse(cuv[1]), cuv[2], cuv[3], cuv[4], int.Parse(cuv[5]), 
+                int.Parse(cuv[6]), int.Parse(cuv[7]), cuv[8]);
         }
     }
 }

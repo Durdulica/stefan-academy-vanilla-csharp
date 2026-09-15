@@ -1,69 +1,17 @@
 ﻿using stefan_academy_vanilla_charp.Enrolments.Dtos;
 using stefan_academy_vanilla_charp.Enrolments.Models;
+using stefan_academy_vanilla_charp.Enrolments.Repositories;
 
 namespace stefan_academy_vanilla_charp.Enrolments.Services
 {
     public class EnrolmentService
     {
+        EnrolmentRepository repository = new();
         private readonly List<Enrolment> enrolments = new();
 
         public EnrolmentService()
         {
             ReadEnrolments();
-        }
-
-        //Finders
-
-        public Enrolment FindById(Guid id)
-        {
-            foreach (Enrolment enr in enrolments)
-            {
-                if (enr.Id == id) return enr;
-            }
-            return null;
-        }
-
-        public List<Guid> GetEnrolmentIdByStudentId(Guid studentId)
-        {
-            List<Guid> studentEnrolments = new List<Guid>();
-            studentEnrolments.Capacity = enrolments.Count;
-
-            for (int i = 0; i < enrolments.Count; i++)
-            {
-                if(enrolments[i].StudentId == studentId)
-                {
-                    studentEnrolments.Add(enrolments[i].Id);
-                }
-            }
-
-            return studentEnrolments;
-        }
-
-        public Guid GetEnrolmentIdByStudentAndCourseId(Guid studentId, Guid courseId)
-        {
-            foreach(Enrolment enr in enrolments)
-            {
-                if(enr.StudentId == studentId && enr.CourseId == courseId)
-                {
-                    return enr.Id;
-                }
-            }
-            return Guid.Empty;
-        }
-
-        public List<Guid> GetCourseIdListByStudentId(Guid studentId)
-        {
-            List<Guid> courses = new();
-
-            foreach(Enrolment enr in enrolments)
-            {
-                if(enr.StudentId == studentId)
-                {
-                    courses.Add(enr.CourseId);
-                }
-            }
-
-            return courses;
         }
 
         //Mappers
@@ -85,12 +33,7 @@ namespace stefan_academy_vanilla_charp.Enrolments.Services
 
         public EnrolmentUpdateResponse EnrolmentToEnrolmentUpdateRespone(Enrolment enrolment)
         {
-            return new EnrolmentUpdateResponse
-            {
-                StudentId = enrolment.StudentId,
-                CourseId = enrolment.CourseId,
-                CreatedAt = enrolment.CreatedAt
-            };
+            return new EnrolmentUpdateResponse(enrolment.Id, enrolment.StudentId, enrolment.CourseId);
         }
 
         //Crud
@@ -142,7 +85,6 @@ namespace stefan_academy_vanilla_charp.Enrolments.Services
 
             enrolment.StudentId = request.StudentId;
             enrolment.CourseId = request.CourseId;
-            enrolment.CreatedAt = request.CreatedAt;
 
             return EnrolmentToEnrolmentUpdateRespone(enrolment);
         }

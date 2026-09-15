@@ -116,7 +116,7 @@ namespace stefan_academy_vanilla_charp.Users.Models
                         throw new ArgumentException("Emailul contine caractere nepermise");
                     }
                 }
-                email = value;
+                email = text;
             }
         }
 

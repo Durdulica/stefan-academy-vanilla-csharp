@@ -20,7 +20,7 @@ namespace stefan_academy_vanilla_charp.Users.Models
         {
             string[] cuv = text.Split(',');
 
-            return new Student(Guid.Parse(cuv[0]), cuv[1], cuv[2], cuv[3], Int32.Parse(cuv[4]));
+            return new Student(Guid.Parse(cuv[1]), cuv[2], cuv[3], cuv[4], Int32.Parse(cuv[5]));
         }
     }
 }

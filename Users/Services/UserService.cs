@@ -1,8 +1,6 @@
-﻿using stefan_academy_vanilla_charp.Books.Models;
-using stefan_academy_vanilla_charp.Users.Dtos;
+﻿using stefan_academy_vanilla_charp.Users.Dtos;
 using stefan_academy_vanilla_charp.Users.Mappers;
 using stefan_academy_vanilla_charp.Users.Models;
-using stefan_academy_vanilla_charp.Users.Models.Students.Dtos;
 using stefan_academy_vanilla_charp.Users.Repositories;
 
 namespace stefan_academy_vanilla_charp.Users.Services
@@ -25,13 +23,14 @@ namespace stefan_academy_vanilla_charp.Users.Services
 
         public StudentCreateResponse CreateStudent(StudentCreateRequest request)
         {
-            Student student = UserMapper.ToStudent(request);
+            
 
-            if (repository.FindById(student.Id) != null)
+            if (repository.GetByEmail(request.Email) != null)
             {
                 throw new ArgumentException("Studentul se afla deja in baza de date");
             }
 
+            Student student = UserMapper.ToStudent(request);
             repository.Add(student);
             return UserMapper.StudentToCreateResponse(student);
         }

@@ -1,10 +1,9 @@
 ﻿using stefan_academy_vanilla_charp.Users.Dtos;
 using stefan_academy_vanilla_charp.Users.Models;
-using stefan_academy_vanilla_charp.Users.Models.Students.Dtos;
 
 namespace stefan_academy_vanilla_charp.Users.Mappers
 {
-    public class UserMapper
+    public static class UserMapper
     {
         //STUDENT
 
@@ -25,7 +24,7 @@ namespace stefan_academy_vanilla_charp.Users.Mappers
             return new StudentCreateResponse(user.Id, user.FirstName, user.LastName, user.Email, user.Age);
         }
 
-        public static StudentUpdateResponse ToStudentUpdateResponse(User user) 
+        public static StudentUpdateResponse ToStudentUpdateResponse(Student user) 
         {
             return new StudentUpdateResponse(user.Id, user.FirstName, user.LastName, user.Email);
         }

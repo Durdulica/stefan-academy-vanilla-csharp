@@ -34,6 +34,12 @@ namespace stefan_academy_vanilla_charp
                 Console.WriteLine("Apasati tasta 3 pentru a vedea statisticile");
                 tasta = Int32.Parse(Console.ReadLine());
 
+                if(!Int32.TryParse(Console.ReadLine(), out tasta))
+                {
+                    InputGresit();
+                    continue;
+                }
+
                 switch (tasta)
                 {
                     case 0: return;
@@ -62,6 +68,13 @@ namespace stefan_academy_vanilla_charp
                 Console.WriteLine("Apasati tasta 4 pentru a sterge o carte");
 
                 tasta = Int32.Parse(Console.ReadLine());
+
+                if (!Int32.TryParse(Console.ReadLine(), out tasta))
+                {
+                    InputGresit();
+                    continue;
+                }
+
                 switch (tasta)
                 {
                     case 0: break;
@@ -86,6 +99,13 @@ namespace stefan_academy_vanilla_charp
                 Console.WriteLine("Apasati tasta 3 pentru a va dezabona de la un curs");
 
                 tasta = Int32.Parse(Console.ReadLine());
+
+                if (!Int32.TryParse(Console.ReadLine(), out tasta))
+                {
+                    InputGresit();
+                    continue;
+                }
+
                 switch (tasta)
                 {
                     case 0: break;
@@ -105,6 +125,12 @@ namespace stefan_academy_vanilla_charp
                 Console.WriteLine("Apasati tasta 0 pentru a va intoarce");
                 Console.WriteLine("Apasati tasta 1 pentru a vedea cursul cu cei mai multi elevi");
                 tasta = Int32.Parse(Console.ReadLine());
+
+                if (!Int32.TryParse(Console.ReadLine(), out tasta))
+                {
+                    InputGresit();
+                    continue;
+                }
 
                 switch (tasta)
                 {
