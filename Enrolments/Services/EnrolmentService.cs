@@ -1,4 +1,5 @@
 ﻿using stefan_academy_vanilla_charp.Enrolments.Dtos;
+using stefan_academy_vanilla_charp.Enrolments.Mappers;
 using stefan_academy_vanilla_charp.Enrolments.Models;
 using stefan_academy_vanilla_charp.Enrolments.Repositories;
 
@@ -6,79 +7,56 @@ namespace stefan_academy_vanilla_charp.Enrolments.Services
 {
     public class EnrolmentService
     {
-        EnrolmentRepository repository = new();
-        private readonly List<Enrolment> enrolments = new();
+        private readonly EnrolmentRepository repository = new();
 
-        public EnrolmentService()
+        public EnrolmentService(EnrolmentRepository repository)
         {
-            ReadEnrolments();
+            this.repository = repository;
         }
 
-        //Mappers
-
-        public Enrolment EnrolmentCreateRequestToEnrolment(EnrolmentCreateRequest request)
+        public List<Guid> GetEnrolmentIdByStudentId(Guid studentId)
         {
-            return new Enrolment(request.StudentId, request.CourseId, request.CreatedAt);
+            return repository.GetCourseIdListByStudentId(studentId);
         }
 
-        public EnrolmentCreateResponse EnrolmentToEnrolmentCreateResponse(Enrolment enrolment)
+        public Enrolment GetEnrolment(Guid id)
         {
-            return new EnrolmentCreateResponse
-            {
-                StudentId = enrolment.StudentId,
-                CourseId = enrolment.CourseId,
-                CreatedAt = enrolment.CreatedAt
-            };
+            return repository.FindById(id);
         }
 
-        public EnrolmentUpdateResponse EnrolmentToEnrolmentUpdateRespone(Enrolment enrolment)
+        public Guid GetEnrolmentIdByStudentAndCourseId(Guid studentId, Guid courseId)
         {
-            return new EnrolmentUpdateResponse(enrolment.Id, enrolment.StudentId, enrolment.CourseId);
+            return repository.GetEnrolmentIdByStudentAndCourseId(studentId, courseId);
         }
 
-        //Crud
-
-        public List<Enrolment> Enrolments
+        public List<Guid> GetCourseIdListByStudentId(Guid studentId)
         {
-            get { return enrolments; }
+            return repository.GetCourseIdListByStudentId(studentId);
         }
 
-        public void AfisareEnrolments()
+        public int GetStudentsCountForCourseId(Guid courseId)
         {
-            foreach(Enrolment e in enrolments){
-                Console.WriteLine("StudentId: " + e.StudentId + ", CourseId: " + e.CourseId + ", Created at: " + e.CreatedAt.ToString("yyyy-MM-dd"));
-            }
+            return repository.StudentsCountForCourseId(courseId);
         }
 
         public EnrolmentCreateResponse CreateEnrolment(EnrolmentCreateRequest request)
         {
-            Enrolment newEnrolment = EnrolmentCreateRequestToEnrolment(request);
+            Enrolment newEnrolment = EnrolmentMapper.ToEnrolment(request);
 
-            if(FindById(newEnrolment.Id) != null)
+            if(repository.FindById(newEnrolment.Id) != null)
             {
                 throw new ArgumentException("Enrolmentul se afla deja in baza de date");
             }
-            enrolments.Add(newEnrolment);
 
-            return EnrolmentToEnrolmentCreateResponse(newEnrolment);
+            repository.Add(newEnrolment);
+
+            return EnrolmentMapper.ToCreateResponse(newEnrolment);
         }
 
-        public void ReadEnrolments()
+        public EnrolmentUpdateResponse UpdateEnrolment(Guid id, EnrolmentUpdateRequest request)
         {
-            string path = Path.Combine("..", "..", "..", "Data", "enrolments.txt");
-            using (var reader = new StreamReader(path))
-            {
-                string line = "";
-                while ((line = reader.ReadLine()) != null)
-                {
-                    enrolments.Add(new Enrolment(line));
-                }
-            }
-        }
+            Enrolment enrolment = repository.FindById(id);
 
-        public EnrolmentUpdateResponse UpdateEnrolment(Guid id,EnrolmentUpdateRequest request)
-        {
-            Enrolment enrolment = FindById(id);
             if (enrolment == null) {
                 throw new ArgumentException("Enrolmentul nu se afla in baza de date");
             }
@@ -86,62 +64,19 @@ namespace stefan_academy_vanilla_charp.Enrolments.Services
             enrolment.StudentId = request.StudentId;
             enrolment.CourseId = request.CourseId;
 
-            return EnrolmentToEnrolmentUpdateRespone(enrolment);
+            return EnrolmentMapper.ToUpdateResponse(enrolment);
         }
 
         public void DeleteEnrolment(Guid id)
         {
-            for(int i = 0; i < enrolments.Count; i++)
-            {
-                if(enrolments[i].Id == id)
-                {
-                    enrolments.RemoveAt(i);
-                    return;
-                }
-            }
-        }
+            Enrolment enrolment = repository.FindById(id);
 
-        public string EnrolmentsListToString()
-        {
-            string list = "";
-            for(int i = 0; i < enrolments.Count; i++)
+            if (enrolment == null) 
             {
-                if(i + 1 == enrolments.Count)
-                {
-                   list+=enrolments[i].Id+","+enrolments[i].StudentId+","+enrolments[i].CourseId+","+enrolments[i].CreatedAt.ToString("yyyy-MM-dd");
-                }
-                else
-                {
-                   list += enrolments[i].Id+","+enrolments[i].StudentId+","+enrolments[i].CourseId+","+enrolments[i].CreatedAt.ToString("yyyy-MM-dd")+"\n";
-                }
-            }
-            return list;
-        }
-
-        public void Save()
-        {
-            string path = Path.Combine("..", "..", "..", "Data", "enrolments.txt");
-            using (var writer = new StreamWriter(path))
-            {
-                string list = EnrolmentsListToString();
-                writer.Write(list);
-            }
-        }
-
-        //Functions
-
-        public int StudentsCountForCourseId(Guid courseId)
-        {
-            int index = 0;
-            foreach (Enrolment enr in enrolments)
-            {
-                if(enr.CourseId == courseId)
-                {
-                    index++;
-                }
+                throw new ArgumentException("Enrolmentul nu exista in baza de date");
             }
 
-            return index;
-        }
+            repository.Remove(enrolment);
+        }        
     }
 }

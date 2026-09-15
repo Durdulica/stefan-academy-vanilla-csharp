@@ -4,7 +4,7 @@ using stefan_academy_vanilla_charp.Books.Repositories;
 using stefan_academy_vanilla_charp.Books.Services;
 using stefan_academy_vanilla_charp.Books.Models;
 using stefan_academy_vanilla_charp.Books.Dtos;
-using stefan_academy_vanilla_charp.Enrolments.Models;
+using stefan_academy_vanilla_charp.Enrolments.Dtos;
 using stefan_academy_vanilla_charp.Enrolments.Services;
 using stefan_academy_vanilla_charp.Users.Models;
 
@@ -14,7 +14,7 @@ namespace stefan_academy_vanilla_charp
     {
         private CourseService courseService = new();
         private BookService bookService = new(new BookRepository());
-        private EnrolmentService enrolmentService = new();
+        private EnrolmentService enrolmentService = new(new Enrolments.Repositories.EnrolmentRepository());
 
         private User loggedUser;
 
@@ -32,7 +32,6 @@ namespace stefan_academy_vanilla_charp
                 Console.WriteLine("Apasati tasta 1 pentru a lucra cu CARTI");
                 Console.WriteLine("Apasati tasta 2 pentru a lucra cu CURSURI");
                 Console.WriteLine("Apasati tasta 3 pentru a vedea statisticile");
-                tasta = Int32.Parse(Console.ReadLine());
 
                 if(!Int32.TryParse(Console.ReadLine(), out tasta))
                 {
@@ -98,8 +97,6 @@ namespace stefan_academy_vanilla_charp
                 Console.WriteLine("Apasati tasta 2 pentru a va inscrie la un curs");
                 Console.WriteLine("Apasati tasta 3 pentru a va dezabona de la un curs");
 
-                tasta = Int32.Parse(Console.ReadLine());
-
                 if (!Int32.TryParse(Console.ReadLine(), out tasta))
                 {
                     InputGresit();
@@ -124,7 +121,6 @@ namespace stefan_academy_vanilla_charp
             {
                 Console.WriteLine("Apasati tasta 0 pentru a va intoarce");
                 Console.WriteLine("Apasati tasta 1 pentru a vedea cursul cu cei mai multi elevi");
-                tasta = Int32.Parse(Console.ReadLine());
 
                 if (!Int32.TryParse(Console.ReadLine(), out tasta))
                 {
@@ -261,8 +257,7 @@ namespace stefan_academy_vanilla_charp
                 Console.WriteLine("Sunteti deja inscris la acest curs!");
                 return;
             }
-
-            enrolmentService.Enrolments.Add(new Enrolment(loggedUser.Id, course.Id, DateTime.Now));
+            enrolmentService.CreateEnrolment(new EnrolmentCreateRequest(loggedUser.Id, course.Id, DateTime.Now));
             Console.WriteLine("Ati fost inscris cu succes la curs!");
         }
 
@@ -298,7 +293,7 @@ namespace stefan_academy_vanilla_charp
 
             foreach (Course c in courses)
             {
-                int aux = enrolmentService.StudentsCountForCourseId(c.Id);
+                int aux = enrolmentService.GetStudentsCountForCourseId(c.Id);
                 Console.WriteLine(aux);
                 if(aux > index)
                 {

@@ -1,5 +1,4 @@
 ﻿using stefan_academy_vanilla_charp.Common;
-using stefan_academy_vanilla_charp.Users.Dtos;
 
 namespace stefan_academy_vanilla_charp.Users.Models
 {
@@ -132,34 +131,5 @@ namespace stefan_academy_vanilla_charp.Users.Models
                 age = value;
             }
         }
-
-        /*public virtual string ToText(int cnt, int size)
-        {
-            string list = "";
-            if (cnt + 1 == size)
-            {
-                list += "USER," + Id + "," + FirstName + "," + LastName + "," + Email + "," + Age;
-            }
-            else
-            {
-                list += "USER," + Id + "," + FirstName + "," + LastName + "," + Email + "," + Age + "\n";
-            }
-            return list;
-        }
-
-        public virtual void Create(UserCreateRequest request)
-        {
-            FirstName = request.FirstName;
-            LastName = request.LastName;
-            Email = request.Email;
-            Age = request.Age;
-        }
-
-        public virtual void Update(UserUpdateRequest request)
-        {
-            FirstName = request.FirstName;
-            LastName = request.LastName;
-            Email = request.Email;
-        }*/
     }
 }

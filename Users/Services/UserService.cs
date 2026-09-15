@@ -105,6 +105,8 @@ namespace stefan_academy_vanilla_charp.Users.Services
             return UserMapper.ToAdminUpdateResponse(admin);
         }
 
+
+
         public void DeleteUser(Guid id)
         {
             User user = repository.FindById(id);

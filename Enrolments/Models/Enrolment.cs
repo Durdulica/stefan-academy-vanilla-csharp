@@ -1,25 +1,22 @@
-﻿namespace stefan_academy_vanilla_charp.Enrolments.Models
+﻿using stefan_academy_vanilla_charp.Common;
+
+namespace stefan_academy_vanilla_charp.Enrolments.Models
 {
-    public class Enrolment
+    public class Enrolment : IEntity
     {
-        public Guid Id { get; set; } = Guid.NewGuid();
+        public Guid Id { get; private set; }
         public Guid StudentId { get; set; } = Guid.Empty;
         public Guid CourseId { get; set; } = Guid.Empty;
         public DateTime CreatedAt { get; set; } = DateTime.Now;
 
-        public Enrolment(string text)
-        {
-            string[] cuv = text.Split(',');
-            Id = Guid.Parse(cuv[0]);
-            StudentId = Guid.Parse(cuv[1]);
-            CourseId = Guid.Parse(cuv[2]);
-            CreatedAt = DateTime.Parse(cuv[3]);
-        }
-
-        public Enrolment(Guid studentId, Guid courseId, DateTime createdAt) {
+        public Enrolment(Guid id, Guid studentId, Guid courseId, DateTime createdAt) {
+            Id = id;
             StudentId = studentId;
             CourseId = courseId;
             CreatedAt = createdAt;
         }
-    }
+
+        public Enrolment(Guid studentId, Guid courseId, DateTime createdAt) 
+            : this(Guid.NewGuid(), studentId, courseId, createdAt) { }
+        }
 }

@@ -1,10 +1,13 @@
 ﻿using stefan_academy_vanilla_charp.Common;
+using stefan_academy_vanilla_charp.Enrolments.Mappers;
 using stefan_academy_vanilla_charp.Enrolments.Models;
 
 namespace stefan_academy_vanilla_charp.Enrolments.Repositories
 {
     public class EnrolmentRepository : Repository<Enrolment>
     {
+        public EnrolmentRepository() : base(new EnrolmentTextMapper(), Path.Combine("..", "..", "..", "Data", "enrolments.txt")) { }
+
         public Enrolment FindById(Guid id)
         {
             foreach (Enrolment enr in Items)
@@ -16,7 +19,7 @@ namespace stefan_academy_vanilla_charp.Enrolments.Repositories
 
         public List<Guid> GetEnrolmentIdByStudentId(Guid studentId)
         {
-            List<Guid> studentEnrolments = new List<Guid>();
+            List<Guid> studentEnrolments = new();
             studentEnrolments.Capacity = Items.Count;
 
             for (int i = 0; i < Items.Count; i++)
@@ -55,6 +58,20 @@ namespace stefan_academy_vanilla_charp.Enrolments.Repositories
             }
 
             return courses;
+        }
+
+        public int StudentsCountForCourseId(Guid courseId)
+        {
+            int index = 0;
+            foreach (Enrolment enr in Items)
+            {
+                if (enr.CourseId == courseId)
+                {
+                    index++;
+                }
+            }
+
+            return index;
         }
     }
 }
