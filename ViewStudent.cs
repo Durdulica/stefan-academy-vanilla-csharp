@@ -12,7 +12,7 @@ namespace stefan_academy_vanilla_charp
 {
     public class ViewStudent
     {
-        private CourseService courseService = new();
+        private CourseService courseService = new(new Courses.Repositories.CourseRepository());
         private BookService bookService = new(new BookRepository());
         private EnrolmentService enrolmentService = new(new Enrolments.Repositories.EnrolmentRepository());
 
@@ -65,8 +65,6 @@ namespace stefan_academy_vanilla_charp
                 Console.WriteLine("Apasati tasta 2 pentru a adauga o carte");
                 Console.WriteLine("Apasati tasta 3 pentru a modifica o carte");
                 Console.WriteLine("Apasati tasta 4 pentru a sterge o carte");
-
-                tasta = Int32.Parse(Console.ReadLine());
 
                 if (!Int32.TryParse(Console.ReadLine(), out tasta))
                 {
@@ -245,7 +243,7 @@ namespace stefan_academy_vanilla_charp
             Console.Write("Numele cursului la care doriti sa va inscrieti: ");
             string text = Console.ReadLine();
 
-            Course course = courseService.FindByName(text);
+            Course course = courseService.GetByName(text);
             if (course == null)
             {
                 Console.WriteLine("Cursul nu a fost gasit!");
@@ -266,7 +264,7 @@ namespace stefan_academy_vanilla_charp
             Console.Write("Numele cursului de la care doriti sa va dezabonati");
             string text = Console.ReadLine();
 
-            Course course = courseService.FindByName(text);
+            Course course = courseService.GetByName(text);
 
             if(course == null)
             {
@@ -287,14 +285,14 @@ namespace stefan_academy_vanilla_charp
 
         public void CursTopStudenti()
         {
-            List<Course> courses = courseService.Courses;
+            List<Course> courses = courseService.GetCourses();
             Course course = null;
             int index = -1;
 
             foreach (Course c in courses)
             {
                 int aux = enrolmentService.GetStudentsCountForCourseId(c.Id);
-                Console.WriteLine(aux);
+
                 if(aux > index)
                 {
                     index = aux;

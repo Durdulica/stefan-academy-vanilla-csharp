@@ -1,177 +1,83 @@
 ﻿using stefan_academy_vanilla_charp.Courses.Dtos;
+using stefan_academy_vanilla_charp.Courses.Mappers;
 using stefan_academy_vanilla_charp.Courses.Models;
+using stefan_academy_vanilla_charp.Courses.Repositories;
 
 namespace stefan_academy_vanilla_charp.Courses.Services
 {
     public class CourseService
     {
-        private readonly List<Course> courses = new();
+        private readonly CourseRepository repository;
 
-        public CourseService()
+        public CourseService(CourseRepository repository)
         {
-            ReadCourses();
-        }
-
-        //Finders
-
-        public Course FindById(Guid id)
-        {
-            foreach (Course c in courses)
-            {
-                if (id.CompareTo(c.Id) == 0)
-                {
-                    return c;
-                }
-            }
-            return null;
-        }
-
-        public List<Course> GetCourseListByCourseId(List<Guid> coursesId)
-        {
-            List<Course> studentCourses = new();
-
-            foreach (Guid id in coursesId)
-            {
-                Course c = FindById(id);
-                if (c != null) studentCourses.Add(c);
-            }
-
-            return studentCourses;
-        }
-
-        public Course FindByName(string name)
-        {
-            foreach (Course c in courses)
-            {
-                if (c.Name == name)
-                {
-                    return c;
-                }
-            }
-            return null;
-        }
-
-        //Mappers
-
-        public Course CourseCreateRequestToCourse(CourseCreateRequest request)
-        {
-            return new Course(request.Name, request.Department);
-        }
-
-        public CourseCreateResponse CourseToCourseCreateResponse(Course course)
-        {
-            return new CourseCreateResponse
-            {
-                Name = course.Name,
-                Department = course.Department,
-            };
-        }
-
-        public CourseUpdateResponse CourseToCourseUpdateResponse(Course course)
-        {
-            return new CourseUpdateResponse
-            {
-                Name = course.Name,
-                Department = course.Department,
-            };
+            this.repository = repository;
         }
 
         //Afisare
 
-        public void AfisareCourses()
-        {
-            foreach (Course c in courses)
-            {
-                Console.WriteLine("nume: " + c.Name + ", departament: " + c.Department);
-            }
-        }
+        //public void AfisareCourses()
+        //{
+        //    foreach (Course c in courses)
+        //    {
+        //        Console.WriteLine("nume: " + c.Name + ", departament: " + c.Department);
+        //    }
+        //}
 
         //CRUD
 
-        public List<Course> Courses
+        public List<Course> GetCourses()
         {
-            get { return courses; }
+            return repository.Courses();
+        }
+
+        public Course GetByName(string name)
+        {
+            return repository.FindByName(name);
+        }
+
+        public List<Course> GetCourseListByCourseId(List<Guid> coursesId)
+        {
+            return repository.GetCourseListByCourseId(coursesId);
         }
 
         public CourseCreateResponse CreateCourse(CourseCreateRequest request)
         {
-            Course newCourse = CourseCreateRequestToCourse(request);
+            Course newCourse = CourseMapper.ToCourse(request);
 
-            if (FindById(newCourse.Id) != null)
+            if (repository.FindById(newCourse.Id) != null)
             {
                 throw new ArgumentException("Cursul se afla deja in baza de date");
             }
-            courses.Add(newCourse);
 
-            return CourseToCourseCreateResponse(newCourse);
-        }
+            repository.Add(newCourse);
 
-        private void ReadCourses()
-        {
-            string path = Path.Combine("..", "..", "..", "Data", "courses.txt");
-
-            using (var reader = new StreamReader(path))
-            {
-                string list = "";
-                while ((list = reader.ReadLine()) != null)
-                {
-                    courses.Add(new Course(list));
-                }
-            }
-            ;
+            return CourseMapper.ToCreateResponse(newCourse);
         }
 
         public CourseUpdateResponse UpdateCourse(Guid id, CourseUpdateRequest request)
         {
-            Course course = FindById(id);
+            Course course = repository.FindById(id);
             if (course == null)
             {
                 throw new ArgumentException("Cursul nu exista in baza de date");
             }
 
-            course.Name = request.Name;
-            course.Department = request.Department;
+            CourseMapper.ApplyUpdate(course, request);
 
-            return CourseToCourseUpdateResponse(course);
+            return CourseMapper.ToUpdateResponse(course);
         }
 
         public void DeleteCourse(Guid id)
         {
-            for (int i = 0; i < courses.Count; i++)
-            {
-                if (id.CompareTo(courses[i].Id) == 0)
-                {
-                    courses.RemoveAt(i);
-                    return;
-                }
-            }
-        }
-       
-        public string CoursesListToString()
-        {
-            string list = "";
-            for(int i = 0; i < courses.Count; i++)
-            {
-                if (i + 1 == courses.Count)
-                {
-                    list += courses[i].Id + "," + courses[i].Name + "," + courses[i].Department;
-                }
-                else
-                {
-                    list += courses[i].Id + "," + courses[i].Name + "," + courses[i].Department + "\n";
-                }
-            }
-            return list;
-        }
+            Course course = repository.FindById(id);
 
-        public void Save()
-        {
-            string path = Path.Combine("..", "..", "..", "Data", "courses.txt");
-            using (StreamWriter writer = new StreamWriter(path))
+            if (course == null)
             {
-                string list = CoursesListToString();
-                writer.Write(list);
+                throw new ArgumentException("Cursul nu exista in baza de date");
             }
+
+            repository.Remove(course);
         }
     }
 }

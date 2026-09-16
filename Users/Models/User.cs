@@ -89,17 +89,19 @@ namespace stefan_academy_vanilla_charp.Users.Models
             get { return email; }
             set
             {
-                if (value.Length == 0)
+                string text = value.Trim();
+
+                if (text.Length == 0)
                 {
                     throw new ArgumentException("Emailul nu poate fi gol");
                 }
 
-                if (value.Length < 7 || value.Length > 40)
+                if (text.Length < 7 || text.Length > 40)
                 {
                     throw new ArgumentException("Emailul trebuie sa aiba intre 7 si 40 de caractere");
                 }
 
-                string text = value.Trim();
+                
 
                 if (!text.Contains("@gmail") && !text.Contains("@yahoo") && !text.Contains("@hotmail"))
                 {

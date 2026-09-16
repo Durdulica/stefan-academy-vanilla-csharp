@@ -7,14 +7,14 @@ namespace stefan_academy_vanilla_charp.Books.Mappers
     {
         public string ToText(Book item)
         {
-            return "BOOK," + item.Id + "," + item.StudentId + "," + item.BookName + "," + item.CreatedAt.ToString("yyyy-MM-dd");
+            return item.Id + "," + item.StudentId + "," + item.BookName + "," + item.CreatedAt.ToString("yyyy-MM-dd");
         }
 
         public Book FromText(string text)
         {
             string[] cuv = text.Split(',');
 
-            return new Book(Guid.Parse(cuv[1]), Guid.Parse(cuv[2]), cuv[3], DateTime.Parse(cuv[4]));
+            return new Book(Guid.Parse(cuv[0]), Guid.Parse(cuv[1]), cuv[2], DateTime.Parse(cuv[3]));
         }
     }
 }

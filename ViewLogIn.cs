@@ -5,7 +5,7 @@ namespace stefan_academy_vanilla_charp
 {
     public class ViewLogIn
     {
-        /*public void Logger()
+        public void Logger()
         {
             UserService service = new UserService(new Users.Repositories.UserRepository());
 
@@ -18,7 +18,7 @@ namespace stefan_academy_vanilla_charp
             Console.Write("Prenumele: ");
             string firstName = Console.ReadLine();
 
-            //User user = service.repository.GetByFirstAndLastName(firstName, lastName);
+            User user = service.GetUserByFirstAndLastName(firstName, lastName);
 
             if (user == null) {
                 throw new ArgumentException("Userul nu aceste credentiale nu exista");
@@ -66,6 +66,6 @@ namespace stefan_academy_vanilla_charp
             {
                 throw new ArgumentException("Error on user type");
             }
-        }*/
+        }
     }
 }

@@ -1,16 +1,12 @@
-﻿namespace stefan_academy_vanilla_charp.Courses.Models
+﻿using stefan_academy_vanilla_charp.Common;
+
+namespace stefan_academy_vanilla_charp.Courses.Models
 {
-    public class Course
+    public class Course : IEntity
     {
-        public Guid Id { get; set; } = Guid.NewGuid();
+        public Guid Id { get; private set; }
         private string name = string.Empty;
         private string department = string.Empty;
-
-        public Course()
-        {
-            Name = "necunoscut";
-            Department = "necunoscut";
-        }
 
         public Course(string name, string department)
         {
@@ -18,12 +14,9 @@
             Department = department;
         }
 
-        public Course(string text)
+        public Course(Guid id, string name, string department) : this(name, department)
         {
-            string[] cuv = text.Split(',');
-            Id = Guid.Parse(cuv[0]);
-            Name = cuv[1];
-            Department = cuv[2];
+            Id = id;
         }
 
         public string Name

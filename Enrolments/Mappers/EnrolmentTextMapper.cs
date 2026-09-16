@@ -14,7 +14,7 @@ namespace stefan_academy_vanilla_charp.Enrolments.Mappers
         {
             string[] cuv = text.Split(',');
 
-            return new Enrolment(Guid.Parse(cuv[1]), Guid.Parse(cuv[2]), Guid.Parse(cuv[3]), DateTime.Parse(cuv[4]));
+            return new Enrolment(Guid.Parse(cuv[0]), Guid.Parse(cuv[1]), Guid.Parse(cuv[2]), DateTime.Parse(cuv[3]));
         }
     }
 }

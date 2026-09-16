@@ -1,8 +1,6 @@
-﻿using stefan_academy_vanilla_charp.Common;
-
-namespace stefan_academy_vanilla_charp.Users.Models
+﻿namespace stefan_academy_vanilla_charp.Users.Models
 {
-    public class Admin : User, ITextMapper<Admin>
+    public class Admin : User
     {
         private int salary = 0;
         private string password = string.Empty;
@@ -50,19 +48,6 @@ namespace stefan_academy_vanilla_charp.Users.Models
 
                 password = value;
             }
-        }
-
-        public string ToText(Admin item)
-        {
-            return "ADMIN," + Id + "," + FirstName + "," + LastName + "," + Email
-                    + "," + Age + "," + Salary + "," + Password;
-        }
-
-       public Admin FromText(string text)
-        {
-            string []cuv = text.Split(',');
-
-            return new Admin(Guid.Parse(cuv[1]), cuv[2], cuv[3], cuv[4], Int32.Parse(cuv[5]), Int32.Parse(cuv[6]), cuv[7]);
         }
     }
 }

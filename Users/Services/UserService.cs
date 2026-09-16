@@ -19,12 +19,15 @@ namespace stefan_academy_vanilla_charp.Users.Services
             return repository.FindById(id);
         }
 
+        public User GetUserByFirstAndLastName(string firstName, string lastName)
+        {
+            return repository.GetByFirstAndLastName(firstName, lastName);
+        }
+
         //CRUD
 
         public StudentCreateResponse CreateStudent(StudentCreateRequest request)
         {
-            
-
             if (repository.GetByEmail(request.Email) != null)
             {
                 throw new ArgumentException("Studentul se afla deja in baza de date");
@@ -37,26 +40,24 @@ namespace stefan_academy_vanilla_charp.Users.Services
 
         public TeacherCreateResponse CreateTeacher(TeacherCreateRequest request) 
         {
-            Teacher teacher = UserMapper.ToTeacher(request);
-
-            if (repository.FindById(teacher.Id) != null)
+            if (repository.GetByEmail(request.Email) != null)
             {
                 throw new ArgumentException("Profesorul se afla deja in baza de date");
             }
 
+            Teacher teacher = UserMapper.ToTeacher(request);
             repository.Add(teacher);
             return UserMapper.TeacherToCreateResponse(teacher);
         }
 
         public AdminCreateResponse CreateAdmin(AdminCreateRequest request)
         {
-            Admin admin = UserMapper.ToAdmin(request);
-
-            if (repository.FindById(admin.Id) != null)
+            if (repository.GetByEmail(request.Email) != null)
             {
                 throw new ArgumentException("Adminul se afla deja in baza de date");
             }
 
+            Admin admin = UserMapper.ToAdmin(request);
             repository.Add(admin);
             return UserMapper.AdminToCreateResponse(admin);
         }
@@ -110,6 +111,12 @@ namespace stefan_academy_vanilla_charp.Users.Services
         public void DeleteUser(Guid id)
         {
             User user = repository.FindById(id);
+
+            if (user == null)
+            {
+                throw new ArgumentException("Userul nu exista in baza de date");
+            }
+
             repository.Remove(user);
         }
     }

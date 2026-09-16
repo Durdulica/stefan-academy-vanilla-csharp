@@ -4,7 +4,7 @@ internal class Program
 {
     public static void Main()
     {
-        /*try
+        try
         {
             ViewLogIn logIn = new();
             logIn.Logger();
@@ -12,6 +12,6 @@ internal class Program
         catch (ArgumentException text)
         {
             Console.WriteLine(text);
-        }*/
+        }
     }
 }

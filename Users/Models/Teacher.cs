@@ -1,9 +1,6 @@
-﻿using stefan_academy_vanilla_charp.Common;
-using System.Collections.Generic;
-
-namespace stefan_academy_vanilla_charp.Users.Models
+﻿namespace stefan_academy_vanilla_charp.Users.Models
 {
-    public class Teacher : User, ITextMapper<Teacher>
+    public class Teacher : User
     {
         private int salary = 0;
         private string password;
@@ -72,20 +69,6 @@ namespace stefan_academy_vanilla_charp.Users.Models
                 }
                 workHours = value;
             }
-        }
-
-        public string ToText(Teacher item)
-        {
-            return "TEACHER," + Id + "," + FirstName + "," + LastName + "," + Email
-                    + "," + Age + "," + Salary + "," + WorkHours + "," + Password;
-        }
-
-        public Teacher FromText(string text)
-        {
-            string []cuv = text.Split(',');
-
-            return new Teacher(Guid.Parse(cuv[1]), cuv[2], cuv[3], cuv[4], int.Parse(cuv[5]), 
-                int.Parse(cuv[6]), int.Parse(cuv[7]), cuv[8]);
         }
     }
 }
