@@ -51,14 +51,20 @@ namespace stefan_academy_vanilla_charp.Users.Mappers
             if(item is Student s) { return StudentToText(s); }
             if(item is Teacher t) { return TeacherToText(t); }
             if(item is Admin a) { return AdminToText(a); }
-            return "USER," + item.Id + "," + item.FirstName + "," + item.LastName + "," + item.Email + "," + item.Age;
+            throw new ArgumentException("Unknown user type: " + item.GetType());
         }
 
         public User FromText(string text) 
         {
             string[] cuv = text.Split(',');
 
-            return new User(Guid.Parse(cuv[1]), cuv[2], cuv[3], cuv[4], Int32.Parse(cuv[5]));
+            switch (cuv[0])
+            {
+                case "STUDENT": return StudentFromText(text);
+                case "TEACHER": return TeacherFromText(text);
+                case "ADMIN": return AdminFromText(text);
+                default: throw new ArgumentException("Unknown user type: " + cuv[0]);
+            }
         }
     }
 }

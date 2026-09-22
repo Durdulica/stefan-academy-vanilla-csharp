@@ -8,15 +8,6 @@ namespace stefan_academy_vanilla_charp.Enrolments.Repositories
     {
         public EnrolmentRepository() : base(new EnrolmentTextMapper(), Path.Combine("..", "..", "..", "Data", "enrolments.txt")) { }
 
-        public Enrolment FindById(Guid id)
-        {
-            foreach (Enrolment enr in Items)
-            {
-                if (enr.Id == id) return enr;
-            }
-            return null;
-        }
-
         public List<Guid> GetEnrolmentIdByStudentId(Guid studentId)
         {
             List<Guid> studentEnrolments = new();
