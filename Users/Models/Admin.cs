@@ -28,7 +28,7 @@
             get { return salary; }
             set
             {
-                if(value < 3500)
+                if (value < 4257)
                 {
                     throw new ArgumentException("Salariul trebuie sa fie cel putin minim pe economie");
                 }
@@ -41,7 +41,7 @@
             get { return password; }
             set
             {
-                if(value.Length < 8)
+                if (value.Length < 8)
                 {
                     throw new ArgumentException("Parola trebuie sa aiba cel putin 8 caractere");
                 }

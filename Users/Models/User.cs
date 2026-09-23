@@ -2,7 +2,7 @@
 
 namespace stefan_academy_vanilla_charp.Users.Models
 {
-    public class User : IEntity
+    public  abstract class User : IEntity 
     {
         public Guid Id { get; private set; }
         private string firstName = string.Empty;

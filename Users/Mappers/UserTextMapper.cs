@@ -1,10 +1,14 @@
 ﻿using stefan_academy_vanilla_charp.Common;
+using stefan_academy_vanilla_charp.Users.Factories;
 using stefan_academy_vanilla_charp.Users.Models;
 
 namespace stefan_academy_vanilla_charp.Users.Mappers
 {
     public class UserTextMapper : ITextMapper<User>
     {
+        private IUserFactory[] factories = new IUserFactory[] { new StudentFactory(), new TeacherFactory(), new AdminFactory() };
+        public string Name { get; } = nameof(UserTextMapper);
+
         public static string AdminToText(Admin item)
         {
             return "ADMIN," + item.Id + "," + item.FirstName + "," + item.LastName + "," + item.Email
@@ -58,13 +62,22 @@ namespace stefan_academy_vanilla_charp.Users.Mappers
         {
             string[] cuv = text.Split(',');
 
-            switch (cuv[0])
+            for (int i = 0; i < factories.Length; i++) 
             {
-                case "STUDENT": return StudentFromText(text);
-                case "TEACHER": return TeacherFromText(text);
-                case "ADMIN": return AdminFromText(text);
-                default: throw new ArgumentException("Unknown user type: " + cuv[0]);
+                if (factories[i].Type == cuv[0])
+                {
+                    Send("user type " + cuv[0] + " created succesfully");
+                    return factories[i].Create(cuv);
+                }
             }
+
+            throw new ArgumentException("Unknown user type: " + cuv[0]);
+        }
+
+        public void Send(string message)
+        {
+            Console.ResetColor();
+            Console.WriteLine(Name + ": " + message);
         }
     }
 }

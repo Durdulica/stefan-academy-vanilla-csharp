@@ -119,5 +119,12 @@ namespace stefan_academy_vanilla_charp.Users.Services
 
             repository.Remove(user);
         }
+
+        public User[] Load()
+        {
+            User[] users = new User[10];
+
+            return users;
+        }
     }
 }

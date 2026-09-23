@@ -18,9 +18,16 @@ namespace stefan_academy_vanilla_charp
             Console.Write("Prenumele: ");
             string firstName = Console.ReadLine();
 
+            if (lastName.Length == 0 || firstName.Length == 0) 
+            {
+                Console.WriteLine("Numele si prenumele trebuie introduse!");
+                return;
+            }
+
             User user = service.GetUserByFirstAndLastName(firstName, lastName);
 
-            if (user == null) {
+            if (user == null)
+            {
                 throw new ArgumentException("Userul nu aceste credentiale nu exista");
             }
 

@@ -243,7 +243,14 @@ namespace stefan_academy_vanilla_charp
             Console.Write("Numele cursului la care doriti sa va inscrieti: ");
             string text = Console.ReadLine();
 
+            if (text.Length == 0)
+            {
+                Console.WriteLine("Numele cursului trebuie introdus");
+                return;
+            }
+
             Course course = courseService.GetByName(text);
+
             if (course == null)
             {
                 Console.WriteLine("Cursul nu a fost gasit!");

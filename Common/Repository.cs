@@ -1,6 +1,6 @@
 namespace stefan_academy_vanilla_charp.Common
 {
-    public class Repository<T> where T : class, IEntity
+    public class Repository<T> : IDisplay, ISaver where T : class, IEntity
     {
         private readonly List<T> items = new();
         private readonly ITextMapper<T> mapper;
@@ -33,11 +33,15 @@ namespace stefan_academy_vanilla_charp.Common
         public void Add(T item)
         {
             items.Add(item);
+            Display(nameof(Repository<T>) + ": Item was added");
+            Save();
         }
 
         public void Remove(T item)
         {
             items.Remove(item);
+            Display(nameof(Repository<T>) + ": Item was removed");
+            Save();
         }
 
         public void Save()
@@ -62,6 +66,11 @@ namespace stefan_academy_vanilla_charp.Common
             {
                 items.Add(mapper.FromText(line));
             }
+        }
+
+        public void Display(string message)
+        {
+            Console.WriteLine(message);
         }
     }
 }

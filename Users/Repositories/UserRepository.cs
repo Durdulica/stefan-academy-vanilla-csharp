@@ -1,4 +1,5 @@
 ﻿using stefan_academy_vanilla_charp.Common;
+using stefan_academy_vanilla_charp.Users.Factories;
 using stefan_academy_vanilla_charp.Users.Mappers;
 using stefan_academy_vanilla_charp.Users.Models;
 
