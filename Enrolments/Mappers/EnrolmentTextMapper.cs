@@ -16,14 +16,14 @@ namespace stefan_academy_vanilla_charp.Enrolments.Mappers
         public Enrolment FromText(string text) 
         {
             string[] cuv = text.Split(',');
-            Send("Enrolment created succesfully");
+            Console.WriteLine(Send("Enrolment created succesfully"));
             return new Enrolment(Guid.Parse(cuv[0]), Guid.Parse(cuv[1]), Guid.Parse(cuv[2]),
                 DateTime.ParseExact(cuv[3], "yyyy-MM-dd",CultureInfo.InvariantCulture));
         }
 
-        public void Send(string message)
+        public string Send(string message)
         {
-            Console.WriteLine(Name + " " + message);
+            return Name + " " + message;
         }
     }
 }

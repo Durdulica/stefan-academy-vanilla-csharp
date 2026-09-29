@@ -33,6 +33,7 @@ namespace stefan_academy_vanilla_charp.Common
         public void Add(T item)
         {
             items.Add(item);
+
             Display(nameof(Repository<T>) + ": Item was added");
             Save();
         }

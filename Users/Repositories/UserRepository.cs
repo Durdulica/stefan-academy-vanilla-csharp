@@ -1,5 +1,4 @@
 ﻿using stefan_academy_vanilla_charp.Common;
-using stefan_academy_vanilla_charp.Users.Factories;
 using stefan_academy_vanilla_charp.Users.Mappers;
 using stefan_academy_vanilla_charp.Users.Models;
 
@@ -8,7 +7,7 @@ namespace stefan_academy_vanilla_charp.Users.Repositories
     public class UserRepository : Repository<User>
     {
         public UserRepository() 
-            : base(new UserTextMapper(), Path.Combine("..","..","..","Data","users.txt")) { }
+            : base(new TextMapperCuJurnal<User>(new UserTextMapper()), Path.Combine("..","..","..","Data","users.txt")) { }
 
         public User GetByFirstAndLastName(string firstName, string lastName)
         {

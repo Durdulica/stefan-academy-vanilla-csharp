@@ -15,13 +15,13 @@ namespace stefan_academy_vanilla_charp.Books.Mappers
         public Book FromText(string text)
         {
             string[] cuv = text.Split(',');
-            Send("Book created " + cuv[2] + " succesfully");
+            Console.WriteLine(Send("Book created " + cuv[2] + " succesfully"));
             return new Book(Guid.Parse(cuv[0]), Guid.Parse(cuv[1]), cuv[2], DateTime.Parse(cuv[3]));
         }
 
-        public void Send(string message)
+        public string Send(string message)
         {
-            Console.WriteLine(Name + ": " + message);
+            return Name + ": " + message;
         }
     }
 }

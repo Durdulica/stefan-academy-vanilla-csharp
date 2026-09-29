@@ -1,0 +1,1 @@
+UserTextMapper cu jurnal: UserTextMapper: textul s-a transfomat in T

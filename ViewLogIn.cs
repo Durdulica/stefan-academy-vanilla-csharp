@@ -7,7 +7,7 @@ namespace stefan_academy_vanilla_charp
     {
         public void Logger()
         {
-            UserService service = new UserService(new Users.Repositories.UserRepository());
+            UserService service = new(new Users.Repositories.UserRepository());
 
             Console.WriteLine("==================LOG IN==================");
             Console.Write("\n");
@@ -65,7 +65,7 @@ namespace stefan_academy_vanilla_charp
                 }
             }
             else if (s != null) {
-                ViewStudent viewer = new ViewStudent(user);
+                ViewStudent viewer = new(user);
                 Console.WriteLine("Logat cu succes!");
                 viewer.Viewer();
             }

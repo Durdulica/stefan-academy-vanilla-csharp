@@ -7,6 +7,9 @@ namespace stefan_academy_vanilla_charp.Users.Mappers
     public class UserTextMapper : ITextMapper<User>
     {
         private IUserFactory[] factories = new IUserFactory[] { new StudentFactory(), new TeacherFactory(), new AdminFactory() };
+
+
+
         public string Name { get; } = nameof(UserTextMapper);
 
         public static string AdminToText(Admin item)
@@ -74,10 +77,9 @@ namespace stefan_academy_vanilla_charp.Users.Mappers
             throw new ArgumentException("Unknown user type: " + cuv[0]);
         }
 
-        public void Send(string message)
+        public string Send(string message)
         {
-            Console.ResetColor();
-            Console.WriteLine(Name + ": " + message);
+            return Name + ": " + message;
         }
     }
 }

@@ -15,13 +15,13 @@ namespace stefan_academy_vanilla_charp.Courses.Mappers
         public Course FromText(string text)
         {
             string[] cuv = text.Split(',');
-            Send("Course " + cuv[1] + "created succesfully");
+            Console.WriteLine(Send("Course " + cuv[1] + "created succesfully"));
             return new Course(Guid.Parse(cuv[0]), cuv[1], cuv[2]);
         }
 
-        public void Send(string message)
+        public string Send(string message)
         {
-            Console.WriteLine(Name + " " + message);
+            return Name + " " + message;
         }
     }
 }
