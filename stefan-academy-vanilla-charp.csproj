@@ -18,4 +18,10 @@
     <Folder Include="Data\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Remove="exemplu-exceptii/**" />
+    <None Remove="exemplu-exceptii/**" />
+    <EmbeddedResource Remove="exemplu-exceptii/**" />
+  </ItemGroup>
+
 </Project>
