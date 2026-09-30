@@ -1,6 +1,6 @@
 ﻿namespace stefan_academy_vanilla_charp.Common
 {
-    public class NotificatorTest : INotificator
+    internal class NotificatorTest : INotificator
     {
         public string Name { get { return nameof(NotificatorTest); } }
 

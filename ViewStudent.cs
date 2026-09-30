@@ -13,9 +13,9 @@ namespace stefan_academy_vanilla_charp
 {
     public class ViewStudent
     {
-        private CourseService courseService = new(new Courses.Repositories.CourseRepository());
-        private BookService bookService = new(new BookRepository());
-        private EnrolmentService enrolmentService = new(new Enrolments.Repositories.EnrolmentRepository());
+        private CourseService courseService;
+        private BookService bookService;
+        private EnrolmentService enrolmentService;
 
         private User loggedUser;
 

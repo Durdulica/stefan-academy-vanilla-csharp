@@ -10,7 +10,7 @@ namespace stefan_academy_vanilla_charp
         {
             Users.Repositories.UserRepository repository = new();
             repository.Subscribe(new NotificatorConsola());
-            UserService service = new(new Users.Repositories.UserRepository());
+            UserService service = new(repository);
 
             Console.WriteLine("==================LOG IN==================");
             Console.Write("\n");

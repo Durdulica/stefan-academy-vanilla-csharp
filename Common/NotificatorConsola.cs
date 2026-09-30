@@ -1,6 +1,6 @@
 ﻿namespace stefan_academy_vanilla_charp.Common
 {
-    public class NotificatorConsola : INotificator
+    internal class NotificatorConsola : INotificator
     {
         public string Name
         {
