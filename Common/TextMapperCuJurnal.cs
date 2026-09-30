@@ -1,37 +1,34 @@
-﻿namespace stefan_academy_vanilla_charp.Common
+﻿using stefan_academy_vanilla_charp.Users.Mappers;
+
+namespace stefan_academy_vanilla_charp.Common
 {
-    public class TextMapperCuJurnal<T> : ITextMapper<T>
+    public class TextMapperCuJurnal<T> :  ITextMapper<T> 
     {
         private readonly ITextMapper<T> interior;
-
         public TextMapperCuJurnal(ITextMapper<T> interior) 
         {
-            if (interior == null)
-            {
-                throw new ArgumentNullException(nameof(interior));
-            }
+            ArgumentNullException.ThrowIfNull(nameof(interior));
             this.interior = interior;
         }
 
-        public string Name => interior.Name + " cu jurnal";
-
         public string ToText(T item) 
         {
-            Send(nameof(T) + " s-a fost transformat in text");
+            Write(typeof(T).Name + " s-a fost transformat in text");
             return interior.ToText(item);
         }
 
         public T FromText(string text) 
         {
-            Send("textul s-a transfomat in " + nameof(T));
+            Write("textul s-a transfomat in " + typeof(T).Name);
             return interior.FromText(text);
         }
 
-        public string Send(string message)
+        public string Write(string message)
         {
-            using var writer = new StreamWriter(Path.Combine("..", "..","..", "Data", "jurnal.txt"));
-            
-            writer.Write(Name + ": " + interior.Send(message));
+            using var writer = new StreamWriter(Path.Combine("..", "..", "..", "Data", "jurnal.txt"), true);
+
+            writer.Write("\n" + typeof(UserTextMapper).Name + " cu jurnal: " + message);//?????
+            writer.Close();
             return "";
         }
     }

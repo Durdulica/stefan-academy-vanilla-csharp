@@ -1,11 +1,24 @@
 namespace stefan_academy_vanilla_charp.Common
 {
-    public class Repository<T> : IDisplay, ISaver where T : class, IEntity
+    public class Repository<T> : INotificator where T : class, IEntity
     {
         private readonly List<T> items = new();
         private readonly ITextMapper<T> mapper;
         private readonly string path;
+        private readonly List<INotificator> ascultatori = new();
 
+        public void Subscribe(INotificator ascultator)
+        {
+            ascultatori.Add(ascultator);
+        }
+
+        private void Anunta(string message)
+        {
+            foreach (INotificator ascultator in ascultatori)
+            {
+                ascultator.Send(message);
+            }
+        }
         public Repository(ITextMapper<T> mapper, string path)
         {
             this.mapper = mapper;
@@ -33,15 +46,14 @@ namespace stefan_academy_vanilla_charp.Common
         public void Add(T item)
         {
             items.Add(item);
-
-            Display(nameof(Repository<T>) + ": Item was added");
+            Anunta(nameof(item) + " created successfully");
             Save();
         }
 
         public void Remove(T item)
         {
             items.Remove(item);
-            Display(nameof(Repository<T>) + ": Item was removed");
+            Anunta(nameof(item) + " removed successfully");
             Save();
         }
 
@@ -73,5 +85,13 @@ namespace stefan_academy_vanilla_charp.Common
         {
             Console.WriteLine(message);
         }
+
+
+        public void Send(string message)
+        {
+            //return Name + message;
+        }
+
+        public string Name => $"{typeof(Repository<T>).Name}: ";
     }
 }

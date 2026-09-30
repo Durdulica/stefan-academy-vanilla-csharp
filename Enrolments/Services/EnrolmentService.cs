@@ -7,7 +7,7 @@ namespace stefan_academy_vanilla_charp.Enrolments.Services
 {
     public class EnrolmentService
     {
-        private readonly EnrolmentRepository repository = new();
+        private readonly EnrolmentRepository repository;
 
         public EnrolmentService(EnrolmentRepository repository)
         {

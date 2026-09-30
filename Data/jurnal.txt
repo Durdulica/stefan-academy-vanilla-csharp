@@ -1,1 +1,33 @@
-UserTextMapper cu jurnal: UserTextMapper: textul s-a transfomat in T
+stefan_academy_vanilla_charp.Users.Mappers.UserTextMapper cu jurnal: textul s-a transfomat in UserNotificatorFisier: item created succesfully
+UserTextMapper cu jurnal: textul s-a transfomat in User
+UserTextMapper cu jurnal: textul s-a transfomat in User
+UserTextMapper cu jurnal: textul s-a transfomat in User
+UserTextMapper cu jurnal: textul s-a transfomat in User
+UserTextMapper cu jurnal: textul s-a transfomat in User
+UserTextMapper cu jurnal: textul s-a transfomat in User
+UserTextMapper cu jurnal: textul s-a transfomat in User
+UserTextMapper cu jurnal: textul s-a transfomat in User
+UserTextMapper cu jurnal: textul s-a transfomat in User
+UserTextMapper cu jurnal: textul s-a transfomat in User
+UserTextMapper cu jurnal: textul s-a transfomat in User
+UserTextMapper cu jurnal: textul s-a transfomat in User
+UserTextMapper cu jurnal: textul s-a transfomat in User
+UserTextMapper cu jurnal: textul s-a transfomat in User
+UserTextMapper cu jurnal: textul s-a transfomat in User
+UserTextMapper cu jurnal: textul s-a transfomat in User
+UserTextMapper cu jurnal: textul s-a transfomat in User
+UserTextMapper cu jurnal: textul s-a transfomat in User
+UserTextMapper cu jurnal: textul s-a transfomat in User
+UserTextMapper cu jurnal: textul s-a transfomat in User
+UserTextMapper cu jurnal: textul s-a transfomat in User
+UserTextMapper cu jurnal: textul s-a transfomat in User
+UserTextMapper cu jurnal: textul s-a transfomat in User
+UserTextMapper cu jurnal: textul s-a transfomat in User
+UserTextMapper cu jurnal: textul s-a transfomat in User
+UserTextMapper cu jurnal: textul s-a transfomat in User
+UserTextMapper cu jurnal: textul s-a transfomat in User
+UserTextMapper cu jurnal: textul s-a transfomat in User
+UserTextMapper cu jurnal: textul s-a transfomat in User
+UserTextMapper cu jurnal: textul s-a transfomat in User
+UserTextMapper cu jurnal: textul s-a transfomat in User
+UserTextMapper cu jurnal: textul s-a transfomat in UserNotificatorFisier: item created succesfully

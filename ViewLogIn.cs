@@ -1,5 +1,6 @@
-﻿using stefan_academy_vanilla_charp.Users.Services;
+﻿using stefan_academy_vanilla_charp.Common;
 using stefan_academy_vanilla_charp.Users.Models;
+using stefan_academy_vanilla_charp.Users.Services;
 
 namespace stefan_academy_vanilla_charp
 {
@@ -7,6 +8,8 @@ namespace stefan_academy_vanilla_charp
     {
         public void Logger()
         {
+            Users.Repositories.UserRepository repository = new();
+            repository.Subscribe(new NotificatorConsola());
             UserService service = new(new Users.Repositories.UserRepository());
 
             Console.WriteLine("==================LOG IN==================");
@@ -17,6 +20,12 @@ namespace stefan_academy_vanilla_charp
 
             Console.Write("Prenumele: ");
             string firstName = Console.ReadLine();
+
+            if(lastName == null || firstName == null) 
+            {
+                Console.WriteLine("Input gresit!!!!!");
+                return;
+            }
 
             if (lastName.Length == 0 || firstName.Length == 0) 
             {

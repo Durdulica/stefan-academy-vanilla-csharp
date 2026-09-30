@@ -1,9 +1,10 @@
-﻿using stefan_academy_vanilla_charp.Courses.Services;
-using stefan_academy_vanilla_charp.Courses.Models;
+﻿using stefan_academy_vanilla_charp.Books.Dtos;
+using stefan_academy_vanilla_charp.Books.Models;
 using stefan_academy_vanilla_charp.Books.Repositories;
 using stefan_academy_vanilla_charp.Books.Services;
-using stefan_academy_vanilla_charp.Books.Models;
-using stefan_academy_vanilla_charp.Books.Dtos;
+using stefan_academy_vanilla_charp.Common;
+using stefan_academy_vanilla_charp.Courses.Models;
+using stefan_academy_vanilla_charp.Courses.Services;
 using stefan_academy_vanilla_charp.Enrolments.Dtos;
 using stefan_academy_vanilla_charp.Enrolments.Services;
 using stefan_academy_vanilla_charp.Users.Models;
@@ -21,6 +22,15 @@ namespace stefan_academy_vanilla_charp
         public ViewStudent(User user)
         {
             loggedUser = user;
+
+            BookRepository bookRepository = new();
+
+            bookRepository.Subscribe(new NotificatorTest());
+            bookRepository.Subscribe(new NotificatorFisier(Path.Combine("..", "..", "..", "Data", "jurnal.txt")));
+
+            bookService = new(bookRepository);
+            courseService = new(new Courses.Repositories.CourseRepository());
+            enrolmentService = new(new Enrolments.Repositories.EnrolmentRepository());
         }
         public void Viewer()
         {

@@ -3,6 +3,6 @@
     public interface INotificator
     {
         string Name { get; }
-        string Send(string message);
+        void Send(string message);
     }
 }
