@@ -51,6 +51,12 @@ namespace stefan_academy_vanilla_charp.Common
             Save();
         }
 
+        public void Update(T item)
+        {
+            Anunta(typeof(T).Name + " updated successfully");
+            Save();
+        }
+
         public void Remove(T item)
         {
             items.Remove(item);

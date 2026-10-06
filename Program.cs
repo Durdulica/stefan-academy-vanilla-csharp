@@ -11,7 +11,7 @@ internal class Program
         }
         catch (ArgumentException text)
         {
-            Console.WriteLine(text);
+            Console.WriteLine(text.Message);
         }
     }
 }

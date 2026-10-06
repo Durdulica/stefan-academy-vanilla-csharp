@@ -7,6 +7,5 @@
 
         public Student(string firstName, string lastName, string email, int age) 
             : base(firstName, lastName, email, age) { }
-
     }
 }

@@ -1,4 +1,5 @@
-﻿using stefan_academy_vanilla_charp.Courses.Dtos;
+﻿using stefan_academy_vanilla_charp.Common.Exceptions;
+using stefan_academy_vanilla_charp.Courses.Dtos;
 using stefan_academy_vanilla_charp.Courses.Mappers;
 using stefan_academy_vanilla_charp.Courses.Models;
 using stefan_academy_vanilla_charp.Courses.Repositories;
@@ -45,9 +46,9 @@ namespace stefan_academy_vanilla_charp.Courses.Services
         {
             Course newCourse = CourseMapper.ToCourse(request);
 
-            if (repository.FindById(newCourse.Id) != null)
+            if (repository.FindByName(newCourse.Name) != null)
             {
-                throw new ArgumentException("Cursul se afla deja in baza de date");
+                throw new DuplicateException("Cursul", newCourse.Name);
             }
 
             repository.Add(newCourse);
@@ -60,11 +61,11 @@ namespace stefan_academy_vanilla_charp.Courses.Services
             Course course = repository.FindById(id);
             if (course == null)
             {
-                throw new ArgumentException("Cursul nu exista in baza de date");
+                throw new NotFoundException("Cursul", id.ToString());
             }
 
             CourseMapper.ApplyUpdate(course, request);
-
+            repository.Update(course);
             return CourseMapper.ToUpdateResponse(course);
         }
 
@@ -74,7 +75,7 @@ namespace stefan_academy_vanilla_charp.Courses.Services
 
             if (course == null)
             {
-                throw new ArgumentException("Cursul nu exista in baza de date");
+                throw new NotFoundException("Cursul", id.ToString());
             }
 
             repository.Remove(course);

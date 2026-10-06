@@ -1,4 +1,5 @@
-﻿using stefan_academy_vanilla_charp.Users.Dtos;
+﻿using stefan_academy_vanilla_charp.Common.Exceptions;
+using stefan_academy_vanilla_charp.Users.Dtos;
 using stefan_academy_vanilla_charp.Users.Mappers;
 using stefan_academy_vanilla_charp.Users.Models;
 using stefan_academy_vanilla_charp.Users.Repositories;
@@ -30,7 +31,7 @@ namespace stefan_academy_vanilla_charp.Users.Services
         {
             if (repository.GetByEmail(request.Email) != null)
             {
-                throw new ArgumentException("Studentul se afla deja in baza de date");
+                throw new DuplicateException("Studentul", request.Email);
             }
 
             Student student = UserMapper.ToStudent(request);
@@ -42,7 +43,7 @@ namespace stefan_academy_vanilla_charp.Users.Services
         {
             if (repository.GetByEmail(request.Email) != null)
             {
-                throw new ArgumentException("Profesorul se afla deja in baza de date");
+                throw new DuplicateException("Profesorul", request.Email);
             }
 
             Teacher teacher = UserMapper.ToTeacher(request);
@@ -54,7 +55,7 @@ namespace stefan_academy_vanilla_charp.Users.Services
         {
             if (repository.GetByEmail(request.Email) != null)
             {
-                throw new ArgumentException("Adminul se afla deja in baza de date");
+                throw new DuplicateException("Adminul", request.Email);
             }
 
             Admin admin = UserMapper.ToAdmin(request);
@@ -70,11 +71,11 @@ namespace stefan_academy_vanilla_charp.Users.Services
             
             if(student == null)
             {
-                throw new ArgumentException("Studentul nu exista in baza de date");
+                throw new NotFoundException("Studentul", id.ToString());
             }
 
             UserMapper.ApplyStudentUpdate(student, request);
-
+            repository.Update(student);
             return UserMapper.ToStudentUpdateResponse(student);
         }
 
@@ -84,11 +85,11 @@ namespace stefan_academy_vanilla_charp.Users.Services
 
             if (teacher == null)
             {
-                throw new ArgumentException("Profesorul nu exista in baza de date");
+                throw new NotFoundException("Profesorul", id.ToString());
             }
 
             UserMapper.ApplyTeacherUpdate(teacher, request);
-
+            repository.Update(teacher);
             return UserMapper.ToTeacherUpdateResponse(teacher);
         }
 
@@ -98,11 +99,11 @@ namespace stefan_academy_vanilla_charp.Users.Services
 
             if (admin == null)
             {
-                throw new ArgumentException("Adminul nu exista in baza de date");
+                throw new NotFoundException("Adminul", id.ToString());
             }
 
             UserMapper.ApplyAdminUpdate(admin, request);
-
+            repository.Update(admin);
             return UserMapper.ToAdminUpdateResponse(admin);
         }
 
@@ -114,7 +115,7 @@ namespace stefan_academy_vanilla_charp.Users.Services
 
             if (user == null)
             {
-                throw new ArgumentException("Userul nu exista in baza de date");
+                throw new NotFoundException("Userul", id.ToString());
             }
 
             repository.Remove(user);

@@ -39,7 +39,7 @@ namespace stefan_academy_vanilla_charp.Books.Models
 
                 foreach (char ch in text)
                 {
-                    bool caracterPermis = char.IsLetterOrDigit(ch);
+                    bool caracterPermis = char.IsLetterOrDigit(ch) || ch == ' ';
                     if (!caracterPermis)
                     {
                         throw new ArgumentException("Numele contine caractere nepermise");

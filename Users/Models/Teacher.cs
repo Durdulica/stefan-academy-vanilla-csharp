@@ -1,4 +1,6 @@
-﻿namespace stefan_academy_vanilla_charp.Users.Models
+﻿using stefan_academy_vanilla_charp.Common.Exceptions;
+
+namespace stefan_academy_vanilla_charp.Users.Models
 {
     public class Teacher : User
     {
@@ -33,7 +35,7 @@
             {
                 if (value < 4257)
                 {
-                    throw new ArgumentException("Salariul trebuie sa fie cel putin minim pe economie");
+                    throw new ValidationException("Salariul", "trebuie sa fie cel putin minim pe economie");
                 }
                 salary = value;
             }
@@ -44,9 +46,13 @@
             get { return password; }
             set
             {
+                if (value.Contains(","))
+                {
+                    throw new ValidationException("Parola", " nu poate contine caracterul ','");
+                }
                 if (value.Length < 8)
                 {
-                    throw new ArgumentException("Parola trebuie sa aiba cel putin 8 caractere");
+                    throw new ValidationException("Parola", "trebuie sa aiba cel putin 8 caractere");
                 }
 
                 password = value;
@@ -60,12 +66,12 @@
             {
                 if (value < 25)
                 {
-                    throw new ArgumentException("Profesorul nu are destule ore alocate");
+                    throw new ValidationException("Profesorul", "nu are destule ore alocate");
                 }
 
                 if (value > 45)
                 {
-                    throw new ArgumentException("Profesorul are prea multe ore alocate");
+                    throw new ValidationException("Profesorul", "are prea multe ore alocate");
                 }
                 workHours = value;
             }

@@ -1,6 +1,4 @@
-﻿using stefan_academy_vanilla_charp.Users.Mappers;
-
-namespace stefan_academy_vanilla_charp.Common
+﻿namespace stefan_academy_vanilla_charp.Common
 {
     public class TextMapperCuJurnal<T> :  ITextMapper<T> 
     {
@@ -28,7 +26,6 @@ namespace stefan_academy_vanilla_charp.Common
             using var writer = new StreamWriter(Path.Combine("..", "..", "..", "Data", "jurnal.txt"), true);
 
             writer.WriteLine(typeof(T).Name + " cu jurnal: " + message);
-            writer.Close();
         }
     }
 }

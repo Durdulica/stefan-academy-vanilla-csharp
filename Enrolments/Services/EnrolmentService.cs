@@ -1,4 +1,6 @@
-﻿using stefan_academy_vanilla_charp.Enrolments.Dtos;
+﻿using stefan_academy_vanilla_charp.Common.Exceptions;
+using stefan_academy_vanilla_charp.Courses.Models;
+using stefan_academy_vanilla_charp.Enrolments.Dtos;
 using stefan_academy_vanilla_charp.Enrolments.Mappers;
 using stefan_academy_vanilla_charp.Enrolments.Models;
 using stefan_academy_vanilla_charp.Enrolments.Repositories;
@@ -42,10 +44,10 @@ namespace stefan_academy_vanilla_charp.Enrolments.Services
         public EnrolmentCreateResponse CreateEnrolment(EnrolmentCreateRequest request)
         {
             Enrolment newEnrolment = EnrolmentMapper.ToEnrolment(request);
-
-            if(repository.FindById(newEnrolment.Id) != null)
+            
+            if (repository.GetEnrolmentIdByStudentAndCourseId(newEnrolment.StudentId, newEnrolment.CourseId) != Guid.Empty)
             {
-                throw new ArgumentException("Enrolmentul se afla deja in baza de date");
+                throw new DuplicateException("Enrolmentul", "id student " + newEnrolment.StudentId + " id curs " + newEnrolment.CourseId);
             }
 
             repository.Add(newEnrolment);
@@ -58,12 +60,11 @@ namespace stefan_academy_vanilla_charp.Enrolments.Services
             Enrolment enrolment = repository.FindById(id);
 
             if (enrolment == null) {
-                throw new ArgumentException("Enrolmentul nu se afla in baza de date");
+                throw new NotFoundException("Enrolmentul", id.ToString());
             }
 
-            enrolment.StudentId = request.StudentId;
-            enrolment.CourseId = request.CourseId;
-
+            EnrolmentMapper.ApplyUpdate(enrolment, request);
+            repository.Update(enrolment);
             return EnrolmentMapper.ToUpdateResponse(enrolment);
         }
 
@@ -73,7 +74,7 @@ namespace stefan_academy_vanilla_charp.Enrolments.Services
 
             if (enrolment == null) 
             {
-                throw new ArgumentException("Enrolmentul nu exista in baza de date");
+                throw new NotFoundException("Enrolmentul", id.ToString());
             }
 
             repository.Remove(enrolment);

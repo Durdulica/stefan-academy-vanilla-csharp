@@ -3,6 +3,7 @@ using stefan_academy_vanilla_charp.Books.Models;
 using stefan_academy_vanilla_charp.Books.Repositories;
 using stefan_academy_vanilla_charp.Books.Services;
 using stefan_academy_vanilla_charp.Common;
+using stefan_academy_vanilla_charp.Common.Exceptions;
 using stefan_academy_vanilla_charp.Courses.Models;
 using stefan_academy_vanilla_charp.Courses.Services;
 using stefan_academy_vanilla_charp.Enrolments.Dtos;
@@ -199,9 +200,9 @@ namespace stefan_academy_vanilla_charp
                     Console.WriteLine("Cartea " + response.BookName + " adaugata cu succes la data de " + response.CreatedAt.ToString("dd-MM-yyyy"));
                 }
             }
-            catch (ArgumentException ex)
+            catch (DuplicateException ex)
             {
-                Console.WriteLine(ex);
+                Console.WriteLine(ex.MesajPentruUtilizator);
             }
         }
 
@@ -225,9 +226,9 @@ namespace stefan_academy_vanilla_charp
                 BookUpdateRequest request = new(nume);
                 BookUpdateResponse response = bookService.UpdateBook(book.Id, request);
             }
-            catch (ArgumentException ex)
+            catch (NotFoundException ex)
             {
-                Console.WriteLine(ex);
+                Console.WriteLine(ex.MesajPentruUtilizator);
             }
         }
 
@@ -267,11 +268,6 @@ namespace stefan_academy_vanilla_charp
                 return;
             }
 
-            if(enrolmentService.GetEnrolmentIdByStudentAndCourseId(loggedUser.Id,course.Id) != Guid.Empty)
-            {
-                Console.WriteLine("Sunteti deja inscris la acest curs!");
-                return;
-            }
             enrolmentService.CreateEnrolment(new EnrolmentCreateRequest(loggedUser.Id, course.Id, DateTime.Now));
             Console.WriteLine("Ati fost inscris cu succes la curs!");
         }

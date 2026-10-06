@@ -8,19 +8,19 @@ namespace stefan_academy_vanilla_charp.Users.Mappers
     {
         private IUserFactory[] factories = new IUserFactory[] { new StudentFactory(), new TeacherFactory(), new AdminFactory() };
 
-        public static string AdminToText(Admin item)
+        private static string AdminToText(Admin item)
         {
             return "ADMIN," + item.Id + "," + item.FirstName + "," + item.LastName + "," + item.Email
                     + "," + item.Age + "," + item.Salary + "," + item.Password;
         }
 
-        public static string TeacherToText(Teacher item)
+        private static string TeacherToText(Teacher item)
         {
             return "TEACHER," + item.Id + "," + item.FirstName + "," + item.LastName + "," + item.Email
                     + "," + item.Age + "," + item.Salary + "," + item.WorkHours + "," + item.Password;
         }
 
-        public static string StudentToText(Student item)
+        private static string StudentToText(Student item)
         {
             return "STUDENT," + item.Id + "," + item.FirstName + "," + item.LastName + "," + item.Email + "," + item.Age;
         }

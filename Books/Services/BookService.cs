@@ -2,6 +2,7 @@ using stefan_academy_vanilla_charp.Books.Dtos;
 using stefan_academy_vanilla_charp.Books.Mappers;
 using stefan_academy_vanilla_charp.Books.Models;
 using stefan_academy_vanilla_charp.Books.Repositories;
+using stefan_academy_vanilla_charp.Common.Exceptions;
 
 namespace stefan_academy_vanilla_charp.Books.Services
 {
@@ -28,9 +29,9 @@ namespace stefan_academy_vanilla_charp.Books.Services
         {
             Book newBook = BookMapper.ToBook(request);
 
-            if (repository.FindById(newBook.Id) != null)
+            if (repository.FindByStudentAndName != null)
             {
-                throw new ArgumentException("Cartea se afla deja in baza de date");
+                throw new DuplicateException("Cartea", newBook.BookName + " id student" + newBook.StudentId);
             }
 
             repository.Add(newBook);
@@ -43,11 +44,11 @@ namespace stefan_academy_vanilla_charp.Books.Services
             Book book = repository.FindById(id);
             if (book == null)
             {
-                throw new ArgumentException("Cartea nu exista in baza de date");
+                throw new NotFoundException("Cartea", id.ToString());
             }
 
             BookMapper.ApplyUpdate(book, request);
-
+            repository.Update(book);
             return BookMapper.ToUpdateResponse(book);
         }
 
@@ -56,7 +57,7 @@ namespace stefan_academy_vanilla_charp.Books.Services
             Book book = repository.FindById(id);
             if (book == null)
             {
-                throw new ArgumentException("Cartea nu exista in baza de date");
+                throw new NotFoundException("Cartea", id.ToString());
             }
 
             repository.Remove(book);
