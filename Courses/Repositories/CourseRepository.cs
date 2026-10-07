@@ -6,7 +6,21 @@ namespace stefan_academy_vanilla_charp.Courses.Repositories
 {
     public class CourseRepository : Repository<Course>
     {
-        public CourseRepository() : base(new CourseTextMapper(), Path.Combine("..", "..", "..", "Data", "courses.txt")) { }
+        private static CourseRepository instance;
+
+        public static CourseRepository Instance
+        {
+            get
+            {
+                if (instance == null)
+                {
+                    instance = new CourseRepository();
+                }
+                return instance;
+            }
+        }
+
+        private CourseRepository() : base(new CourseTextMapper(), Path.Combine("..", "..", "..", "Data", "courses.txt")) { }
 
         public List<Course> Courses()
         {

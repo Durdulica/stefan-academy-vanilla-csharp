@@ -1,5 +1,6 @@
 ﻿using stefan_academy_vanilla_charp.Common;
 using stefan_academy_vanilla_charp.Users.Models;
+using stefan_academy_vanilla_charp.Users.Repositories;
 using stefan_academy_vanilla_charp.Users.Services;
 
 namespace stefan_academy_vanilla_charp
@@ -8,7 +9,7 @@ namespace stefan_academy_vanilla_charp
     {
         public void Logger()
         {
-            Users.Repositories.UserRepository repository = new();
+            UserRepository repository = UserRepository.Instance;
             repository.Subscribe(new NotificatorConsola());
             UserService service = new(repository);
 

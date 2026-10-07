@@ -6,7 +6,22 @@ namespace stefan_academy_vanilla_charp.Enrolments.Repositories
 {
     public class EnrolmentRepository : Repository<Enrolment>
     {
-        public EnrolmentRepository() : base(new EnrolmentTextMapper(), Path.Combine("..", "..", "..", "Data", "enrolments.txt")) { }
+        private static EnrolmentRepository instance;
+
+        public static EnrolmentRepository Instance
+        {
+            get
+            {
+                if(instance == null)
+                {
+                    instance = new EnrolmentRepository();
+                }
+
+                return instance;
+            }
+        }
+
+        private EnrolmentRepository() : base(new EnrolmentTextMapper(), Path.Combine("..", "..", "..", "Data", "enrolments.txt")) { }
 
         public List<Guid> GetEnrolmentIdByStudentId(Guid studentId)
         {

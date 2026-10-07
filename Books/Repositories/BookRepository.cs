@@ -6,7 +6,21 @@ namespace stefan_academy_vanilla_charp.Books.Repositories
 {
     public class BookRepository : Repository<Book>
     {
-        public BookRepository()
+        private static BookRepository instance;
+
+        public static BookRepository Instance
+        {
+            get 
+            {
+                if (instance == null) 
+                {
+                    instance = new BookRepository();
+                }
+
+                return instance;
+            }
+        }
+        private BookRepository()
             : base(new BookTextMapper(), Path.Combine("..", "..", "..", "Data", "books.txt")) { }
 
         public Book FindByStudentAndName(Guid studentId, string bookName)

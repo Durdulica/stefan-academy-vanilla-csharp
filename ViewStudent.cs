@@ -24,14 +24,14 @@ namespace stefan_academy_vanilla_charp
         {
             loggedUser = user;
 
-            BookRepository bookRepository = new();
+            BookRepository bookRepository = BookRepository.Instance;
 
             bookRepository.Subscribe(new NotificatorTest());
             bookRepository.Subscribe(new NotificatorFisier(Path.Combine("..", "..", "..", "Data", "jurnal.txt")));
 
             bookService = new(bookRepository);
-            courseService = new(new Courses.Repositories.CourseRepository());
-            enrolmentService = new(new Enrolments.Repositories.EnrolmentRepository());
+            courseService = new(Courses.Repositories.CourseRepository.Instance);
+            enrolmentService = new(Enrolments.Repositories.EnrolmentRepository.Instance);
         }
         public void Viewer()
         {
