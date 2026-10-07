@@ -10,7 +10,6 @@ namespace stefan_academy_vanilla_charp
         public void Logger()
         {
             UserRepository repository = UserRepository.Instance;
-            repository.Subscribe(new NotificatorConsola());
             UserService service = new(repository);
 
             Console.WriteLine("==================LOG IN==================");
@@ -53,7 +52,9 @@ namespace stefan_academy_vanilla_charp
 
                 if (a.Password == password)
                 {
-                    //viewAdmin
+                    ViewAdmin viewer = new(user);
+                    Console.WriteLine("Logat cu succes!");
+                    viewer.Viewer();
                 }
                 else
                 {

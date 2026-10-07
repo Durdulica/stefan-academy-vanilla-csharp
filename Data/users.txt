@@ -6,3 +6,4 @@ STUDENT,0ab503d2-475d-4170-97ec-c055bca104bd,Teodor,Prundel,teo@gmail.com,18
 STUDENT,07a4e522-d372-4007-9ed5-b50fbe95b243,Andrei,Puscas,puscasAndrei@yahoo.com,30
 STUDENT,7f14e670-c46e-4a8b-a7dd-7deeadd7c9be,Alex,Rosca,rosca@gmail.com,23
 ADMIN,9c99cd02-e318-4bdb-8ca6-ee005c9ea2b6,Alex,Grozavu,gicu@hotmail.com,48,10000,gicuEgrozav
+STUDENT,4fa87ce7-97cf-41af-8352-b1035395a767,Maria,Ionescu,maria.ionescu@gmail.com,20
