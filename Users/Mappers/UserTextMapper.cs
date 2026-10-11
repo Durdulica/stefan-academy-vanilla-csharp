@@ -28,7 +28,6 @@ namespace stefan_academy_vanilla_charp.Users.Mappers
 
         public string ToText(User item)
         {
-            
             if(item is Student s) { return StudentToText(s); }
             if(item is Teacher t) { return TeacherToText(t); }
             if(item is Admin a) { return AdminToText(a); }

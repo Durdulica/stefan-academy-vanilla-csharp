@@ -36,7 +36,7 @@ namespace stefan_academy_vanilla_charp
                     case 1: AdaugareStudent(); break;
                     default: InputGresit(); break;
                 }
-            } while (tasta != 0);
+            } while (true);
         }
 
         public void InputGresit()
@@ -57,7 +57,12 @@ namespace stefan_academy_vanilla_charp
 
             Console.WriteLine("Varsta: ");
             int varsta;
-            Int32.TryParse(Console.ReadLine(), out varsta);
+
+            if(!Int32.TryParse(Console.ReadLine(), out varsta))
+            {
+                Console.WriteLine("Varsta trebuie sa fie un numar.");
+                return;
+            }
 
             try
             {

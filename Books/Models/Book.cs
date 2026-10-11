@@ -1,4 +1,5 @@
 ﻿using stefan_academy_vanilla_charp.Common;
+using stefan_academy_vanilla_charp.Common.Exceptions;
 
 namespace stefan_academy_vanilla_charp.Books.Models
 {
@@ -27,14 +28,14 @@ namespace stefan_academy_vanilla_charp.Books.Models
             {
                 if(value.Length == 0)
                 {
-                    throw new ArgumentException("Numele cartii nu poate fi gol");
+                    throw new ValidationException("Numele", "cartii nu poate fi gol");
                 }
 
                 string text = value.Trim();
 
                 if (text.Length < 2 || text.Length > 30)
                 {
-                    throw new ArgumentException("Numele cartii trebuie sa aiba intre 2 si 30 de caractere");
+                    throw new ValidationException("Numele", " cartii trebuie sa aiba intre 2 si 30 de caractere");
                 }
 
                 foreach (char ch in text)
@@ -42,7 +43,7 @@ namespace stefan_academy_vanilla_charp.Books.Models
                     bool caracterPermis = char.IsLetterOrDigit(ch) || ch == ' ';
                     if (!caracterPermis)
                     {
-                        throw new ArgumentException("Numele contine caractere nepermise");
+                        throw new ValidationException("Numele", " contine caractere nepermise");
                     }
                 }
                 bookName = text;

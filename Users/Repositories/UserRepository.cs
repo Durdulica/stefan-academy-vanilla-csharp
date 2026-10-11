@@ -22,7 +22,8 @@ namespace stefan_academy_vanilla_charp.Users.Repositories
         }
 
         private UserRepository() 
-            : base(new TextMapperCuJurnal<User>(new UserTextMapper()), Path.Combine("..","..","..","Data","users.txt")) { }
+            : base(new TextMapperCuJurnal<User>(new UserTextMapper(), Path.Combine("..", "..", "..", "Data", "users.txt"))
+                  , Path.Combine("..","..","..","Data","users.txt")) { }
 
         public User GetByFirstAndLastName(string firstName, string lastName)
         {

@@ -1,4 +1,5 @@
 ﻿using stefan_academy_vanilla_charp.Common;
+using stefan_academy_vanilla_charp.Common.Exceptions;
 
 namespace stefan_academy_vanilla_charp.Courses.Models
 {
@@ -26,13 +27,13 @@ namespace stefan_academy_vanilla_charp.Courses.Models
             {
                 if(value.Length == 0)
                 {
-                    throw new ArgumentException("Numele cursului nu poate fi gol");
+                    throw new ValidationException("Numele", " cursului nu poate fi gol");
                 }
 
                 string text = value.Trim();
                 if (text.Length < 2 || text.Length > 30)
                 {
-                    throw new ArgumentException("Numele cursului trebuie sa aiba intre 2 si 30 de caractere");
+                    throw new ValidationException("Numele", " cursului trebuie sa aiba intre 2 si 30 de caractere");
                 }
 
                 foreach(char ch in  text )
@@ -40,7 +41,7 @@ namespace stefan_academy_vanilla_charp.Courses.Models
                     bool caracterPermis = Char.IsLetterOrDigit(ch) || ch == ' ';
                     if (!caracterPermis)
                     {
-                        throw new ArgumentException("Numele cursului contine caractere nepermise");
+                        throw new ValidationException("Numele", " cursului contine caractere nepermise");
                     }
                 }
                 name = text;
@@ -54,13 +55,13 @@ namespace stefan_academy_vanilla_charp.Courses.Models
             {
                 if (value.Length == 0)
                 {
-                    throw new ArgumentException("Departamentul cursului nu poate fi gol");
+                    throw new ValidationException("Departamentul", " cursului nu poate fi gol");
                 }
 
                 string text = value.Trim();
                 if (text.Length < 2 || text.Length > 30)
                 {
-                    throw new ArgumentException("Departamentul cursului trebuie sa aiba intre 2 si 30 de caractere");
+                    throw new ValidationException("Departamentul", " cursului trebuie sa aiba intre 2 si 30 de caractere");
                 }
 
                 foreach (char ch in text)
@@ -68,7 +69,7 @@ namespace stefan_academy_vanilla_charp.Courses.Models
                     bool caracterPermis = Char.IsLetterOrDigit(ch);
                     if (!caracterPermis)
                     {
-                        throw new ArgumentException("Departamentul cursului contine caractere nepermise");
+                        throw new ValidationException("Departamentul", " cursului contine caractere nepermise");
                     }
                 }
                 department = text;

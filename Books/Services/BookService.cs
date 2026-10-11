@@ -27,12 +27,14 @@ namespace stefan_academy_vanilla_charp.Books.Services
 
         public BookCreateResponse CreateBook(BookCreateRequest request)
         {
-            Book newBook = BookMapper.ToBook(request);
+            
 
-            if (repository.FindByStudentAndName != null)
+            if (repository.FindByStudentAndName(request.StudentId, request.BookName) != null)
             {
-                throw new DuplicateException("Cartea", newBook.BookName + " id student" + newBook.StudentId);
+                throw new DuplicateException("Cartea", request.BookName + " id student" + request.StudentId);
             }
+
+            Book newBook = BookMapper.ToBook(request);
 
             repository.Add(newBook);
 

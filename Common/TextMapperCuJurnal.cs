@@ -3,10 +3,13 @@
     public class TextMapperCuJurnal<T> :  ITextMapper<T> 
     {
         private readonly ITextMapper<T> interior;
-        public TextMapperCuJurnal(ITextMapper<T> interior) 
+        private readonly string path;
+
+        public TextMapperCuJurnal(ITextMapper<T> interior, string path) 
         {
             ArgumentNullException.ThrowIfNull(interior);
             this.interior = interior;
+            this.path = path;
         }
 
         public string ToText(T item) 

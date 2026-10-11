@@ -56,7 +56,7 @@ namespace stefan_academy_vanilla_charp
                 }
                 //Console.Clear();
             }
-            while (tasta != 0);
+            while (true);
         }
 
         //Domenii
@@ -88,7 +88,7 @@ namespace stefan_academy_vanilla_charp
                     case 4: StergereCarte(); break;
                     default: InputGresit(); break;
                 }
-            }while(tasta != 0);
+            }while(true);
         }
 
         public void Cursuri()
@@ -116,7 +116,7 @@ namespace stefan_academy_vanilla_charp
                     case 3: DezabonareCurs(); break;
                     default: InputGresit(); break;
                 }
-            } while (tasta != 0);
+            } while (true);
         }
 
         public void Statistici()
@@ -139,7 +139,7 @@ namespace stefan_academy_vanilla_charp
                     case 1: CursTopStudenti(); break;
                     default: InputGresit(); break;
                 }
-            } while (tasta != 0);
+            } while (true);
         }
 
         //Functii

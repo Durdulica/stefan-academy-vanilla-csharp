@@ -1,10 +1,8 @@
 ﻿using stefan_academy_vanilla_charp;
-using stefan_academy_vanilla_charp.Books.Models;
 using stefan_academy_vanilla_charp.Books.Repositories;
 using stefan_academy_vanilla_charp.Common;
-using stefan_academy_vanilla_charp.Users.Models;
 using stefan_academy_vanilla_charp.Users.Repositories;
-
+using stefan_academy_vanilla_charp.Common.Exceptions;
 internal class Program
 {
     public static void Main()
@@ -18,9 +16,9 @@ internal class Program
             ViewLogIn logIn = new();
             logIn.Logger();
         }
-        catch (ArgumentException text)
+        catch (AcademyException text)
         {
-            Console.WriteLine(text.Message);
+            Console.WriteLine(text.MesajPentruUtilizator);
         }
     }
 }
