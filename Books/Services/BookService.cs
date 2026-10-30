@@ -48,7 +48,10 @@ namespace stefan_academy_vanilla_charp.Books.Services
             {
                 throw new NotFoundException("Cartea", id.ToString());
             }
-
+            if(request.BookName == book.BookName)
+            {
+                throw new DuplicateException("Book", "BookName");
+            }
             BookMapper.ApplyUpdate(book, request);
             repository.Update(book);
             return BookMapper.ToUpdateResponse(book);

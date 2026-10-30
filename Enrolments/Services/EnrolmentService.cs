@@ -1,5 +1,4 @@
 ﻿using stefan_academy_vanilla_charp.Common.Exceptions;
-using stefan_academy_vanilla_charp.Courses.Models;
 using stefan_academy_vanilla_charp.Enrolments.Dtos;
 using stefan_academy_vanilla_charp.Enrolments.Mappers;
 using stefan_academy_vanilla_charp.Enrolments.Models;
@@ -36,9 +35,14 @@ namespace stefan_academy_vanilla_charp.Enrolments.Services
             return repository.GetCourseIdListByStudentId(studentId);
         }
 
-        public int GetStudentsCountForCourseId(Guid courseId)
+        public Dictionary<Guid, int> GetStudentsCountPerCourse()
         {
-            return repository.StudentsCountForCourseId(courseId);
+            return repository.StudentsCountPerCourse();
+        }
+
+        public HashSet<Guid> GetCourseIdsForStudent(Guid studentId)
+        {
+            return repository.CourseIdsForStudent(studentId);
         }
 
         public EnrolmentCreateResponse CreateEnrolment(EnrolmentCreateRequest request)

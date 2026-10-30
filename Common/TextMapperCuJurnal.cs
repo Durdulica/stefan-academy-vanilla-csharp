@@ -26,7 +26,7 @@
 
         public void Write(string message)
         {
-            using var writer = new StreamWriter(Path.Combine("..", "..", "..", "Data", "jurnal.txt"), true);
+            using var writer = new StreamWriter(path, true);
 
             writer.WriteLine(typeof(T).Name + " cu jurnal: " + message);
         }

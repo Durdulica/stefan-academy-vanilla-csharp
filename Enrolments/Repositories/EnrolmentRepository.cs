@@ -7,7 +7,7 @@ namespace stefan_academy_vanilla_charp.Enrolments.Repositories
     public class EnrolmentRepository : Repository<Enrolment>
     {
         private static EnrolmentRepository instance;
-
+        
         public static EnrolmentRepository Instance
         {
             get
@@ -66,18 +66,35 @@ namespace stefan_academy_vanilla_charp.Enrolments.Repositories
             return courses;
         }
 
-        public int StudentsCountForCourseId(Guid courseId)
+        public Dictionary<Guid, int> StudentsCountPerCourse()
         {
-            int index = 0;
+            Dictionary<Guid, int> d = new Dictionary<Guid, int>();
             foreach (Enrolment enr in Items)
             {
-                if (enr.CourseId == courseId)
+                if(d.TryGetValue(enr.CourseId, out int count))
                 {
-                    index++;
+                    d[enr.CourseId] = count++;
+                }
+                else
+                {
+                    d.Add(enr.CourseId, 1);
                 }
             }
+            return d;
+        }
 
-            return index;
+        public HashSet<Guid> CourseIdsForStudent(Guid studentId)
+        {
+            HashSet<Guid> h = new HashSet<Guid>();
+            foreach (Enrolment enr in Items)
+            {
+                
+                if (!Guid.Equals(enr.StudentId, studentId))
+                {
+                    h.Add(enr.CourseId);
+                }
+            }
+            return h;
         }
     }
 }

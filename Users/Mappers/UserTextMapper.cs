@@ -6,7 +6,14 @@ namespace stefan_academy_vanilla_charp.Users.Mappers
 {
     public class UserTextMapper : ITextMapper<User>
     {
-        private IUserFactory[] factories = new IUserFactory[] { new StudentFactory(), new TeacherFactory(), new AdminFactory() };
+        private Dictionary<string, IUserFactory> factories = new Dictionary<string, IUserFactory>();
+        
+        public UserTextMapper() 
+        {
+            factories.Add(new StudentFactory().Type, new StudentFactory());
+            factories.Add(new TeacherFactory().Type, new TeacherFactory());
+            factories.Add(new AdminFactory().Type, new AdminFactory());
+        }
 
         private static string AdminToText(Admin item)
         {
@@ -34,16 +41,12 @@ namespace stefan_academy_vanilla_charp.Users.Mappers
             throw new ArgumentException("Unknown user type: " + item.GetType());
         }
 
-        public User FromText(string text) 
+        public User FromText(string text)
         {
             string[] cuv = text.Split(',');
-
-            for (int i = 0; i < factories.Length; i++) 
+            if (factories.ContainsKey(cuv[0]))
             {
-                if (factories[i].Type == cuv[0])
-                {
-                    return factories[i].Create(cuv);
-                }
+                return factories[cuv[0]].Create(cuv);
             }
 
             throw new ArgumentException("Unknown user type: " + cuv[0]);

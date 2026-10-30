@@ -60,3 +60,4 @@ User cu jurnal: textul s-a transformat in User
 User cu jurnal: textul s-a transformat in User
 User cu jurnal: textul s-a transformat in User
 User cu jurnal: textul s-a transformat in User
+NotificatorFisier: Book removed successfully

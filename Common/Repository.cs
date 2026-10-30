@@ -1,8 +1,11 @@
+using stefan_academy_vanilla_charp.Common.Exceptions;
+
 namespace stefan_academy_vanilla_charp.Common
 {
     public class Repository<T> where T : class, IEntity
     {
         private readonly List<T> items = new();
+        private readonly Dictionary<Guid, T> itemsById = new();
         private readonly ITextMapper<T> mapper;
         private readonly string path;
         private readonly List<INotificator> ascultatori = new();
@@ -34,19 +37,14 @@ namespace stefan_academy_vanilla_charp.Common
 
         public T FindById(Guid id)
         {
-            foreach (T item in items)
-            {
-                if (item.Id == id)
-                {
-                    return item;
-                }
-            }
+            if(itemsById.TryGetValue(id, out T item)) return item;
             return null;
         }
 
         public void Add(T item)
         {
             items.Add(item);
+            itemsById.Add(item.Id, item);
             Anunta(typeof(T).Name + " created successfully");
             Save();
         }
@@ -60,6 +58,7 @@ namespace stefan_academy_vanilla_charp.Common
         public void Remove(T item)
         {
             items.Remove(item);
+            itemsById.Remove(item.Id);
             Anunta(typeof(T).Name + " removed successfully");
             Save();
         }
@@ -84,7 +83,15 @@ namespace stefan_academy_vanilla_charp.Common
             string line = "";
             while ((line = reader.ReadLine()) != null)
             {
-                items.Add(mapper.FromText(line));
+
+                T aux = mapper.FromText(line);
+                if (itemsById.TryGetValue(aux.Id, out T val))
+                {
+                    throw new DuplicateException(typeof(T).Name, aux.Id.ToString());
+                }
+
+                items.Add(aux);
+                itemsById.Add(aux.Id, aux);
             }
         }
     }

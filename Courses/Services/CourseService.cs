@@ -15,32 +15,17 @@ namespace stefan_academy_vanilla_charp.Courses.Services
             this.repository = repository;
         }
 
-        //Afisare
+        public Course GetCourse(Guid id) => repository.FindById(id);
 
-        //public void AfisareCourses()
-        //{
-        //    foreach (Course c in courses)
-        //    {
-        //        Console.WriteLine("nume: " + c.Name + ", departament: " + c.Department);
-        //    }
-        //}
+        public List<Course> GetCourses() => repository.Courses();
 
         //CRUD
 
-        public List<Course> GetCourses()
-        {
-            return repository.Courses();
-        }
+        public Course GetByName(string name) => repository.FindByName(name);
 
-        public Course GetByName(string name)
-        {
-            return repository.FindByName(name);
-        }
+        public List<Course> GetCourseListByCourseId(List<Guid> coursesId) => repository.GetCourseListByCourseId(coursesId);
 
-        public List<Course> GetCourseListByCourseId(List<Guid> coursesId)
-        {
-            return repository.GetCourseListByCourseId(coursesId);
-        }
+        public SortedDictionary<string, List<Course>> GetCoursesByDepartment() => repository.CoursesByDepartment();
 
         public CourseCreateResponse CreateCourse(CourseCreateRequest request)
         {

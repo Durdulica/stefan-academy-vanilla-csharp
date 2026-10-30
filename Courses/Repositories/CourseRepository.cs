@@ -22,10 +22,7 @@ namespace stefan_academy_vanilla_charp.Courses.Repositories
 
         private CourseRepository() : base(new CourseTextMapper(), Path.Combine("..", "..", "..", "Data", "courses.txt")) { }
 
-        public List<Course> Courses()
-        {
-            return Items;
-        }
+        public List<Course> Courses() => Items;
 
         public List<Course> GetCourseListByCourseId(List<Guid> coursesId)
         {
@@ -50,6 +47,25 @@ namespace stefan_academy_vanilla_charp.Courses.Repositories
                 }
             }
             return null;
+        }
+
+        public SortedDictionary<string, List<Course>> CoursesByDepartment()
+        {
+            SortedDictionary<string, List<Course>> d = new SortedDictionary<string, List<Course>>();
+
+            foreach (Course c in Items)
+            {
+                if(d.TryGetValue(c.Department, out List<Course> courses))
+                {
+                    courses.Add(c);
+                }
+                else
+                {
+                    d.Add(c.Department, new List<Course> { c });
+                }
+            }
+
+            return d;
         }
     }
 }

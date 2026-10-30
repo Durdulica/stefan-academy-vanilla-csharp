@@ -2,7 +2,6 @@
 using stefan_academy_vanilla_charp.Books.Models;
 using stefan_academy_vanilla_charp.Books.Repositories;
 using stefan_academy_vanilla_charp.Books.Services;
-using stefan_academy_vanilla_charp.Common;
 using stefan_academy_vanilla_charp.Common.Exceptions;
 using stefan_academy_vanilla_charp.Courses.Models;
 using stefan_academy_vanilla_charp.Courses.Services;
@@ -81,7 +80,7 @@ namespace stefan_academy_vanilla_charp
 
                 switch (tasta)
                 {
-                    case 0: break;
+                    case 0: return;
                     case 1: AfisareCartiDetinute(); break;
                     case 2: AdaugareCarte(); break;
                     case 3: ModificareCarte(); break;
@@ -101,6 +100,7 @@ namespace stefan_academy_vanilla_charp
                 Console.WriteLine("Apasati tasta 1 pentru a vedea cursurile");
                 Console.WriteLine("Apasati tasta 2 pentru a va inscrie la un curs");
                 Console.WriteLine("Apasati tasta 3 pentru a va dezabona de la un curs");
+                Console.WriteLine("Apasati tasta 4 pentru a vedea cursurile la care va puteti inscrie");
 
                 if (!Int32.TryParse(Console.ReadLine(), out tasta))
                 {
@@ -110,10 +110,11 @@ namespace stefan_academy_vanilla_charp
 
                 switch (tasta)
                 {
-                    case 0: break;
+                    case 0: return;
                     case 1: AfisareCursuri(); break;
                     case 2: InscriereCurs(); break;
                     case 3: DezabonareCurs(); break;
+                    case 4: AfisareCursuriDisponibile(); break;
                     default: InputGresit(); break;
                 }
             } while (true);
@@ -126,7 +127,8 @@ namespace stefan_academy_vanilla_charp
             {
                 Console.WriteLine("Apasati tasta 0 pentru a va intoarce");
                 Console.WriteLine("Apasati tasta 1 pentru a vedea cursul cu cei mai multi elevi");
-
+                Console.WriteLine("Apasati tasta 2 pentru a vedea cursurile pe departamente");
+                Console.WriteLine("Apasati tasta 3 pentru a vedea cati studenti sunt inscrisi in fiecare departament");
                 if (!Int32.TryParse(Console.ReadLine(), out tasta))
                 {
                     InputGresit();
@@ -137,6 +139,8 @@ namespace stefan_academy_vanilla_charp
                 {
                     case 0: return;
                     case 1: CursTopStudenti(); break;
+                    case 2: CursuriPeDepartamente(); break;
+                    case 3: StudentiPeDepartamente(); break;
                     default: InputGresit(); break;
                 }
             } while (true);
@@ -163,6 +167,17 @@ namespace stefan_academy_vanilla_charp
             else
             {
                 Console.WriteLine("Nu sunteti inscris la niciun curs");
+            }
+        }
+
+        public void AfisareCursuriDisponibile()
+        {
+            HashSet<Guid> h = enrolmentService.GetCourseIdsForStudent(loggedUser.Id);
+            
+            foreach (Guid id in h) 
+            {
+                Course c = courseService.GetCourse(id);
+                Console.WriteLine("nume: " + c.Name + ", departament: " + c.Department);
             }
         }
 
@@ -297,14 +312,13 @@ namespace stefan_academy_vanilla_charp
             List<Course> courses = courseService.GetCourses();
             Course course = null;
             int index = -1;
+            Dictionary<Guid, int> d = enrolmentService.GetStudentsCountPerCourse();
 
             foreach (Course c in courses)
             {
-                int aux = enrolmentService.GetStudentsCountForCourseId(c.Id);
-
-                if(aux > index)
+                if (d[c.Id] > index)
                 {
-                    index = aux;
+                    index = d[c.Id];
                     course = c;
                 }
             }
@@ -316,6 +330,34 @@ namespace stefan_academy_vanilla_charp
             }
 
             Console.WriteLine(course.Name + " " + course.Department + " cu " + index + " studenti");
+        }
+
+        public void CursuriPeDepartamente()
+        {
+            SortedDictionary<string, List<Course>> d = courseService.GetCoursesByDepartment();
+            
+            foreach (string key in d.Keys) 
+            {
+                Console.WriteLine("Departament: " + key + ", cursuri: " + String.Join(", ", d[key]));
+
+            }
+        }
+
+        public void StudentiPeDepartamente()
+        {
+            SortedDictionary<string, List<Course>> d = courseService.GetCoursesByDepartment();
+            Dictionary<Guid, int> s = enrolmentService.GetStudentsCountPerCourse();
+
+            foreach (string key in d.Keys)
+            {
+                int sum = 0;
+                foreach (Course c in d[key]) 
+                {
+                    sum += s[c.Id];
+                }
+
+                Console.WriteLine("Departament: " + key + ", studenti: " + sum);
+            }
         }
     }
 }

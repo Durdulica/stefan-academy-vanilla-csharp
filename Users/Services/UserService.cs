@@ -15,15 +15,9 @@ namespace stefan_academy_vanilla_charp.Users.Services
             this.repository = repository;
         }
 
-        public User GetUser(Guid id)
-        {
-            return repository.FindById(id);
-        }
+        public User GetUser(Guid id) => repository.FindById(id);
 
-        public User GetUserByFirstAndLastName(string firstName, string lastName)
-        {
-            return repository.GetByFirstAndLastName(firstName, lastName);
-        }
+        public User GetUserByFirstAndLastName(string firstName, string lastName) => repository.GetByFirstAndLastName(firstName, lastName);
 
         //CRUD
 

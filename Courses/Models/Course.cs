@@ -75,5 +75,8 @@ namespace stefan_academy_vanilla_charp.Courses.Models
                 department = text;
             }
         }
+
+        public override string ToString() =>  Name;
+
     }
 }
