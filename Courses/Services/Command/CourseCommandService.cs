@@ -4,28 +4,16 @@ using stefan_academy_vanilla_charp.Courses.Mappers;
 using stefan_academy_vanilla_charp.Courses.Models;
 using stefan_academy_vanilla_charp.Courses.Repositories;
 
-namespace stefan_academy_vanilla_charp.Courses.Services
+namespace stefan_academy_vanilla_charp.Courses.Services.Command
 {
-    public class CourseService
+    public class CourseCommandService : ICourseCommandService
     {
         private readonly CourseRepository repository;
 
-        public CourseService(CourseRepository repository)
+        public CourseCommandService(CourseRepository repository)
         {
             this.repository = repository;
         }
-
-        public Course GetCourse(Guid id) => repository.FindById(id);
-
-        public List<Course> GetCourses() => repository.Courses();
-
-        //CRUD
-
-        public Course GetByName(string name) => repository.FindByName(name);
-
-        public List<Course> GetCourseListByCourseId(List<Guid> coursesId) => repository.GetCourseListByCourseId(coursesId);
-
-        public SortedDictionary<string, List<Course>> GetCoursesByDepartment() => repository.CoursesByDepartment();
 
         public CourseCreateResponse CreateCourse(CourseCreateRequest request)
         {

@@ -4,7 +4,7 @@ using stefan_academy_vanilla_charp.Enrolments.Models;
 
 namespace stefan_academy_vanilla_charp.Enrolments.Repositories
 {
-    public class EnrolmentRepository : Repository<Enrolment>
+    public class EnrolmentRepository : Repository<Enrolment>, IEnrolmentRepository
     {
         private static EnrolmentRepository instance;
         
@@ -73,7 +73,7 @@ namespace stefan_academy_vanilla_charp.Enrolments.Repositories
             {
                 if(d.TryGetValue(enr.CourseId, out int count))
                 {
-                    d[enr.CourseId] = count++;
+                    d[enr.CourseId] = count + 1;
                 }
                 else
                 {
@@ -89,7 +89,7 @@ namespace stefan_academy_vanilla_charp.Enrolments.Repositories
             foreach (Enrolment enr in Items)
             {
                 
-                if (!Guid.Equals(enr.StudentId, studentId))
+                if (Guid.Equals(enr.StudentId, studentId))
                 {
                     h.Add(enr.CourseId);
                 }

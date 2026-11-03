@@ -4,45 +4,15 @@ using stefan_academy_vanilla_charp.Enrolments.Mappers;
 using stefan_academy_vanilla_charp.Enrolments.Models;
 using stefan_academy_vanilla_charp.Enrolments.Repositories;
 
-namespace stefan_academy_vanilla_charp.Enrolments.Services
+namespace stefan_academy_vanilla_charp.Enrolments.Services.Command
 {
-    public class EnrolmentService
+    public class EnrolmentCommandService : IEnrolmentCommandService
     {
         private readonly EnrolmentRepository repository;
 
-        public EnrolmentService(EnrolmentRepository repository)
+        public EnrolmentCommandService(EnrolmentRepository repository)
         {
             this.repository = repository;
-        }
-
-        public List<Guid> GetEnrolmentIdByStudentId(Guid studentId)
-        {
-            return repository.GetCourseIdListByStudentId(studentId);
-        }
-
-        public Enrolment GetEnrolment(Guid id)
-        {
-            return repository.FindById(id);
-        }
-
-        public Guid GetEnrolmentIdByStudentAndCourseId(Guid studentId, Guid courseId)
-        {
-            return repository.GetEnrolmentIdByStudentAndCourseId(studentId, courseId);
-        }
-
-        public List<Guid> GetCourseIdListByStudentId(Guid studentId)
-        {
-            return repository.GetCourseIdListByStudentId(studentId);
-        }
-
-        public Dictionary<Guid, int> GetStudentsCountPerCourse()
-        {
-            return repository.StudentsCountPerCourse();
-        }
-
-        public HashSet<Guid> GetCourseIdsForStudent(Guid studentId)
-        {
-            return repository.CourseIdsForStudent(studentId);
         }
 
         public EnrolmentCreateResponse CreateEnrolment(EnrolmentCreateRequest request)

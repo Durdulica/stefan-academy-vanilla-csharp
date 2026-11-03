@@ -5,22 +5,41 @@ using stefan_academy_vanilla_charp.Books.Services.Query;
 using stefan_academy_vanilla_charp.Common;
 using stefan_academy_vanilla_charp.Users.Repositories;
 using stefan_academy_vanilla_charp.Common.Exceptions;
+using stefan_academy_vanilla_charp.Courses.Services.Query;
+using stefan_academy_vanilla_charp.Courses.Repositories;
+using stefan_academy_vanilla_charp.Courses.Services.Command;
+using stefan_academy_vanilla_charp.Enrolments.Services.Query;
+using stefan_academy_vanilla_charp.Enrolments.Services.Command;
+using stefan_academy_vanilla_charp.Enrolments.Repositories;
+using stefan_academy_vanilla_charp.Users.Services.Query;
+
 internal class Program
 {
     public static void Main()
     {
         BookRepository bookRepository = BookRepository.Instance;
+        CourseRepository courseRepository = CourseRepository.Instance;
+        EnrolmentRepository enrolmentRepository = EnrolmentRepository.Instance;
+        UserRepository userRepository = UserRepository.Instance;
+
         bookRepository.Subscribe(new NotificatorTest());
         bookRepository.Subscribe(new NotificatorFisier(Path.Combine("..", "..", "..", "Data", "jurnal.txt")));
 
+
         IBookQueryService bookQueryService = new BookQueryService(bookRepository);
         IBookCommandService bookCommandService = new BookCommandService(bookRepository);
+        ICourseQueryService courseQueryService = new CourseQueryService(courseRepository);
+        ICourseCommandService courseCommandService = new CourseCommandService(courseRepository);
+        IEnrolmentQueryService enrolmentQueryService = new EnrolmentQueryService(enrolmentRepository);
+        IEnrolmentCommandService enrolmentCommandService = new EnrolmentCommandService(enrolmentRepository);
+        IUserQueryService userQueryService = new UserQueryService(userRepository);
 
         UserRepository.Instance.Subscribe(new NotificatorConsola());
 
         try
         {
-            ViewLogIn logIn = new(bookQueryService, bookCommandService);
+            ViewLogIn logIn = new(bookQueryService, bookCommandService, courseQueryService, courseCommandService, 
+                enrolmentQueryService, enrolmentCommandService, userQueryService);
             logIn.Logger();
         }
         catch (AcademyException text)

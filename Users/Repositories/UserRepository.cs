@@ -4,7 +4,7 @@ using stefan_academy_vanilla_charp.Users.Models;
 
 namespace stefan_academy_vanilla_charp.Users.Repositories
 {
-    public class UserRepository : Repository<User>
+    public class UserRepository : Repository<User>, IUserRepository
     {
         private static UserRepository instance;
 

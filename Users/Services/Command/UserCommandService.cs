@@ -4,22 +4,16 @@ using stefan_academy_vanilla_charp.Users.Mappers;
 using stefan_academy_vanilla_charp.Users.Models;
 using stefan_academy_vanilla_charp.Users.Repositories;
 
-namespace stefan_academy_vanilla_charp.Users.Services
+namespace stefan_academy_vanilla_charp.Users.Services.Command
 {
-    public class UserService
+    public class UserCommandService : IUserCommandService
     {
         private readonly UserRepository repository;
 
-        public UserService(UserRepository repository) 
+        public UserCommandService(UserRepository repository) 
         {
             this.repository = repository;
         }
-
-        public User GetUser(Guid id) => repository.FindById(id);
-
-        public User GetUserByFirstAndLastName(string firstName, string lastName) => repository.GetByFirstAndLastName(firstName, lastName);
-
-        //CRUD
 
         public StudentCreateResponse CreateStudent(StudentCreateRequest request)
         {

@@ -4,30 +4,38 @@ using stefan_academy_vanilla_charp.Books.Services.Command;
 using stefan_academy_vanilla_charp.Books.Services.Query;
 using stefan_academy_vanilla_charp.Common.Exceptions;
 using stefan_academy_vanilla_charp.Courses.Models;
-using stefan_academy_vanilla_charp.Courses.Services;
+using stefan_academy_vanilla_charp.Courses.Services.Command;
+using stefan_academy_vanilla_charp.Courses.Services.Query;
 using stefan_academy_vanilla_charp.Enrolments.Dtos;
-using stefan_academy_vanilla_charp.Enrolments.Services;
+using stefan_academy_vanilla_charp.Enrolments.Services.Command;
+using stefan_academy_vanilla_charp.Enrolments.Services.Query;
 using stefan_academy_vanilla_charp.Users.Models;
 
 namespace stefan_academy_vanilla_charp
 {
     public class ViewStudent
     {
-        private CourseService courseService;
+        private readonly ICourseQueryService courseQueryService;
+        private readonly ICourseCommandService courseCommandService;
         private readonly IBookQueryService bookQueryService;
         private readonly IBookCommandService bookCommandService;
-        private EnrolmentService enrolmentService;
+        private readonly IEnrolmentQueryService enrolmentQueryService;
+        private  readonly IEnrolmentCommandService enrolmentCommandService;
 
         private User loggedUser;
 
-        public ViewStudent(User user, IBookQueryService bookQueryService, IBookCommandService bookCommandService)
+        public ViewStudent(User user, IBookQueryService bookQueryService, IBookCommandService bookCommandService,
+            ICourseQueryService courseQueryService, ICourseCommandService courseCommandService,
+            IEnrolmentQueryService enrolmentQueryService, IEnrolmentCommandService enrolmentCommandService)
         {
             loggedUser = user;
 
             this.bookQueryService = bookQueryService;
             this.bookCommandService = bookCommandService;
-            courseService = new(Courses.Repositories.CourseRepository.Instance);
-            enrolmentService = new(Enrolments.Repositories.EnrolmentRepository.Instance);
+            this.courseQueryService = courseQueryService;
+            this.courseCommandService = courseCommandService;
+            this.enrolmentQueryService = enrolmentQueryService;
+            this.enrolmentCommandService = enrolmentCommandService;
         }
 
         public void Viewer()
@@ -150,14 +158,11 @@ namespace stefan_academy_vanilla_charp
 
         //Functii
 
-        public void InputGresit()
-        {
-            Console.WriteLine("Ati introdus un caracter nepermis!");
-        }
+        public static void InputGresit() => Console.WriteLine("Ati introdus un caracter nepermis!");
 
         public void AfisareCursuri()
         {
-            List<Course> courses = courseService.GetCourseListByCourseId(enrolmentService.GetCourseIdListByStudentId(loggedUser.Id));
+            List<Course> courses = courseQueryService.GetCourseListByCourseId(enrolmentQueryService.GetCourseIdListByStudentId(loggedUser.Id));
 
             if (courses.Count > 0)
             {
@@ -174,11 +179,11 @@ namespace stefan_academy_vanilla_charp
 
         public void AfisareCursuriDisponibile()
         {
-            HashSet<Guid> h = enrolmentService.GetCourseIdsForStudent(loggedUser.Id);
+            HashSet<Guid> h = enrolmentQueryService.GetCourseIdsForStudent(loggedUser.Id);
             
             foreach (Guid id in h) 
             {
-                Course c = courseService.GetCourse(id);
+                Course c = courseQueryService.GetCourse(id);
                 Console.WriteLine("nume: " + c.Name + ", departament: " + c.Department);
             }
         }
@@ -273,7 +278,7 @@ namespace stefan_academy_vanilla_charp
                 return;
             }
 
-            Course course = courseService.GetByName(text);
+            Course course = courseQueryService.GetByName(text);
 
             if (course == null)
             {
@@ -281,7 +286,7 @@ namespace stefan_academy_vanilla_charp
                 return;
             }
 
-            enrolmentService.CreateEnrolment(new EnrolmentCreateRequest(loggedUser.Id, course.Id, DateTime.Now));
+            enrolmentCommandService.CreateEnrolment(new EnrolmentCreateRequest(loggedUser.Id, course.Id, DateTime.Now));
             Console.WriteLine("Ati fost inscris cu succes la curs!");
         }
 
@@ -290,7 +295,7 @@ namespace stefan_academy_vanilla_charp
             Console.Write("Numele cursului de la care doriti sa va dezabonati");
             string text = Console.ReadLine();
 
-            Course course = courseService.GetByName(text);
+            Course course = courseQueryService.GetByName(text);
 
             if(course == null)
             {
@@ -298,23 +303,23 @@ namespace stefan_academy_vanilla_charp
                 return;
             }
 
-            Guid id = enrolmentService.GetEnrolmentIdByStudentAndCourseId(loggedUser.Id, course.Id);
+            Guid id = enrolmentQueryService.GetEnrolmentIdByStudentAndCourseId(loggedUser.Id, course.Id);
             if (id == Guid.Empty)
             {
                 Console.WriteLine("Nu sunteti inscris la acest curs!");
                 return;
             }
 
-            enrolmentService.DeleteEnrolment(id);
+            enrolmentCommandService.DeleteEnrolment(id);
             Console.WriteLine("Ati fost dezabonat cu succes!");
         }
 
         public void CursTopStudenti()
         {
-            List<Course> courses = courseService.GetCourses();
+            List<Course> courses = courseQueryService.GetCourses();
             Course course = null;
             int index = -1;
-            Dictionary<Guid, int> d = enrolmentService.GetStudentsCountPerCourse();
+            Dictionary<Guid, int> d = enrolmentQueryService.GetStudentsCountPerCourse();
 
             foreach (Course c in courses)
             {
@@ -336,7 +341,7 @@ namespace stefan_academy_vanilla_charp
 
         public void CursuriPeDepartamente()
         {
-            SortedDictionary<string, List<Course>> d = courseService.GetCoursesByDepartment();
+            SortedDictionary<string, List<Course>> d = courseQueryService.GetCoursesByDepartment();
             
             foreach (string key in d.Keys) 
             {
@@ -347,8 +352,8 @@ namespace stefan_academy_vanilla_charp
 
         public void StudentiPeDepartamente()
         {
-            SortedDictionary<string, List<Course>> d = courseService.GetCoursesByDepartment();
-            Dictionary<Guid, int> s = enrolmentService.GetStudentsCountPerCourse();
+            SortedDictionary<string, List<Course>> d = courseQueryService.GetCoursesByDepartment();
+            Dictionary<Guid, int> s = enrolmentQueryService.GetStudentsCountPerCourse();
 
             foreach (string key in d.Keys)
             {

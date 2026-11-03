@@ -14,12 +14,15 @@ namespace stefan_academy_vanilla_charp.Books.Repositories
             {
                 if (instance == null) 
                 {
+                    Console.WriteLine("acum creez");
                     instance = new BookRepository();
                 }
 
+                Console.WriteLine("acum doar accesez");
                 return instance;
             }
         }
+
         private BookRepository()
             : base(new BookTextMapper(), Path.Combine("..", "..", "..", "Data", "books.txt")) { }
 

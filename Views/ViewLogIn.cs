@@ -1,9 +1,11 @@
 ﻿using stefan_academy_vanilla_charp.Books.Services.Command;
 using stefan_academy_vanilla_charp.Books.Services.Query;
-using stefan_academy_vanilla_charp.Common;
+using stefan_academy_vanilla_charp.Courses.Services.Command;
+using stefan_academy_vanilla_charp.Courses.Services.Query;
+using stefan_academy_vanilla_charp.Enrolments.Services.Command;
+using stefan_academy_vanilla_charp.Enrolments.Services.Query;
 using stefan_academy_vanilla_charp.Users.Models;
-using stefan_academy_vanilla_charp.Users.Repositories;
-using stefan_academy_vanilla_charp.Users.Services;
+using stefan_academy_vanilla_charp.Users.Services.Query;
 
 namespace stefan_academy_vanilla_charp
 {
@@ -11,18 +13,28 @@ namespace stefan_academy_vanilla_charp
     {
         private readonly IBookQueryService bookQueryService;
         private readonly IBookCommandService bookCommandService;
+        private readonly ICourseQueryService courseQueryService;
+        private readonly ICourseCommandService courseCommandService;
+        private readonly IEnrolmentQueryService enrolmentQueryService;
+        private readonly IEnrolmentCommandService enrolmentCommandService;
+        private readonly IUserQueryService userQueryService;
 
-        public ViewLogIn(IBookQueryService bookQueryService, IBookCommandService bookCommandService)
+        public ViewLogIn(IBookQueryService bookQueryService, IBookCommandService bookCommandService,
+            ICourseQueryService courseQueryService, ICourseCommandService courseCommandService,
+            IEnrolmentQueryService enrolmentQueryService, IEnrolmentCommandService enrolmentCommandService,
+            IUserQueryService userQueryService)
         {
             this.bookQueryService = bookQueryService;
             this.bookCommandService = bookCommandService;
+            this.courseQueryService = courseQueryService;
+            this.courseCommandService = courseCommandService;
+            this.enrolmentQueryService = enrolmentQueryService;
+            this.enrolmentCommandService = enrolmentCommandService;
+            this.userQueryService = userQueryService;
         }
 
         public void Logger()
         {
-            UserRepository repository = UserRepository.Instance;
-            UserService service = new(repository);
-
             Console.WriteLine("==================LOG IN==================");
             Console.Write("\n");
 
@@ -44,19 +56,14 @@ namespace stefan_academy_vanilla_charp
                 return;
             }
 
-            User user = service.GetUserByFirstAndLastName(firstName, lastName);
+            User user = userQueryService.GetUserByFirstAndLastName(firstName, lastName);
 
             if (user == null)
             {
                 throw new ArgumentException("Userul nu aceste credentiale nu exista");
             }
 
-            Student s = user as Student;
-            Teacher t = user as Teacher;
-            Admin a = user as Admin;
-
-
-            if (a != null)
+            if (user is Admin a)
             {
                 Console.Write("Parola: ");
                 string password = Console.ReadLine();
@@ -73,12 +80,13 @@ namespace stefan_academy_vanilla_charp
                 }
 
             }
-            else if (t != null)
+            else if (user is Teacher t)
             {
                 Console.Write("Parola: ");
                 string password = Console.ReadLine();
 
-                if (t.Password == password) {
+                if (t.Password == password)
+                {
                     //viewTeacher
                 }
                 else
@@ -86,8 +94,10 @@ namespace stefan_academy_vanilla_charp
                     throw new ArgumentException("Parola gresita!");
                 }
             }
-            else if (s != null) {
-                ViewStudent viewer = new(user, bookQueryService, bookCommandService);
+            else if (user is Student)
+            {
+                ViewStudent viewer = new(user, bookQueryService, bookCommandService, courseQueryService, courseCommandService,
+                    enrolmentQueryService, enrolmentCommandService);
                 Console.WriteLine("Logat cu succes!");
                 viewer.Viewer();
             }

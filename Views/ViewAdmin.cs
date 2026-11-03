@@ -2,13 +2,13 @@
 using stefan_academy_vanilla_charp.Users.Dtos;
 using stefan_academy_vanilla_charp.Users.Models;
 using stefan_academy_vanilla_charp.Users.Repositories;
-using stefan_academy_vanilla_charp.Users.Services;
+using stefan_academy_vanilla_charp.Users.Services.Command;
 
 namespace stefan_academy_vanilla_charp
 {
     public class ViewAdmin
     {
-        private UserService userService = new(UserRepository.Instance);
+        private UserCommandService userService = new(UserRepository.Instance);
         private User loggedUser;
         
         public ViewAdmin(User user) 

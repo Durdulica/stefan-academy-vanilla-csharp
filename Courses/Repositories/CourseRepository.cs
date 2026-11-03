@@ -4,7 +4,7 @@ using stefan_academy_vanilla_charp.Courses.Models;
 
 namespace stefan_academy_vanilla_charp.Courses.Repositories
 {
-    public class CourseRepository : Repository<Course>
+    public class CourseRepository : Repository<Course>, ICourseRepository
     {
         private static CourseRepository instance;
 
