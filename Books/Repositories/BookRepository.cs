@@ -4,7 +4,7 @@ using stefan_academy_vanilla_charp.Common;
 
 namespace stefan_academy_vanilla_charp.Books.Repositories
 {
-    public class BookRepository : Repository<Book>
+    public class BookRepository : Repository<Book>, IBookRepository
     {
         private static BookRepository instance;
 

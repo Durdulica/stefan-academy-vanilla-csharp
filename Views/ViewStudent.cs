@@ -1,7 +1,7 @@
 ﻿using stefan_academy_vanilla_charp.Books.Dtos;
 using stefan_academy_vanilla_charp.Books.Models;
-using stefan_academy_vanilla_charp.Books.Repositories;
-using stefan_academy_vanilla_charp.Books.Services;
+using stefan_academy_vanilla_charp.Books.Services.Command;
+using stefan_academy_vanilla_charp.Books.Services.Query;
 using stefan_academy_vanilla_charp.Common.Exceptions;
 using stefan_academy_vanilla_charp.Courses.Models;
 using stefan_academy_vanilla_charp.Courses.Services;
@@ -14,16 +14,18 @@ namespace stefan_academy_vanilla_charp
     public class ViewStudent
     {
         private CourseService courseService;
-        private BookService bookService;
+        private readonly IBookQueryService bookQueryService;
+        private readonly IBookCommandService bookCommandService;
         private EnrolmentService enrolmentService;
 
         private User loggedUser;
 
-        public ViewStudent(User user)
+        public ViewStudent(User user, IBookQueryService bookQueryService, IBookCommandService bookCommandService)
         {
             loggedUser = user;
 
-            bookService = new(BookRepository.Instance);
+            this.bookQueryService = bookQueryService;
+            this.bookCommandService = bookCommandService;
             courseService = new(Courses.Repositories.CourseRepository.Instance);
             enrolmentService = new(Enrolments.Repositories.EnrolmentRepository.Instance);
         }
@@ -183,7 +185,7 @@ namespace stefan_academy_vanilla_charp
 
         public void AfisareCartiDetinute()
         {
-            List<Book> books = bookService.GetBooksByStudentId(loggedUser.Id);
+            List<Book> books = bookQueryService.GetBooksByStudentId(loggedUser.Id);
             if (books.Count == 0)
             {
                 Console.WriteLine("Nu ai nicio carte");
@@ -205,7 +207,7 @@ namespace stefan_academy_vanilla_charp
             try
             {
                 BookCreateRequest request = new BookCreateRequest(loggedUser.Id, text, DateTime.Now);
-                BookCreateResponse response = bookService.CreateBook(request);
+                BookCreateResponse response = bookCommandService.CreateBook(request);
                 if (response != null)
                 {
                     Console.WriteLine("Cartea " + response.BookName + " adaugata cu succes la data de " + response.CreatedAt.ToString("dd-MM-yyyy"));
@@ -221,7 +223,7 @@ namespace stefan_academy_vanilla_charp
         {
             Console.Write("Tastati numele cartii pe care doriti sa o modificati: ");
             string text = Console.ReadLine();
-            Book book = bookService.GetBook(loggedUser.Id, text);
+            Book book = bookQueryService.GetBook(loggedUser.Id, text);
 
             if (book == null)
             {
@@ -235,7 +237,7 @@ namespace stefan_academy_vanilla_charp
             try
             {
                 BookUpdateRequest request = new(nume);
-                BookUpdateResponse response = bookService.UpdateBook(book.Id, request);
+                BookUpdateResponse response = bookCommandService.UpdateBook(book.Id, request);
             }
             catch (NotFoundException ex)
             {
@@ -247,7 +249,7 @@ namespace stefan_academy_vanilla_charp
         {
             Console.Write("Tastati numele cartii pe care doriti sa o stergeti: ");
             string text = Console.ReadLine();
-            Book book = bookService.GetBook(loggedUser.Id, text);
+            Book book = bookQueryService.GetBook(loggedUser.Id, text);
 
             if (book == null)
             {
@@ -255,7 +257,7 @@ namespace stefan_academy_vanilla_charp
                 return;
             }
 
-            bookService.DeleteBook(book.Id);
+            bookCommandService.DeleteBook(book.Id);
 
             Console.WriteLine("Carte stearsa cu succes");
         }

@@ -1,4 +1,6 @@
-﻿using stefan_academy_vanilla_charp.Common;
+﻿using stefan_academy_vanilla_charp.Books.Services.Command;
+using stefan_academy_vanilla_charp.Books.Services.Query;
+using stefan_academy_vanilla_charp.Common;
 using stefan_academy_vanilla_charp.Users.Models;
 using stefan_academy_vanilla_charp.Users.Repositories;
 using stefan_academy_vanilla_charp.Users.Services;
@@ -7,6 +9,15 @@ namespace stefan_academy_vanilla_charp
 {
     public class ViewLogIn
     {
+        private readonly IBookQueryService bookQueryService;
+        private readonly IBookCommandService bookCommandService;
+
+        public ViewLogIn(IBookQueryService bookQueryService, IBookCommandService bookCommandService)
+        {
+            this.bookQueryService = bookQueryService;
+            this.bookCommandService = bookCommandService;
+        }
+
         public void Logger()
         {
             UserRepository repository = UserRepository.Instance;
@@ -76,7 +87,7 @@ namespace stefan_academy_vanilla_charp
                 }
             }
             else if (s != null) {
-                ViewStudent viewer = new(user);
+                ViewStudent viewer = new(user, bookQueryService, bookCommandService);
                 Console.WriteLine("Logat cu succes!");
                 viewer.Viewer();
             }

@@ -4,31 +4,19 @@ using stefan_academy_vanilla_charp.Books.Models;
 using stefan_academy_vanilla_charp.Books.Repositories;
 using stefan_academy_vanilla_charp.Common.Exceptions;
 
-namespace stefan_academy_vanilla_charp.Books.Services
+namespace stefan_academy_vanilla_charp.Books.Services.Command
 {
-    public class BookService
+    public class BookCommandService : IBookCommandService
     {
-        private readonly BookRepository repository;
+        private readonly IBookRepository repository;
 
-        public BookService(BookRepository repository)
+        public BookCommandService(IBookRepository repository)
         {
             this.repository = repository;
         }
 
-        public Book GetBook(Guid studentId, string bookName)
-        {
-            return repository.FindByStudentAndName(studentId, bookName);
-        }
-
-        public List<Book> GetBooksByStudentId(Guid studentId)
-        {
-            return repository.FindByStudentId(studentId);
-        }
-
         public BookCreateResponse CreateBook(BookCreateRequest request)
         {
-            
-
             if (repository.FindByStudentAndName(request.StudentId, request.BookName) != null)
             {
                 throw new DuplicateException("Cartea", request.BookName + " id student" + request.StudentId);
@@ -48,7 +36,7 @@ namespace stefan_academy_vanilla_charp.Books.Services
             {
                 throw new NotFoundException("Cartea", id.ToString());
             }
-            if(request.BookName == book.BookName)
+            if (request.BookName == book.BookName)
             {
                 throw new DuplicateException("Book", "BookName");
             }
