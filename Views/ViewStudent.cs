@@ -16,7 +16,6 @@ namespace stefan_academy_vanilla_charp
     public class ViewStudent
     {
         private readonly ICourseQueryService courseQueryService;
-        private readonly ICourseCommandService courseCommandService;
         private readonly IBookQueryService bookQueryService;
         private readonly IBookCommandService bookCommandService;
         private readonly IEnrolmentQueryService enrolmentQueryService;
@@ -25,7 +24,7 @@ namespace stefan_academy_vanilla_charp
         private User loggedUser;
 
         public ViewStudent(User user, IBookQueryService bookQueryService, IBookCommandService bookCommandService,
-            ICourseQueryService courseQueryService, ICourseCommandService courseCommandService,
+            ICourseQueryService courseQueryService, 
             IEnrolmentQueryService enrolmentQueryService, IEnrolmentCommandService enrolmentCommandService)
         {
             loggedUser = user;
@@ -33,7 +32,6 @@ namespace stefan_academy_vanilla_charp
             this.bookQueryService = bookQueryService;
             this.bookCommandService = bookCommandService;
             this.courseQueryService = courseQueryService;
-            this.courseCommandService = courseCommandService;
             this.enrolmentQueryService = enrolmentQueryService;
             this.enrolmentCommandService = enrolmentCommandService;
         }
