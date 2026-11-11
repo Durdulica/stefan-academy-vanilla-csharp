@@ -5,9 +5,9 @@ namespace stefan_academy_vanilla_charp.Users.Services.Query
 {
     public class UserQueryService : IUserQueryService
     {
-        private readonly UserRepository repository;
+        private readonly IUserRepository repository;
 
-        public UserQueryService(UserRepository repository)
+        public UserQueryService(IUserRepository repository)
         {
             this.repository = repository;
         }

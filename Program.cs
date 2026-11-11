@@ -12,6 +12,7 @@ using stefan_academy_vanilla_charp.Enrolments.Services.Query;
 using stefan_academy_vanilla_charp.Enrolments.Services.Command;
 using stefan_academy_vanilla_charp.Enrolments.Repositories;
 using stefan_academy_vanilla_charp.Users.Services.Query;
+using stefan_academy_vanilla_charp.Users.Services.Command;
 
 internal class Program
 {
@@ -33,13 +34,14 @@ internal class Program
         IEnrolmentQueryService enrolmentQueryService = new EnrolmentQueryService(enrolmentRepository);
         IEnrolmentCommandService enrolmentCommandService = new EnrolmentCommandService(enrolmentRepository);
         IUserQueryService userQueryService = new UserQueryService(userRepository);
+        IUserCommandService userCommandService = new UserCommandService(userRepository);
 
         UserRepository.Instance.Subscribe(new NotificatorConsola());
 
         try
         {
             ViewLogIn logIn = new(bookQueryService, bookCommandService, courseQueryService, courseCommandService, 
-                enrolmentQueryService, enrolmentCommandService, userQueryService);
+                enrolmentQueryService, enrolmentCommandService, userQueryService, userCommandService);
             logIn.Logger();
         }
         catch (AcademyException text)

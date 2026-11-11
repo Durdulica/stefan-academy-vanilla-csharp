@@ -8,9 +8,9 @@ namespace stefan_academy_vanilla_charp.Enrolments.Services.Command
 {
     public class EnrolmentCommandService : IEnrolmentCommandService
     {
-        private readonly EnrolmentRepository repository;
+        private readonly IEnrolmentRepository repository;
 
-        public EnrolmentCommandService(EnrolmentRepository repository)
+        public EnrolmentCommandService(IEnrolmentRepository repository)
         {
             this.repository = repository;
         }
@@ -19,7 +19,7 @@ namespace stefan_academy_vanilla_charp.Enrolments.Services.Command
         {
             Enrolment newEnrolment = EnrolmentMapper.ToEnrolment(request);
             
-            if (repository.GetEnrolmentIdByStudentAndCourseId(newEnrolment.StudentId, newEnrolment.CourseId) != Guid.Empty)
+            if (repository.EnrolmentIdByStudentAndCourseId(newEnrolment.StudentId, newEnrolment.CourseId) != Guid.Empty)
             {
                 throw new DuplicateException("Enrolmentul", "id student " + newEnrolment.StudentId + " id curs " + newEnrolment.CourseId);
             }

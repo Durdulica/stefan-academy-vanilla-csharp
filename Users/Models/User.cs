@@ -44,13 +44,9 @@ namespace stefan_academy_vanilla_charp.Users.Models
                     throw new ValidationException("Numele", "trebuie sa aiba intre 2 si 30 de caractere");
                 }
 
-                foreach (char ch in text)
+                if(!text.All(ch => char.IsLetter(ch) || ch == '-'))
                 {
-                    bool caracterPermis = char.IsLetter(ch) || ch == '-';
-                    if (!caracterPermis)
-                    {
-                        throw new ValidationException("Numele", "contine caractere nepermise");
-                    }
+                    throw new ValidationException("Numele", "contine caractere nepermise");
                 }
                 firstName = text;
             }
@@ -73,13 +69,9 @@ namespace stefan_academy_vanilla_charp.Users.Models
                     throw new ValidationException("Prenumele", "trebuie sa aiba intre 2 si 30 de caractere");
                 }
 
-                foreach (char ch in text)
+                if(!text.All(ch => char.IsLetter(ch) || ch == '-'))
                 {
-                    bool caracterPermis = char.IsLetter(ch) || ch == '-';
-                    if (!caracterPermis)
-                    {
-                        throw new ValidationException("Prenumele", "contine caractere nepermise");
-                    }
+                    throw new ValidationException("Prenumele", "contine caractere nepermise");
                 }
                 lastName = text;
             }
@@ -102,21 +94,14 @@ namespace stefan_academy_vanilla_charp.Users.Models
                     throw new ValidationException("Emailul", "trebuie sa aiba intre 7 si 40 de caractere");
                 }
 
-                
-
                 if (!text.Contains("@gmail") && !text.Contains("@yahoo") && !text.Contains("@hotmail"))
                 {
                     throw new ValidationException("Email", "incomplet");
                 }
 
-                foreach (char ch in text)
+                if(!text.All(ch => char.IsLetterOrDigit(ch) || ch == '@' || ch == '.'))
                 {
-                    bool caracterPermis = char.IsLetterOrDigit(ch) || ch == '@' || ch == '.';
-
-                    if (!caracterPermis)
-                    {
-                        throw new ValidationException("Emailul", "contine caractere nepermise");
-                    }
+                    throw new ValidationException("Emailul", "contine caractere nepermise");
                 }
                 email = text;
             }

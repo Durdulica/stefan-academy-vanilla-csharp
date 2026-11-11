@@ -180,12 +180,14 @@ namespace stefan_academy_vanilla_charp
         public void AfisareCursuriDisponibile()
         {
             HashSet<Guid> h = enrolmentQueryService.GetCourseIdsForStudent(loggedUser.Id);
-            
-            foreach (Guid id in h) 
+            List<Course> courses = courseQueryService.GetCourses().Where(c => !h.Contains(c.Id)).ToList();
+
+            if (!courses.Any())
             {
-                Course c = courseQueryService.GetCourse(id);
-                Console.WriteLine("nume: " + c.Name + ", departament: " + c.Department);
+                Console.WriteLine("Sunteti inscris la toate cursurile");
             }
+
+            courses.ForEach(c => Console.WriteLine("nume: " + c.Name + ", departament: " + c.Department));
         }
 
         public void AfisareCartiDetinute()
@@ -292,8 +294,8 @@ namespace stefan_academy_vanilla_charp
 
         public void DezabonareCurs()
         {
-            Console.Write("Numele cursului de la care doriti sa va dezabonati");
-            string text = Console.ReadLine();
+            Console.Write("Numele cursului de la care doriti sa va dezabonati: ");
+            string text = Console.ReadLine().Trim();
 
             Course course = courseQueryService.GetByName(text);
 
@@ -318,25 +320,16 @@ namespace stefan_academy_vanilla_charp
         {
             List<Course> courses = courseQueryService.GetCourses();
             Course course = null;
-            int index = -1;
-            Dictionary<Guid, int> d = enrolmentQueryService.GetStudentsCountPerCourse();
+            Dictionary<Guid, int> d = enrolmentQueryService.GetStudentsCountPerCourse().OrderByDescending(k => k.Value).ToDictionary();
 
-            foreach (Course c in courses)
-            {
-                if (d[c.Id] > index)
-                {
-                    index = d[c.Id];
-                    course = c;
-                }
-            }
-
-            if(course == null)
+            course = courseQueryService.GetCourse(d.FirstOrDefault().Key);
+            if(course == default)
             {
                 Console.WriteLine("Nu exista cursuri in baza de date");
                 return;
             }
 
-            Console.WriteLine(course.Name + " " + course.Department + " cu " + index + " studenti");
+            Console.WriteLine(course.Name + " " + course.Department + " cu " + d.FirstOrDefault().Value + " studenti");
         }
 
         public void CursuriPeDepartamente()
@@ -345,25 +338,27 @@ namespace stefan_academy_vanilla_charp
             
             foreach (string key in d.Keys) 
             {
-                Console.WriteLine("Departament: " + key + ", cursuri: " + String.Join(", ", d[key]));
-
+                Console.WriteLine(key + ": " + String.Join(", ", d[key]));//?????? Select(c => c.Name)
             }
         }
 
         public void StudentiPeDepartamente()
         {
             SortedDictionary<string, List<Course>> d = courseQueryService.GetCoursesByDepartment();
-            Dictionary<Guid, int> s = enrolmentQueryService.GetStudentsCountPerCourse();
 
             foreach (string key in d.Keys)
             {
-                int sum = 0;
-                foreach (Course c in d[key]) 
+                HashSet<Guid> s = [];
+                if (d.TryGetValue(key, out List<Course> lista))
                 {
-                    sum += s[c.Id];
+                    foreach (Course c in lista)
+                    {
+                        s.UnionWith(enrolmentQueryService.GetStudentIdsForCourse(c.Id));
+                    }
                 }
 
-                Console.WriteLine("Departament: " + key + ", studenti: " + sum);
+                
+                Console.WriteLine("Departament: " + key + ", studenti: " + s.Count);
             }
         }
     }

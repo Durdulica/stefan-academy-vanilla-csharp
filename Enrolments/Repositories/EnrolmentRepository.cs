@@ -23,78 +23,40 @@ namespace stefan_academy_vanilla_charp.Enrolments.Repositories
 
         private EnrolmentRepository() : base(new EnrolmentTextMapper(), Path.Combine("..", "..", "..", "Data", "enrolments.txt")) { }
 
-        public List<Guid> GetEnrolmentIdByStudentId(Guid studentId)
+        public List<Guid> EnrolmentIdByStudentId(Guid studentId)
         {
-            List<Guid> studentEnrolments = new();
-            studentEnrolments.Capacity = Items.Count;
-
-            for (int i = 0; i < Items.Count; i++)
-            {
-                if (Items[i].StudentId == studentId)
-                {
-                    studentEnrolments.Add(Items[i].Id);
-                }
-            }
-
-            return studentEnrolments;
+            return Items.Where(e => e.StudentId == studentId)
+                .Select(e => e.Id).ToList();
         }
 
-        public Guid GetEnrolmentIdByStudentAndCourseId(Guid studentId, Guid courseId)
+        public Guid EnrolmentIdByStudentAndCourseId(Guid studentId, Guid courseId)
         {
-            foreach (Enrolment enr in Items)
-            {
-                if (enr.StudentId == studentId && enr.CourseId == courseId)
-                {
-                    return enr.Id;
-                }
-            }
-            return Guid.Empty;
+            return Items.Where(e => e.CourseId == courseId && e.StudentId == studentId)
+                .Select(e => e.Id).FirstOrDefault();              
         }
 
-        public List<Guid> GetCourseIdListByStudentId(Guid studentId)
+        public List<Guid> CourseIdByStudentId(Guid studentId)
         {
-            List<Guid> courses = new();
-
-            foreach (Enrolment enr in Items)
-            {
-                if (enr.StudentId == studentId)
-                {
-                    courses.Add(enr.CourseId);
-                }
-            }
-
-            return courses;
+            return Items.Where(e => e.StudentId == studentId)
+                .Select (e => e.CourseId).ToList();
         }
 
-        public Dictionary<Guid, int> StudentsCountPerCourse()
-        {
-            Dictionary<Guid, int> d = new Dictionary<Guid, int>();
-            foreach (Enrolment enr in Items)
-            {
-                if(d.TryGetValue(enr.CourseId, out int count))
-                {
-                    d[enr.CourseId] = count + 1;
-                }
-                else
-                {
-                    d.Add(enr.CourseId, 1);
-                }
-            }
-            return d;
-        }
+        public Dictionary<Guid, int> StudentsCountPerCourse() => Items.GroupBy(e => e.CourseId).ToDictionary(g => g.Key, g => g.Count());
 
-        public HashSet<Guid> CourseIdsForStudent(Guid studentId)
+        public HashSet<Guid> CourseIdsForStudent(Guid studentId) => Items.Where(e => e.StudentId == studentId).Select(e => e.CourseId).ToHashSet();
+
+        public HashSet<Guid> StudentIdsForCourse(Guid courseId)
         {
-            HashSet<Guid> h = new HashSet<Guid>();
-            foreach (Enrolment enr in Items)
+            HashSet<Guid> l = new();
+            foreach(Enrolment enr in Items)
             {
-                
-                if (Guid.Equals(enr.StudentId, studentId))
+                if (enr.CourseId.Equals(courseId)) 
                 {
-                    h.Add(enr.CourseId);
+                    l.Add(enr.StudentId);
                 }
             }
-            return h;
+
+            return l;
         }
     }
 }

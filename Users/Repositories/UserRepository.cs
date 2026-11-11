@@ -25,29 +25,8 @@ namespace stefan_academy_vanilla_charp.Users.Repositories
             : base(new UserTextMapper(), Path.Combine("..","..","..","Data","users.txt")) { }
 
         public User GetByFirstAndLastName(string firstName, string lastName)
-        {
-            foreach (var user in Items)
-            {
-                if (user.FirstName.CompareTo(firstName) == 0 && user.LastName.CompareTo(lastName) == 0)
-                {
-                    return user;
-                }
-            }
+            => Items.FirstOrDefault(s => s.FirstName == firstName && s.LastName == lastName);
 
-            return null;
-        }
-
-        public User GetByEmail(string email) 
-        {
-            foreach (var user in Items)
-            {
-                if (user.Email == email)
-                {
-                    return user;
-                }
-            }
-
-            return null;
-        }
+        public User GetByEmail(string email) => Items.FirstOrDefault(s => s.Email == email);
     }
 }

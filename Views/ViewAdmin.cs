@@ -1,19 +1,19 @@
 ﻿using stefan_academy_vanilla_charp.Common.Exceptions;
 using stefan_academy_vanilla_charp.Users.Dtos;
 using stefan_academy_vanilla_charp.Users.Models;
-using stefan_academy_vanilla_charp.Users.Repositories;
 using stefan_academy_vanilla_charp.Users.Services.Command;
 
 namespace stefan_academy_vanilla_charp
 {
     public class ViewAdmin
     {
-        private UserCommandService userService = new(UserRepository.Instance);
+        private IUserCommandService userCommandService;
         private User loggedUser;
         
-        public ViewAdmin(User user) 
+        public ViewAdmin(User user, IUserCommandService userCommandService) 
         {
             loggedUser = user;
+            this.userCommandService = userCommandService;
         }
 
         public void Viewer()
@@ -67,7 +67,7 @@ namespace stefan_academy_vanilla_charp
             try
             {
                 StudentCreateRequest request = new(prenume, nume, email, varsta);
-                userService.CreateStudent(request);
+                userCommandService.CreateStudent(request);
                 Console.WriteLine("Studentul " + prenume + " " + nume + " a fost adaugat");
             }catch(AcademyException ex)
             {

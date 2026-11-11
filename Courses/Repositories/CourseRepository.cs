@@ -24,48 +24,11 @@ namespace stefan_academy_vanilla_charp.Courses.Repositories
 
         public List<Course> Courses() => Items;
 
-        public List<Course> GetCourseListByCourseId(List<Guid> coursesId)
-        {
-            List<Course> studentCourses = new();
+        public List<Course> GetCourseListByCourseId(List<Guid> coursesId) => Items.Where(c => coursesId.Contains(c.Id)).ToList();
 
-            foreach (Guid id in coursesId)
-            {
-                Course c = FindById(id);
-                if (c != null) studentCourses.Add(c);
-            }
+        public Course FindByName(string name) => Items.FirstOrDefault(c => c.Name == name);
 
-            return studentCourses;
-        }
-
-        public Course FindByName(string name)
-        {
-            foreach (Course c in Items)
-            {
-                if (c.Name == name)
-                {
-                    return c;
-                }
-            }
-            return null;
-        }
-
-        public SortedDictionary<string, List<Course>> CoursesByDepartment()
-        {
-            SortedDictionary<string, List<Course>> d = new SortedDictionary<string, List<Course>>();
-
-            foreach (Course c in Items)
-            {
-                if(d.TryGetValue(c.Department, out List<Course> courses))
-                {
-                    courses.Add(c);
-                }
-                else
-                {
-                    d.Add(c.Department, new List<Course> { c });
-                }
-            }
-
-            return d;
-        }
+        public SortedDictionary<string, List<Course>> CoursesByDepartment() => new SortedDictionary<string,
+            List<Course>>(Items.GroupBy(c => c.Department).ToDictionary(x => x.Key, x => x.ToList()));
     }
 }

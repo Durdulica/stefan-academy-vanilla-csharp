@@ -8,9 +8,9 @@ namespace stefan_academy_vanilla_charp.Users.Services.Command
 {
     public class UserCommandService : IUserCommandService
     {
-        private readonly UserRepository repository;
+        private readonly IUserRepository repository;
 
-        public UserCommandService(UserRepository repository) 
+        public UserCommandService(IUserRepository repository) 
         {
             this.repository = repository;
         }

@@ -14,11 +14,9 @@ namespace stefan_academy_vanilla_charp.Books.Repositories
             {
                 if (instance == null) 
                 {
-                    Console.WriteLine("acum creez");
                     instance = new BookRepository();
                 }
 
-                Console.WriteLine("acum doar accesez");
                 return instance;
             }
         }
@@ -26,31 +24,8 @@ namespace stefan_academy_vanilla_charp.Books.Repositories
         private BookRepository()
             : base(new BookTextMapper(), Path.Combine("..", "..", "..", "Data", "books.txt")) { }
 
-        public Book FindByStudentAndName(Guid studentId, string bookName)
-        {
-            foreach (Book book in Items)
-            {
-                if (book.StudentId == studentId && book.BookName == bookName)
-                {
-                    return book;
-                }
-            }
-            return null;
-        }
+        public Book FindByStudentAndName(Guid studentId, string bookName) => Items.FirstOrDefault(b => b.StudentId == studentId && b.BookName == bookName);
 
-        public List<Book> FindByStudentId(Guid studentId)
-        {
-            List<Book> studentBooks = new();
-
-            foreach (Book book in Items)
-            {
-                if (book.StudentId == studentId)
-                {
-                    studentBooks.Add(book);
-                }
-            }
-
-            return studentBooks;
-        }
+        public List<Book> FindByStudentId(Guid studentId) => Items.Where(b => b.StudentId == studentId).ToList();
     }
 }

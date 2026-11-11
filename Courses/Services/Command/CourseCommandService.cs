@@ -8,9 +8,9 @@ namespace stefan_academy_vanilla_charp.Courses.Services.Command
 {
     public class CourseCommandService : ICourseCommandService
     {
-        private readonly CourseRepository repository;
+        private readonly ICourseRepository repository;
 
-        public CourseCommandService(CourseRepository repository)
+        public CourseCommandService(ICourseRepository repository)
         {
             this.repository = repository;
         }

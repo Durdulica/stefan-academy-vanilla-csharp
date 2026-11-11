@@ -1,10 +1,12 @@
 ﻿using stefan_academy_vanilla_charp.Books.Services.Command;
 using stefan_academy_vanilla_charp.Books.Services.Query;
+using stefan_academy_vanilla_charp.Common.Exceptions;
 using stefan_academy_vanilla_charp.Courses.Services.Command;
 using stefan_academy_vanilla_charp.Courses.Services.Query;
 using stefan_academy_vanilla_charp.Enrolments.Services.Command;
 using stefan_academy_vanilla_charp.Enrolments.Services.Query;
 using stefan_academy_vanilla_charp.Users.Models;
+using stefan_academy_vanilla_charp.Users.Services.Command;
 using stefan_academy_vanilla_charp.Users.Services.Query;
 
 namespace stefan_academy_vanilla_charp
@@ -14,23 +16,23 @@ namespace stefan_academy_vanilla_charp
         private readonly IBookQueryService bookQueryService;
         private readonly IBookCommandService bookCommandService;
         private readonly ICourseQueryService courseQueryService;
-        private readonly ICourseCommandService courseCommandService;
         private readonly IEnrolmentQueryService enrolmentQueryService;
         private readonly IEnrolmentCommandService enrolmentCommandService;
         private readonly IUserQueryService userQueryService;
+        private readonly IUserCommandService userCommandService;
 
         public ViewLogIn(IBookQueryService bookQueryService, IBookCommandService bookCommandService,
             ICourseQueryService courseQueryService, ICourseCommandService courseCommandService,
             IEnrolmentQueryService enrolmentQueryService, IEnrolmentCommandService enrolmentCommandService,
-            IUserQueryService userQueryService)
+            IUserQueryService userQueryService, IUserCommandService userCommandService)
         {
             this.bookQueryService = bookQueryService;
             this.bookCommandService = bookCommandService;
             this.courseQueryService = courseQueryService;
-            this.courseCommandService = courseCommandService;
             this.enrolmentQueryService = enrolmentQueryService;
             this.enrolmentCommandService = enrolmentCommandService;
             this.userQueryService = userQueryService;
+            this.userCommandService = userCommandService;
         }
 
         public void Logger()
@@ -60,9 +62,9 @@ namespace stefan_academy_vanilla_charp
 
             if (user == null)
             {
-                throw new ArgumentException("Userul nu aceste credentiale nu exista");
+                throw new NotFoundException("Userul", " cu aceste credentiale nu exista");
             }
-
+            
             if (user is Admin a)
             {
                 Console.Write("Parola: ");
@@ -70,13 +72,13 @@ namespace stefan_academy_vanilla_charp
 
                 if (a.Password == password)
                 {
-                    ViewAdmin viewer = new(user);
+                    ViewAdmin viewer = new(user, userCommandService);
                     Console.WriteLine("Logat cu succes!");
                     viewer.Viewer();
                 }
                 else
                 {
-                    throw new ArgumentException("Parola gresita!");
+                    throw new ValidationException("Parola", " gresita!");
                 }
 
             }
@@ -91,19 +93,19 @@ namespace stefan_academy_vanilla_charp
                 }
                 else
                 {
-                    throw new ArgumentException("Parola gresita!");
+                    throw new ValidationException("Parola", " gresita!");
                 }
             }
             else if (user is Student)
             {
-                ViewStudent viewer = new(user, bookQueryService, bookCommandService, courseQueryService, courseCommandService,
+                ViewStudent viewer = new(user, bookQueryService, bookCommandService, courseQueryService,
                     enrolmentQueryService, enrolmentCommandService);
                 Console.WriteLine("Logat cu succes!");
                 viewer.Viewer();
             }
             else
             {
-                throw new ArgumentException("Error on user type");
+                throw new NotFoundException("Error", " on user type");
             }
         }
     }

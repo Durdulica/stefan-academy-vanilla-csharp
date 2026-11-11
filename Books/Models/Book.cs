@@ -38,13 +38,9 @@ namespace stefan_academy_vanilla_charp.Books.Models
                     throw new ValidationException("Numele", " cartii trebuie sa aiba intre 2 si 30 de caractere");
                 }
 
-                foreach (char ch in text)
+                if (!text.All(ch => Char.IsLetterOrDigit(ch) || ch == ' '))
                 {
-                    bool caracterPermis = char.IsLetterOrDigit(ch) || ch == ' ';
-                    if (!caracterPermis)
-                    {
-                        throw new ValidationException("Numele", " contine caractere nepermise");
-                    }
+                    throw new ValidationException("Numele", " contine caractere nepermise");
                 }
                 bookName = text;
             }

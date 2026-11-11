@@ -15,5 +15,7 @@ namespace stefan_academy_vanilla_charp.Enrolments.Services.Query
         Dictionary<Guid, int> GetStudentsCountPerCourse();
 
         HashSet<Guid> GetCourseIdsForStudent(Guid studentId);
+
+        HashSet<Guid> GetStudentIdsForCourse(Guid courseId);
     }
 }
