@@ -22,7 +22,7 @@ namespace stefan_academy_vanilla_charp
         private readonly IUserCommandService userCommandService;
 
         public ViewLogIn(IBookQueryService bookQueryService, IBookCommandService bookCommandService,
-            ICourseQueryService courseQueryService, ICourseCommandService courseCommandService,
+            ICourseQueryService courseQueryService, 
             IEnrolmentQueryService enrolmentQueryService, IEnrolmentCommandService enrolmentCommandService,
             IUserQueryService userQueryService, IUserCommandService userCommandService)
         {
@@ -62,7 +62,7 @@ namespace stefan_academy_vanilla_charp
 
             if (user == null)
             {
-                throw new NotFoundException("Userul", " cu aceste credentiale nu exista");
+                throw new NotFoundException("Userul", "aceste credentiale nu exista");
             }
             
             if (user is Admin a)
@@ -78,7 +78,7 @@ namespace stefan_academy_vanilla_charp
                 }
                 else
                 {
-                    throw new ValidationException("Parola", " gresita!");
+                    throw new ValidationException("Parola", "login refuzat!");
                 }
 
             }
@@ -93,7 +93,7 @@ namespace stefan_academy_vanilla_charp
                 }
                 else
                 {
-                    throw new ValidationException("Parola", " gresita!");
+                    throw new ValidationException("Parola", "login refuzat!");
                 }
             }
             else if (user is Student)
@@ -105,7 +105,7 @@ namespace stefan_academy_vanilla_charp
             }
             else
             {
-                throw new NotFoundException("Error", " on user type");
+                throw new NotFoundException("Error", "on user type");
             }
         }
     }

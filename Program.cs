@@ -7,7 +7,6 @@ using stefan_academy_vanilla_charp.Users.Repositories;
 using stefan_academy_vanilla_charp.Common.Exceptions;
 using stefan_academy_vanilla_charp.Courses.Services.Query;
 using stefan_academy_vanilla_charp.Courses.Repositories;
-using stefan_academy_vanilla_charp.Courses.Services.Command;
 using stefan_academy_vanilla_charp.Enrolments.Services.Query;
 using stefan_academy_vanilla_charp.Enrolments.Services.Command;
 using stefan_academy_vanilla_charp.Enrolments.Repositories;
@@ -30,17 +29,16 @@ internal class Program
         IBookQueryService bookQueryService = new BookQueryService(bookRepository);
         IBookCommandService bookCommandService = new BookCommandService(bookRepository);
         ICourseQueryService courseQueryService = new CourseQueryService(courseRepository);
-        ICourseCommandService courseCommandService = new CourseCommandService(courseRepository);
         IEnrolmentQueryService enrolmentQueryService = new EnrolmentQueryService(enrolmentRepository);
         IEnrolmentCommandService enrolmentCommandService = new EnrolmentCommandService(enrolmentRepository);
         IUserQueryService userQueryService = new UserQueryService(userRepository);
         IUserCommandService userCommandService = new UserCommandService(userRepository);
 
-        UserRepository.Instance.Subscribe(new NotificatorConsola());
+        userRepository.Subscribe(new NotificatorConsola());
 
         try
         {
-            ViewLogIn logIn = new(bookQueryService, bookCommandService, courseQueryService, courseCommandService, 
+            ViewLogIn logIn = new(bookQueryService, bookCommandService, courseQueryService,
                 enrolmentQueryService, enrolmentCommandService, userQueryService, userCommandService);
             logIn.Logger();
         }

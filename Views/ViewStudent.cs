@@ -179,7 +179,7 @@ namespace stefan_academy_vanilla_charp
             HashSet<Guid> h = enrolmentQueryService.GetCourseIdsForStudent(loggedUser.Id);
             List<Course> courses = courseQueryService.GetCourses().Where(c => !h.Contains(c.Id)).ToList();
 
-            if (!courses.Any())
+            if (courses.Count == 0)
             {
                 Console.WriteLine("Sunteti inscris la toate cursurile");
             }
@@ -328,7 +328,7 @@ namespace stefan_academy_vanilla_charp
 
             course = courses.OrderByDescending(c => d.ContainsKey(c.Id) ? d[c.Id] : 0).FirstOrDefault();
             
-            if(course == default)
+            if(course == null)
             {
                 Console.WriteLine("Nu exista cursuri in baza de date");
                 return;
@@ -343,7 +343,7 @@ namespace stefan_academy_vanilla_charp
             
             foreach (string key in d.Keys) 
             {
-                Console.WriteLine(key + ": " + String.Join(", ", d[key]));//?????? Select(c => c.Name)
+                Console.WriteLine(key + ": " + String.Join(", ", d[key].Select(c => c.Name)));
             }
         }
 
@@ -354,16 +354,15 @@ namespace stefan_academy_vanilla_charp
             foreach (string key in d.Keys)
             {
                 HashSet<Guid> s = [];
-                if (d.TryGetValue(key, out List<Course> lista))
+
+                foreach (Course c in d[key])
                 {
-                    foreach (Course c in lista)
-                    {
-                        s.UnionWith(enrolmentQueryService.GetStudentIdsForCourse(c.Id));
-                    }
+                    s.UnionWith(enrolmentQueryService.GetStudentIdsForCourse(c.Id));
+
                 }
 
                 
-                Console.WriteLine("Departament: " + key + ", studenti: " + s.Count);
+                Console.WriteLine(key + ": " + s.Count + " studenti");
             }
         }
     }
