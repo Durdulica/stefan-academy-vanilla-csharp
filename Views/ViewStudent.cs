@@ -4,7 +4,6 @@ using stefan_academy_vanilla_charp.Books.Services.Command;
 using stefan_academy_vanilla_charp.Books.Services.Query;
 using stefan_academy_vanilla_charp.Common.Exceptions;
 using stefan_academy_vanilla_charp.Courses.Models;
-using stefan_academy_vanilla_charp.Courses.Services.Command;
 using stefan_academy_vanilla_charp.Courses.Services.Query;
 using stefan_academy_vanilla_charp.Enrolments.Dtos;
 using stefan_academy_vanilla_charp.Enrolments.Services.Command;
@@ -218,7 +217,7 @@ namespace stefan_academy_vanilla_charp
                     Console.WriteLine("Cartea " + response.BookName + " adaugata cu succes la data de " + response.CreatedAt.ToString("dd-MM-yyyy"));
                 }
             }
-            catch (DuplicateException ex)
+            catch (AcademyException ex)
             {
                 Console.WriteLine(ex.MesajPentruUtilizator);
             }
@@ -244,7 +243,7 @@ namespace stefan_academy_vanilla_charp
                 BookUpdateRequest request = new(nume);
                 BookUpdateResponse response = bookCommandService.UpdateBook(book.Id, request);
             }
-            catch (NotFoundException ex)
+            catch (AcademyException ex)
             {
                 Console.WriteLine(ex.MesajPentruUtilizator);
             }
@@ -286,8 +285,15 @@ namespace stefan_academy_vanilla_charp
                 return;
             }
 
-            enrolmentCommandService.CreateEnrolment(new EnrolmentCreateRequest(loggedUser.Id, course.Id, DateTime.Now));
-            Console.WriteLine("Ati fost inscris cu succes la curs!");
+            try
+            {
+                enrolmentCommandService.CreateEnrolment(new EnrolmentCreateRequest(loggedUser.Id, course.Id, DateTime.Now));
+                Console.WriteLine("Ati fost inscris cu succes la curs!");
+            }
+            catch (AcademyException ex) 
+            {
+                Console.WriteLine(ex.MesajPentruUtilizator);
+            }
         }
 
         public void DezabonareCurs()
@@ -320,7 +326,8 @@ namespace stefan_academy_vanilla_charp
             Course course = null;
             Dictionary<Guid, int> d = enrolmentQueryService.GetStudentsCountPerCourse().OrderByDescending(k => k.Value).ToDictionary();
 
-            course = courseQueryService.GetCourse(d.FirstOrDefault().Key);
+            course = courses.OrderByDescending(c => d.ContainsKey(c.Id) ? d[c.Id] : 0).FirstOrDefault();
+            
             if(course == default)
             {
                 Console.WriteLine("Nu exista cursuri in baza de date");

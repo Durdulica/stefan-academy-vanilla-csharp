@@ -24,7 +24,7 @@ namespace stefan_academy_vanilla_charp.Courses.Repositories
 
         public List<Course> Courses() => Items;
 
-        public List<Course> GetCourseListByCourseId(List<Guid> coursesId) => Items.Where(c => coursesId.Contains(c.Id)).ToList();
+        public List<Course> GetCourseListByCourseId(List<Guid> coursesId) => coursesId.Select(id => FindById(id)).Where(c => c != null).ToList();
 
         public Course FindByName(string name) => Items.FirstOrDefault(c => c.Name == name);
 

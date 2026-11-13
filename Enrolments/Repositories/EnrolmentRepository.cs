@@ -23,7 +23,7 @@ namespace stefan_academy_vanilla_charp.Enrolments.Repositories
 
         private EnrolmentRepository() : base(new EnrolmentTextMapper(), Path.Combine("..", "..", "..", "Data", "enrolments.txt")) { }
 
-        public List<Guid> EnrolmentIdByStudentId(Guid studentId)
+        public List<Guid> EnrolmentListByStudentId(Guid studentId)
         {
             return Items.Where(e => e.StudentId == studentId)
                 .Select(e => e.Id).ToList();

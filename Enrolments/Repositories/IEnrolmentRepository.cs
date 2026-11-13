@@ -6,7 +6,7 @@ namespace stefan_academy_vanilla_charp.Enrolments.Repositories
     {
         Enrolment FindById(Guid id);
 
-        List<Guid> EnrolmentIdByStudentId(Guid studentId);
+        List<Guid> EnrolmentListByStudentId(Guid studentId);
 
         Guid EnrolmentIdByStudentAndCourseId(Guid studentId, Guid courseId);
 
