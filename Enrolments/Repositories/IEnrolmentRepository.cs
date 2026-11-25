@@ -6,11 +6,11 @@ namespace stefan_academy_vanilla_charp.Enrolments.Repositories
     {
         Enrolment FindById(Guid id);
 
-        List<Guid> EnrolmentListByStudentId(Guid studentId);
+        List<Guid> EnrolmentIdListByStudentId(Guid studentId);
 
         Guid EnrolmentIdByStudentAndCourseId(Guid studentId, Guid courseId);
 
-        List<Guid> CourseIdByStudentId(Guid studentId);
+        List<Guid> CourseIdListByStudentId(Guid studentId);
 
         Dictionary<Guid, int> StudentsCountPerCourse();
 

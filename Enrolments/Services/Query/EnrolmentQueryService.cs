@@ -12,13 +12,13 @@ namespace stefan_academy_vanilla_charp.Enrolments.Services.Query
             this.repository = repository;
         }
 
-        public List<Guid> GetEnrolmentIdByStudentId(Guid studentId) => repository.CourseIdByStudentId(studentId);
+        public List<Guid> GetEnrolmentIdByStudentId(Guid studentId) => repository.CourseIdListByStudentId(studentId);
 
         public Enrolment GetEnrolment(Guid id) => repository.FindById(id);
 
         public Guid GetEnrolmentIdByStudentAndCourseId(Guid studentId, Guid courseId) => repository.EnrolmentIdByStudentAndCourseId(studentId, courseId);
 
-        public List<Guid> GetCourseIdListByStudentId(Guid studentId) => repository.CourseIdByStudentId(studentId);
+        public List<Guid> GetCourseIdListByStudentId(Guid studentId) => repository.CourseIdListByStudentId(studentId);
 
         public Dictionary<Guid, int> GetStudentsCountPerCourse() => repository.StudentsCountPerCourse();
 

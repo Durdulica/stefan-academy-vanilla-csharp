@@ -242,6 +242,7 @@ namespace stefan_academy_vanilla_charp
             {
                 BookUpdateRequest request = new(nume);
                 BookUpdateResponse response = bookCommandService.UpdateBook(book.Id, request);
+                Console.WriteLine("Cartea a fost modificata cu succes!");
             }
             catch (AcademyException ex)
             {
@@ -269,7 +270,7 @@ namespace stefan_academy_vanilla_charp
         public void InscriereCurs()
         {
             Console.Write("Numele cursului la care doriti sa va inscrieti: ");
-            string text = Console.ReadLine();
+            string text = Console.ReadLine().Trim();
 
             if (text.Length == 0)
             {
@@ -323,10 +324,9 @@ namespace stefan_academy_vanilla_charp
         public void CursTopStudenti()
         {
             List<Course> courses = courseQueryService.GetCourses();
-            Course course = null;
             Dictionary<Guid, int> d = enrolmentQueryService.GetStudentsCountPerCourse().OrderByDescending(k => k.Value).ToDictionary();
 
-            course = courses.OrderByDescending(c => d.ContainsKey(c.Id) ? d[c.Id] : 0).FirstOrDefault();
+            Course course = courses.OrderByDescending(c => d.ContainsKey(c.Id) ? d[c.Id] : 0).FirstOrDefault();
             
             if(course == null)
             {

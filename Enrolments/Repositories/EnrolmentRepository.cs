@@ -23,7 +23,7 @@ namespace stefan_academy_vanilla_charp.Enrolments.Repositories
 
         private EnrolmentRepository() : base(new EnrolmentTextMapper(), Path.Combine("..", "..", "..", "Data", "enrolments.txt")) { }
 
-        public List<Guid> EnrolmentListByStudentId(Guid studentId)
+        public List<Guid> EnrolmentIdListByStudentId(Guid studentId)
         {
             return Items.Where(e => e.StudentId == studentId)
                 .Select(e => e.Id).ToList();
@@ -35,7 +35,7 @@ namespace stefan_academy_vanilla_charp.Enrolments.Repositories
                 .Select(e => e.Id).FirstOrDefault();              
         }
 
-        public List<Guid> CourseIdByStudentId(Guid studentId)
+        public List<Guid> CourseIdListByStudentId(Guid studentId)
         {
             return Items.Where(e => e.StudentId == studentId)
                 .Select (e => e.CourseId).ToList();
@@ -45,18 +45,6 @@ namespace stefan_academy_vanilla_charp.Enrolments.Repositories
 
         public HashSet<Guid> CourseIdsForStudent(Guid studentId) => Items.Where(e => e.StudentId == studentId).Select(e => e.CourseId).ToHashSet();
 
-        public HashSet<Guid> StudentIdsForCourse(Guid courseId)
-        {
-            HashSet<Guid> l = new();
-            foreach(Enrolment enr in Items)
-            {
-                if (enr.CourseId.Equals(courseId)) 
-                {
-                    l.Add(enr.StudentId);
-                }
-            }
-
-            return l;
-        }
+        public HashSet<Guid> StudentIdsForCourse(Guid courseId) => Items.Where(e => e.CourseId.Equals(courseId)).Select(e => e.CourseId).ToHashSet();
     }
 }
